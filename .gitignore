@@ -1,0 +1,17 @@
+# Secrets
+copilot-config.json
+.env
+*.log
+
+# Data files (local state)
+quote-requests.json
+pending-notifications.json
+photos/
+snapshots/
+
+# Node
+node_modules/
+
+# Test files
+test-*.js
+audit-*.js

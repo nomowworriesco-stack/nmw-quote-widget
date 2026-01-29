@@ -1,0 +1,1994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Get a Quote | No Mow Worries</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        :root {
+            --brand: #22c55e;
+            --brand-dark: #16a34a;
+            --brand-light: #dcfce7;
+            --orange: #f97316;
+            --orange-dark: #ea580c;
+            --surface: #ffffff;
+            --surface-2: #f8fafc;
+            --surface-3: #f1f5f9;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-2: #475569;
+            --text-3: #94a3b8;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+            --shadow-lg: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, system-ui, sans-serif;
+            background: linear-gradient(180deg, #f0fdf4 0%, #f8fafc 100%);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Progress bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--border);
+            z-index: 100;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--brand);
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 33%;
+        }
+        
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 24px 20px 100px;
+        }
+        
+        @media (min-width: 800px) {
+            .container { max-width: 800px; }
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 32px 0 24px;
+        }
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--brand);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo-icon svg { width: 26px; height: 26px; color: white; }
+        .logo-text {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text);
+        }
+        .header h1 {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+        .header p {
+            color: var(--text-2);
+            font-size: 15px;
+        }
+        
+        /* Steps indicator */
+        .steps {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 28px;
+        }
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-3);
+        }
+        .step.active { color: var(--brand-dark); }
+        .step.done { color: var(--brand); }
+        .step-num {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--surface-3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .step.active .step-num { background: var(--brand); color: white; }
+        .step.done .step-num { background: var(--brand-light); color: var(--brand-dark); }
+        .step-line {
+            width: 32px;
+            height: 2px;
+            background: var(--border);
+            border-radius: 1px;
+        }
+        .step.done + .step-line,
+        .step-line.done { background: var(--brand-light); }
+        
+        /* Card */
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+        
+        .card-header {
+            margin-bottom: 24px;
+        }
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .card-desc {
+            font-size: 14px;
+            color: var(--text-2);
+        }
+        
+        /* Form */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .form-grid.single { grid-template-columns: 1fr; }
+        
+        .field {
+            position: relative;
+        }
+        .field.full { grid-column: 1 / -1; }
+        
+        .field-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-2);
+            margin-bottom: 6px;
+        }
+        
+        .field-input {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 15px;
+            font-family: inherit;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--surface);
+            color: var(--text);
+            transition: all 0.2s;
+        }
+        .field-input:focus {
+            outline: none;
+            border-color: var(--brand);
+            box-shadow: 0 0 0 4px var(--brand-light);
+        }
+        .field-input::placeholder { color: var(--text-3); }
+        
+        select.field-input {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 40px;
+        }
+        
+        textarea.field-input {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        /* Service pills */
+        .services-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .service-pill {
+            position: relative;
+        }
+        .service-pill input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .service-pill label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 16px;
+            background: var(--surface-2);
+            border: 1.5px solid var(--border);
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-2);
+            cursor: pointer;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+        .service-pill label:hover {
+            border-color: var(--brand);
+            background: var(--brand-light);
+        }
+        .service-pill input:checked + label {
+            background: var(--brand);
+            border-color: var(--brand);
+            color: white;
+        }
+        .service-pill input:checked + label .pill-icon {
+            background: rgba(255,255,255,0.25);
+        }
+        .pill-icon {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--surface-3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .pill-icon svg { width: 12px; height: 12px; }
+        
+        /* Consent */
+        .consent {
+            display: flex;
+            gap: 12px;
+            padding: 16px;
+            background: var(--surface-2);
+            border-radius: var(--radius-sm);
+            margin-top: 8px;
+        }
+        .consent input {
+            width: 20px;
+            height: 20px;
+            margin-top: 2px;
+            flex-shrink: 0;
+            accent-color: var(--brand);
+        }
+        .consent-text {
+            font-size: 12px;
+            color: var(--text-3);
+            line-height: 1.6;
+        }
+        .consent-text a { color: var(--brand-dark); }
+        
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 16px 24px;
+            font-size: 15px;
+            font-weight: 700;
+            font-family: inherit;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: var(--brand);
+            color: white;
+        }
+        .btn-primary:hover { background: var(--brand-dark); }
+        .btn-primary:active { transform: scale(0.98); }
+        
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--text-2);
+            border: 1.5px solid var(--border);
+        }
+        .btn-secondary:hover { background: var(--surface-2); }
+        
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-2);
+            padding: 12px 16px;
+        }
+        .btn-ghost:hover { color: var(--text); }
+        
+        .btn svg { width: 18px; height: 18px; }
+        
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        .btn-row .btn-secondary { flex: 0 0 auto; padding: 16px 20px; }
+        .btn-row .btn-primary { flex: 1; }
+        
+        /* Map Section */
+        .map-wrapper {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #map {
+            width: 100%;
+            height: 500px;
+            background: var(--surface-3);
+        }
+        
+        @media (min-width: 800px) {
+            #map { height: 550px; }
+        }
+        
+        .map-instructions {
+            padding: 14px 24px;
+            background: var(--surface);
+            color: var(--text-2);
+            font-size: 14px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .point-badge {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            padding: 8px 14px;
+            background: rgba(0,0,0,0.75);
+            color: white;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            backdrop-filter: blur(8px);
+            z-index: 10;
+        }
+        .point-badge.ready { background: var(--brand); }
+        
+        /* Toolbar below map */
+        .map-toolbar {
+            display: flex;
+            gap: 12px;
+            padding: 14px 24px;
+            background: var(--surface-2);
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Mode toggle */
+        .mode-toggle {
+            display: inline-flex;
+            background: var(--surface-3);
+            border-radius: 10px;
+            padding: 4px;
+            gap: 4px;
+        }
+        .mode-btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.15s;
+            background: transparent;
+            color: var(--text-3);
+        }
+        .mode-btn:hover { color: var(--text-2); }
+        .mode-btn.active-lawn { background: var(--brand); color: white; }
+        .mode-btn.active-mulch { background: var(--orange); color: white; }
+        .mode-btn.dimmed { opacity: 0.5; }
+        
+        .toolbar-divider {
+            width: 1px;
+            height: 32px;
+            background: var(--border);
+            margin: 0 4px;
+        }
+        
+        .map-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 16px;
+            background: white;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .map-btn:hover { border-color: var(--text-3); background: var(--surface-2); }
+        .map-btn:active { transform: scale(0.97); }
+        .map-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .map-btn.green { background: var(--brand); border-color: var(--brand); color: white; }
+        .map-btn.green:hover { background: var(--brand-dark); border-color: var(--brand-dark); }
+        .map-btn.danger { color: #ef4444; border-color: #fecaca; background: #fef2f2; }
+        .map-btn.danger:hover { background: #fee2e2; }
+        .map-btn svg { width: 14px; height: 14px; }
+        
+        /* Results panel */
+        .results-panel {
+            padding: 20px 24px;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .results-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-2);
+        }
+        .results-total {
+            font-size: 22px;
+            font-weight: 800;
+        }
+        .results-total .turf { color: var(--brand-dark); }
+        .results-total .mulch { color: var(--orange); }
+        
+        .area-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .area-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+        }
+        .area-chip-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .area-chip-name { color: var(--text-2); }
+        .area-chip-sqft { font-weight: 700; color: var(--text); }
+        .area-chip-remove {
+            background: none;
+            border: none;
+            color: var(--text-3);
+            cursor: pointer;
+            padding: 4px;
+            margin-left: 4px;
+            line-height: 1;
+            font-size: 18px;
+        }
+        .area-chip-remove:hover { color: #ef4444; }
+        
+        /* Mulch calc - compact inline */
+        .mulch-calc {
+            padding: 12px 24px;
+            background: var(--surface-2);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            font-size: 13px;
+        }
+        
+        .mulch-calc-label {
+            font-weight: 600;
+            color: var(--orange-dark);
+        }
+        
+        .mulch-calc-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-2);
+        }
+        .mulch-calc-item strong {
+            color: var(--text);
+            font-weight: 700;
+        }
+        
+        .mulch-calc select {
+            padding: 6px 10px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            color: var(--text);
+        }
+        
+        .mulch-calc-result {
+            display: inline-flex;
+            align-items: baseline;
+            gap: 4px;
+            padding: 6px 12px;
+            background: var(--orange);
+            color: white;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        .mulch-calc-result span {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+        
+        /* Bottom actions */
+        .bottom-actions {
+            padding: 24px;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+        }
+        
+        .submit-btn-big {
+            width: 100%;
+            padding: 18px 24px;
+            font-size: 17px;
+            font-weight: 700;
+            background: var(--brand);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .submit-btn-big:hover { background: var(--brand-dark); }
+        .submit-btn-big:active { transform: scale(0.98); }
+        .submit-btn-big svg { width: 20px; height: 20px; }
+        
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 16px;
+            color: var(--text-3);
+            font-size: 14px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 100%;
+            font-family: inherit;
+        }
+        .back-link:hover { color: var(--text-2); }
+        
+        /* Confirmation */
+        .success-card {
+            text-align: center;
+            padding: 40px 24px;
+        }
+        
+        .success-icon {
+            width: 72px;
+            height: 72px;
+            background: var(--brand-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+        }
+        .success-icon svg {
+            width: 36px;
+            height: 36px;
+            color: var(--brand);
+        }
+        
+        .success-card h2 {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        .success-card > p {
+            color: var(--text-2);
+            margin-bottom: 32px;
+        }
+        
+        .summary-list {
+            background: var(--surface-2);
+            border-radius: var(--radius-sm);
+            padding: 4px 0;
+            text-align: left;
+            margin-bottom: 24px;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 14px 18px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+        .summary-row:last-child { border-bottom: none; }
+        .summary-row span:first-child { color: var(--text-3); }
+        .summary-row span:last-child { font-weight: 600; color: var(--text); }
+        
+        .success-footer {
+            color: var(--text-3);
+            font-size: 13px;
+        }
+        .success-footer a { color: var(--brand-dark); font-weight: 600; }
+        
+        /* Sections */
+        .section { display: none; }
+        .section.active { display: block; }
+        
+        /* Photo tip */
+        .photo-tip {
+            display: flex;
+            gap: 14px;
+            padding: 16px;
+            background: #fef9c3;
+            border: 1px solid #fde047;
+            border-radius: var(--radius-sm);
+        }
+        .tip-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .tip-content strong {
+            display: block;
+            color: #854d0e;
+            margin-bottom: 4px;
+        }
+        .tip-content p {
+            font-size: 13px;
+            color: #a16207;
+            margin: 0;
+            line-height: 1.5;
+        }
+        
+        /* Disabled service pill */
+        .service-pill.disabled label {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .service-pill.disabled input {
+            pointer-events: none;
+        }
+        .service-pill .pill-note {
+            font-size: 10px;
+            color: var(--text-3);
+            display: block;
+            margin-top: 2px;
+        }
+        
+        /* Photo upload */
+        .photo-drop-zone {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-sm);
+            padding: 32px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--surface-2);
+        }
+        .photo-drop-zone:hover {
+            border-color: var(--brand);
+            background: var(--brand-light);
+        }
+        .photo-drop-zone.dragover {
+            border-color: var(--brand);
+            background: var(--brand-light);
+        }
+        .drop-zone-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-2);
+        }
+        .drop-zone-content svg {
+            width: 40px;
+            height: 40px;
+            color: var(--text-3);
+        }
+        .drop-zone-content span {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .drop-hint {
+            font-size: 12px !important;
+            color: var(--text-3) !important;
+        }
+        
+        .photo-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .photo-preview {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--surface-3);
+        }
+        .photo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .photo-preview-remove {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 24px;
+            height: 24px;
+            background: rgba(0,0,0,0.6);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        .photo-preview-remove:hover {
+            background: #ef4444;
+        }
+        
+        /* Mobile adjustments */
+        @media (max-width: 600px) {
+            .container { padding: 16px 12px 80px; }
+            .form-grid { grid-template-columns: 1fr; }
+            .header h1 { font-size: 24px; }
+            #map { height: 380px; }
+            .card { padding: 16px; }
+            .map-toolbar { padding: 12px 16px; gap: 8px; }
+            .mode-toggle { width: 100%; justify-content: center; }
+            .mode-btn { flex: 1; padding: 10px 12px; font-size: 13px; }
+            .toolbar-divider { display: none !important; }
+            .map-btn { padding: 10px 14px; font-size: 13px; }
+            .results-panel { padding: 16px; }
+            .mulch-calc { 
+                padding: 12px 16px; 
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .bottom-actions { padding: 16px; }
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5"/>
+                    </svg>
+                </div>
+                <span class="logo-text">No Mow Worries</span>
+            </div>
+            <h1>Get Your Free Quote</h1>
+            <p>Takes about 2 minutes</p>
+        </div>
+        
+        <!-- Section 1: Info -->
+        <div class="section active" id="section1">
+            <div class="steps">
+                <div class="step active"><span class="step-num">1</span>Details</div>
+                <div class="step-line"></div>
+                <div class="step"><span class="step-num">2</span>Measure</div>
+                <div class="step-line"></div>
+                <div class="step"><span class="step-num">3</span>Done</div>
+            </div>
+            
+            <div class="card">
+                <form id="infoForm">
+                    <div class="card-header">
+                        <div class="card-title">Contact Info</div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="field">
+                            <label class="field-label">Name</label>
+                            <input type="text" name="name" class="field-input" required placeholder="John Smith">
+                        </div>
+                        <div class="field">
+                            <label class="field-label">Phone</label>
+                            <input type="tel" name="phone" class="field-input" required placeholder="(720) 555-1234">
+                        </div>
+                        <div class="field">
+                            <label class="field-label">Email</label>
+                            <input type="email" name="email" class="field-input" required placeholder="john@email.com">
+                        </div>
+                        <div class="field">
+                            <label class="field-label">How'd you find us?</label>
+                            <select name="source" class="field-input">
+                                <option value="">Select...</option>
+                                <option value="google">Google</option>
+                                <option value="nextdoor">Nextdoor</option>
+                                <option value="referral">Friend/Neighbor</option>
+                                <option value="facebook">Facebook</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="field full">
+                            <label class="field-label">Service Address</label>
+                            <input type="text" name="address" class="field-input" required placeholder="1234 Main St, Aurora, CO 80015">
+                        </div>
+                    </div>
+                    
+                    <div class="card-header" style="margin-top: 32px;">
+                        <div class="card-title">What do you need?</div>
+                        <div class="card-desc">Select all that apply</div>
+                    </div>
+                    
+                    <div class="services-grid" id="serviceCheckboxes">
+                        <div class="service-pill">
+                            <input type="checkbox" name="services" value="mowing" id="svc-mowing" onchange="checkServices()">
+                            <label for="svc-mowing">Weekly Mowing</label>
+                        </div>
+                        <div class="service-pill" id="biweeklyPill">
+                            <input type="checkbox" name="services" value="biweekly" id="svc-biweekly" onchange="checkServices()">
+                            <label for="svc-biweekly">Bi-Weekly Mowing</label>
+                        </div>
+                        <div class="service-pill">
+                            <input type="checkbox" name="services" value="aeration" id="svc-aeration" onchange="checkServices()">
+                            <label for="svc-aeration">Lawn Aeration</label>
+                        </div>
+                        <div class="service-pill">
+                            <input type="checkbox" name="services" value="overseeding" id="svc-overseeding" onchange="checkServices()">
+                            <label for="svc-overseeding">Overseeding</label>
+                        </div>
+                        <div class="service-pill">
+                            <input type="checkbox" name="services" value="fertilizer" id="svc-fertilizer" onchange="checkServices()">
+                            <label for="svc-fertilizer">Fertilization</label>
+                        </div>
+                        <div class="service-pill">
+                            <input type="checkbox" name="services" value="weed_control" id="svc-weed" onchange="checkServices()">
+                            <label for="svc-weed">Weed Control</label>
+                        </div>
+                        <div class="service-pill">
+                            <input type="checkbox" name="services" value="mulch" id="svc-mulch" onchange="checkServices()">
+                            <label for="svc-mulch">Mulch Install</label>
+                        </div>
+                        <div class="service-pill">
+                            <input type="checkbox" name="services" value="cleanup" id="svc-cleanup" onchange="checkServices()">
+                            <label for="svc-cleanup">Spring/Fall Cleanup</label>
+                        </div>
+                        <div class="service-pill">
+                            <input type="checkbox" name="services" value="bush_trimming" id="svc-bush" onchange="checkServices()">
+                            <label for="svc-bush">Bush Trimming</label>
+                        </div>
+                        <div class="service-pill">
+                            <input type="checkbox" name="services" value="snow" id="svc-snow" onchange="checkServices()">
+                            <label for="svc-snow">Snow Removal</label>
+                        </div>
+                    </div>
+                    
+                    <div class="field full" style="margin-top: 24px;">
+                        <label class="field-label">Notes (optional)</label>
+                        <textarea name="notes" class="field-input" rows="2" placeholder="Gate code, pets, special requests..."></textarea>
+                    </div>
+                    
+                    <div class="photo-tip" id="photoTip" style="display: none; margin-top: 20px;">
+                        <div class="tip-icon">💡</div>
+                        <div class="tip-content">
+                            <strong>Get your quote faster!</strong>
+                            <p>The more detailed your photos, the less likely we'll need to reach out for more info. Be sure to describe what you need in the notes section above!</p>
+                        </div>
+                    </div>
+                    
+                    <div class="photo-upload-section" id="photoUploadSection" style="display: none; margin-top: 24px;">
+                        <div class="card-header" style="margin-bottom: 16px;">
+                            <div class="card-title">Add Photos <span style="font-weight:400;color:#737373;">(max 10)</span></div>
+                            <div class="card-desc">Upload photos of the areas you need serviced for a faster, more accurate quote</div>
+                        </div>
+                        
+                        <div class="photo-drop-zone" id="photoDropZone">
+                            <input type="file" id="photoInput" multiple accept="image/*" style="display: none;" onchange="handlePhotoSelect(event)">
+                            <div class="drop-zone-content" onclick="document.getElementById('photoInput').click()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                                <span>Click to add photos</span>
+                                <span class="drop-hint">or drag and drop</span>
+                            </div>
+                        </div>
+                        
+                        <div class="photo-preview-grid" id="photoPreviewGrid"></div>
+                    </div>
+                    
+                    <div class="consent">
+                        <input type="checkbox" name="sms_consent" id="smsConsent" required>
+                        <label for="smsConsent" class="consent-text">
+                            I agree to receive texts from No Mow Worries about my quote. Msg rates may apply. Reply STOP to opt out. <a href="https://nomowworriesco.com/privacy-policy/" target="_blank">Privacy Policy</a>
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="margin-top: 24px;" id="continueBtn">
+                        Continue
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Section 2: Map -->
+        <div class="section" id="section2">
+            <div class="steps">
+                <div class="step done"><span class="step-num">✓</span>Details</div>
+                <div class="step-line done"></div>
+                <div class="step active"><span class="step-num">2</span>Measure</div>
+                <div class="step-line"></div>
+                <div class="step"><span class="step-num">3</span>Done</div>
+            </div>
+            
+            <div class="card" style="padding: 0; overflow: hidden;">
+                <div class="map-instructions" id="mapHint">Tap the corners of your lawn to outline the area</div>
+                
+                <div class="map-wrapper">
+                    <div id="map"></div>
+                    <div class="point-badge" id="pointCounter" style="display: none;"></div>
+                </div>
+                
+                <div class="map-toolbar">
+                    <div class="mode-toggle" id="modeToggle" style="display: none;">
+                        <button class="mode-btn active-lawn" id="modeLawnBtn" onclick="setMode('turf')">Lawn</button>
+                        <button class="mode-btn" id="modeMulchBtn" onclick="setMode('mulch')">Mulch</button>
+                    </div>
+                    
+                    <div class="toolbar-divider" id="toolbarDivider" style="display: none;"></div>
+                    
+                    <button class="map-btn" id="undoBtn" onclick="undoLastPoint()" disabled>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10h10a5 5 0 015 5v2M3 10l5-5M3 10l5 5"/></svg>
+                        Undo
+                    </button>
+                    <button class="map-btn green" id="finishBtn" onclick="finishCurrentArea()" style="display: none;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+                        Done
+                    </button>
+                    <button class="map-btn danger" id="clearAllBtn" onclick="clearAllAreas()" style="display: none;">Clear All</button>
+                </div>
+                
+                <div class="results-panel" id="resultBox" style="display: none;">
+                    <div class="results-header">
+                        <span class="results-label">Measured Areas</span>
+                        <span class="results-total" id="sqftValue">0 sq ft</span>
+                    </div>
+                    <div class="area-chips" id="areaList"></div>
+                </div>
+                
+                <div class="mulch-calc" id="mulchCalc" style="display: none;">
+                    <span class="mulch-calc-label">Mulch:</span>
+                    <span class="mulch-calc-item"><strong id="mulchSqftDisplay">0</strong> sq ft</span>
+                    <span class="mulch-calc-item">×
+                        <select id="mulchThickness" onchange="calculateMulch()">
+                            <option value="1">1"</option>
+                            <option value="2" selected>2"</option>
+                            <option value="3">3"</option>
+                            <option value="4">4"</option>
+                        </select>
+                        deep
+                    </span>
+                    <span class="mulch-calc-item">=</span>
+                    <div class="mulch-calc-result"><span id="mulchCuFt">0</span> <span>cu ft</span></div>
+                </div>
+                
+                <div class="bottom-actions">
+                    <button class="submit-btn-big" id="submitFromMapBtn" onclick="submitRequest()">
+                        Submit My Request
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+                    <button class="back-link" onclick="goBack()">← Go back to edit details</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section 3: Confirmation -->
+        <div class="section" id="section3">
+            <div class="steps">
+                <div class="step done"><span class="step-num">✓</span>Details</div>
+                <div class="step-line done"></div>
+                <div class="step done"><span class="step-num">✓</span>Measure</div>
+                <div class="step-line done"></div>
+                <div class="step done"><span class="step-num">✓</span>Done</div>
+            </div>
+            
+            <div class="card success-card">
+                <div class="success-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                </div>
+                
+                <h2>You're all set!</h2>
+                <p>We'll email your quote within 24 hours.</p>
+                
+                <div class="summary-list">
+                    <div class="summary-row">
+                        <span>Name</span>
+                        <span id="confirmName">-</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Services</span>
+                        <span id="confirmService">-</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Address</span>
+                        <span id="confirmAddress">-</span>
+                    </div>
+                    <div class="summary-row" id="confirmSqftRow" style="display: none;">
+                        <span>Area</span>
+                        <span id="confirmSqft">-</span>
+                    </div>
+                </div>
+                
+                <p class="success-footer">
+                    Questions? <a href="mailto:nomowworriesco@gmail.com">nomowworriesco@gmail.com</a>
+                </p>
+                
+                <button class="btn btn-secondary" style="margin-top: 24px;" onclick="startOver()">Submit Another Request</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function initMaps() { console.log('Maps loaded'); }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('infoForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    submitInfo(e);
+                });
+            }
+        });
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA1Ta2LKaz1kDpx6EvSKKV8ipnt34rY1_0&libraries=drawing,geometry&callback=initMaps" async defer></script>
+    <script>
+        let map;
+        let formData = {};
+        let currentSqft = 0;
+        let areas = [];
+        let currentDrawing = null;
+        let currentPolyline = null;
+        let markers = [];
+        
+        const turfServices = ['mowing', 'biweekly', 'aeration', 'overseeding', 'fertilizer', 'weed_control'];
+        const mulchServices = ['mulch'];
+        const skipMeasureServices = ['cleanup', 'bush_trimming', 'snow'];
+        const photoServices = ['cleanup', 'bush_trimming'];
+        
+        let uploadedPhotos = [];
+        
+        // Check if bi-weekly is available (after June 15)
+        function isBiweeklyAvailable() {
+            const now = new Date();
+            const month = now.getMonth(); // 0-indexed (5 = June)
+            const day = now.getDate();
+            return month > 5 || (month === 5 && day >= 15);
+        }
+        
+        // Initialize bi-weekly availability on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const biweeklyPill = document.getElementById('biweeklyPill');
+            const biweeklyInput = document.getElementById('svc-biweekly');
+            const biweeklyLabel = biweeklyPill.querySelector('label');
+            
+            if (!isBiweeklyAvailable()) {
+                biweeklyPill.classList.add('disabled');
+                biweeklyInput.disabled = true;
+                biweeklyLabel.innerHTML = 'Bi-Weekly Mowing<span class="pill-note">Available after June 15</span>';
+            }
+        });
+        
+        const serviceNames = {
+            'mowing': 'Weekly Mowing',
+            'biweekly': 'Bi-Weekly Mowing',
+            'aeration': 'Aeration',
+            'overseeding': 'Overseeding',
+            'fertilizer': 'Fertilization',
+            'weed_control': 'Weed Control',
+            'mulch': 'Mulch Install',
+            'cleanup': 'Cleanup',
+            'bush_trimming': 'Bush Trimming',
+            'snow': 'Snow Removal'
+        };
+        
+        let measureMode = null;
+        
+        const turfColors = [
+            { fill: '#22c55e', stroke: '#16a34a', name: 'Front Lawn', type: 'turf' },
+            { fill: '#3b82f6', stroke: '#2563eb', name: 'Back Lawn', type: 'turf' },
+            { fill: '#06b6d4', stroke: '#0891b2', name: 'Side Lawn', type: 'turf' },
+        ];
+        
+        const mulchColors = [
+            { fill: '#f97316', stroke: '#ea580c', name: 'Mulch Bed 1', type: 'mulch' },
+            { fill: '#ef4444', stroke: '#dc2626', name: 'Mulch Bed 2', type: 'mulch' },
+            { fill: '#a855f7', stroke: '#9333ea', name: 'Mulch Bed 3', type: 'mulch' },
+        ];
+        
+        let turfAreaCount = 0;
+        let mulchAreaCount = 0;
+        let currentAreaType = 'turf';
+        
+        function getSelectedServices() {
+            return Array.from(document.querySelectorAll('input[name="services"]:checked')).map(cb => cb.value);
+        }
+        
+        // Photo upload handling
+        function handlePhotoSelect(event) {
+            const files = event.target.files;
+            addPhotos(files);
+        }
+        
+        // Compress image for mobile uploads
+        async function compressImage(file, maxWidth = 1600, quality = 0.75) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    let width = img.width;
+                    let height = img.height;
+                    
+                    // Only resize if larger than maxWidth
+                    if (width > maxWidth) {
+                        height = (height * maxWidth) / width;
+                        width = maxWidth;
+                    }
+                    
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // Convert to JPEG for better compression
+                    const compressedData = canvas.toDataURL('image/jpeg', quality);
+                    
+                    // Log compression results
+                    const originalSize = file.size;
+                    const compressedSize = Math.round((compressedData.length * 3) / 4); // Approx base64 to bytes
+                    console.log(`📷 Compressed ${file.name}: ${(originalSize/1024).toFixed(0)}KB → ${(compressedSize/1024).toFixed(0)}KB (${Math.round(100 - (compressedSize/originalSize)*100)}% smaller)`);
+                    
+                    resolve(compressedData);
+                };
+                img.src = URL.createObjectURL(file);
+            });
+        }
+        
+        async function addPhotos(files) {
+            const MAX_PHOTOS = 10;
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            const dropZone = document.getElementById('photoDropZone');
+            const originalContent = dropZone.innerHTML;
+            
+            // Check photo limit
+            const spotsLeft = MAX_PHOTOS - uploadedPhotos.length;
+            if (spotsLeft <= 0) {
+                alert(`Maximum ${MAX_PHOTOS} photos allowed. Please remove some photos to add more.`);
+                return;
+            }
+            
+            // Limit files to available spots
+            const filesToAdd = Array.from(files).slice(0, spotsLeft);
+            if (filesToAdd.length < files.length) {
+                alert(`Only adding ${filesToAdd.length} photo${filesToAdd.length > 1 ? 's' : ''} (${MAX_PHOTOS} max). ${files.length - filesToAdd.length} photo${files.length - filesToAdd.length > 1 ? 's' : ''} skipped.`);
+            }
+            
+            if (filesToAdd.length === 0) return;
+            
+            // Show processing indicator
+            dropZone.innerHTML = `<div class="drop-zone-content" style="pointer-events:none;">
+                <svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite;"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"/></svg>
+                <span>Processing ${filesToAdd.length} photo${filesToAdd.length > 1 ? 's' : ''}...</span>
+            </div>`;
+            
+            for (const file of filesToAdd) {
+                if (!file.type.startsWith('image/')) continue;
+                
+                let photoData;
+                let photoType = file.type;
+                
+                // Compress on mobile OR if file is large (>1MB)
+                if (isMobile || file.size > 1024 * 1024) {
+                    photoData = await compressImage(file);
+                    photoType = 'image/jpeg';
+                } else {
+                    // Desktop with small files - use original
+                    photoData = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => resolve(e.target.result);
+                        reader.readAsDataURL(file);
+                    });
+                }
+                
+                uploadedPhotos.push({
+                    data: photoData,
+                    name: file.name,
+                    type: photoType
+                });
+            }
+            
+            // Restore drop zone and render previews
+            dropZone.innerHTML = originalContent;
+            renderPhotoPreview();
+        }
+        
+        function removePhoto(index) {
+            uploadedPhotos.splice(index, 1);
+            renderPhotoPreview();
+        }
+        
+        function renderPhotoPreview() {
+            const grid = document.getElementById('photoPreviewGrid');
+            grid.innerHTML = uploadedPhotos.map((photo, i) => `
+                <div class="photo-preview">
+                    <img src="${photo.data}" alt="Photo ${i + 1}">
+                    <button class="photo-preview-remove" onclick="removePhoto(${i})">×</button>
+                </div>
+            `).join('');
+        }
+        
+        // Drag and drop
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropZone = document.getElementById('photoDropZone');
+            if (dropZone) {
+                dropZone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.add('dragover');
+                });
+                dropZone.addEventListener('dragleave', () => {
+                    dropZone.classList.remove('dragover');
+                });
+                dropZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove('dragover');
+                    addPhotos(e.dataTransfer.files);
+                });
+            }
+        });
+        
+        function checkServices() {
+            const selected = getSelectedServices();
+            const btn = document.getElementById('continueBtn');
+            const needsTurf = selected.some(s => turfServices.includes(s));
+            const needsMulch = selected.some(s => mulchServices.includes(s));
+            const needsPhotos = selected.some(s => photoServices.includes(s));
+            
+            // Show/hide photo tip and upload section
+            document.getElementById('photoTip').style.display = needsPhotos ? 'flex' : 'none';
+            document.getElementById('photoUploadSection').style.display = needsPhotos ? 'block' : 'none';
+            
+            if (selected.length === 0) {
+                btn.innerHTML = 'Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+            } else if (needsTurf || needsMulch) {
+                btn.innerHTML = 'Continue to Measure <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+            } else {
+                btn.innerHTML = 'Submit Request <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+            }
+        }
+        
+        function submitInfo(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const selectedServices = getSelectedServices();
+            
+            if (selectedServices.length === 0) {
+                alert('Please select at least one service');
+                return;
+            }
+            
+            formData = {
+                name: form.name.value,
+                phone: form.phone.value,
+                email: form.email.value,
+                source: form.source.value,
+                address: form.address.value,
+                services: selectedServices,
+                notes: form.notes.value,
+                smsConsent: form.sms_consent.checked
+            };
+            
+            const needsTurf = selectedServices.some(s => turfServices.includes(s));
+            const needsMulch = selectedServices.some(s => mulchServices.includes(s));
+            
+            if (needsTurf && needsMulch) {
+                measureMode = 'both';
+            } else if (needsTurf) {
+                measureMode = 'turf';
+            } else if (needsMulch) {
+                measureMode = 'mulch';
+            } else {
+                measureMode = null;
+            }
+            
+            if (measureMode) {
+                showSection(2);
+                updateMapHint();
+                initMap();
+            } else {
+                submitRequest();
+            }
+        }
+        
+        function updateMapHint() {
+            const hint = document.getElementById('mapHint');
+            if (measureMode === 'mulch') {
+                hint.innerHTML = 'Tap the corners of your <strong>mulch beds</strong> to outline them';
+            } else if (measureMode === 'both') {
+                hint.innerHTML = 'Draw your <strong>lawn areas</strong> first, then switch to <strong>Mulch</strong> for beds';
+            } else {
+                hint.innerHTML = 'Tap the corners of your <strong>lawn</strong> to outline the area';
+            }
+        }
+        
+        function initMap() {
+            if (map) return;
+            
+            const geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ address: formData.address }, function(results, status) {
+                if (status !== 'OK' || !results[0]) {
+                    alert('Could not find address. Please check and try again.');
+                    showSection(1);
+                    return;
+                }
+                
+                const location = results[0].geometry.location;
+                
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: location,
+                    zoom: 20,
+                    mapTypeId: 'satellite',
+                    tilt: 0,
+                    disableDefaultUI: true,
+                    zoomControl: true,
+                    draggableCursor: 'crosshair',
+                    draggingCursor: 'crosshair'
+                });
+                
+                startNewArea();
+                updateModeToggle();
+                updateUI();
+                map.addListener('click', handleMapClick);
+                map.addListener('click', () => areas.forEach(a => a.polygon.setEditable(false)));
+            });
+        }
+        
+        function handleMapClick(e) {
+            if (!currentDrawing) return;
+            
+            const point = e.latLng;
+            
+            if (currentDrawing.length >= 3) {
+                const firstPoint = currentDrawing[0];
+                const distance = google.maps.geometry.spherical.computeDistanceBetween(point, firstPoint);
+                // Tight threshold - must click very close to first pin (1.5 meters)
+                if (distance < 1.5) {
+                    finishCurrentArea();
+                    return;
+                }
+            }
+            
+            currentDrawing.push(point);
+            
+            const colors = currentAreaType === 'mulch' ? mulchColors : turfColors;
+            const count = currentAreaType === 'mulch' ? mulchAreaCount : turfAreaCount;
+            const colorIndex = count % colors.length;
+            const isFirst = currentDrawing.length === 1;
+            
+            const marker = new google.maps.Marker({
+                position: point,
+                map: map,
+                icon: {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    scale: isFirst ? 5 : 4,
+                    fillColor: isFirst ? colors[colorIndex].fill : '#ffffff',
+                    fillOpacity: 1,
+                    strokeColor: colors[colorIndex].stroke,
+                    strokeWeight: 2
+                }
+            });
+            
+            if (isFirst) {
+                marker.addListener('click', () => {
+                    if (currentDrawing && currentDrawing.length >= 3) finishCurrentArea();
+                });
+            }
+            
+            markers.push(marker);
+            updatePolylinePreview();
+            updateUI();
+        }
+        
+        function updatePolylinePreview() {
+            if (currentPolyline) currentPolyline.setMap(null);
+            
+            if (currentDrawing && currentDrawing.length >= 2) {
+                const colors = currentAreaType === 'mulch' ? mulchColors : turfColors;
+                const count = currentAreaType === 'mulch' ? mulchAreaCount : turfAreaCount;
+                const colorIndex = count % colors.length;
+                currentPolyline = new google.maps.Polyline({
+                    path: currentDrawing,
+                    strokeColor: colors[colorIndex].stroke,
+                    strokeWeight: 3,
+                    map: map
+                });
+            }
+        }
+        
+        function setMode(mode) {
+            currentAreaType = mode;
+            clearDrawingState();
+            currentDrawing = [];
+            updateModeToggle();
+            updateUI();
+            updateMapHint();
+        }
+        
+        function updateModeToggle() {
+            const lawnBtn = document.getElementById('modeLawnBtn');
+            const mulchBtn = document.getElementById('modeMulchBtn');
+            
+            if (currentAreaType === 'turf') {
+                lawnBtn.className = 'mode-btn active-lawn';
+                mulchBtn.className = 'mode-btn dimmed';
+            } else {
+                lawnBtn.className = 'mode-btn dimmed';
+                mulchBtn.className = 'mode-btn active-mulch';
+            }
+        }
+        
+        function updateUI() {
+            const pointCount = currentDrawing ? currentDrawing.length : 0;
+            const hasAreas = areas.length > 0;
+            const isDrawing = currentDrawing && currentDrawing.length > 0;
+            
+            const counter = document.getElementById('pointCounter');
+            if (pointCount > 0) {
+                counter.style.display = 'block';
+                counter.className = pointCount >= 3 ? 'point-badge ready' : 'point-badge';
+                counter.textContent = pointCount >= 3 ? `${pointCount} pts — tap first to close` : `${pointCount} / 3 points`;
+            } else {
+                counter.style.display = 'none';
+            }
+            
+            document.getElementById('undoBtn').disabled = pointCount === 0;
+            document.getElementById('finishBtn').style.display = pointCount >= 3 ? 'inline-flex' : 'none';
+            
+            // Show mode toggle only when both modes are available
+            const showToggle = measureMode === 'both';
+            document.getElementById('modeToggle').style.display = showToggle ? 'inline-flex' : 'none';
+            document.getElementById('toolbarDivider').style.display = showToggle ? 'block' : 'none';
+            
+            document.getElementById('clearAllBtn').style.display = (hasAreas || pointCount > 0) ? 'inline-flex' : 'none';
+            
+            // Update hint
+            const hint = document.getElementById('mapHint');
+            if (isDrawing && pointCount >= 3) {
+                hint.innerHTML = '<strong>Tap the first point</strong> or click Done to complete the shape';
+            } else if (isDrawing && pointCount > 0) {
+                hint.innerHTML = `<strong>${3 - pointCount} more point${3 - pointCount !== 1 ? 's' : ''}</strong> needed to complete the shape`;
+            } else if (hasAreas) {
+                const modeText = currentAreaType === 'mulch' ? 'mulch bed' : 'lawn area';
+                hint.innerHTML = `Draw another <strong>${modeText}</strong> or submit your request`;
+            }
+        }
+        
+        function undoLastPoint() {
+            if (!currentDrawing || currentDrawing.length === 0) return;
+            currentDrawing.pop();
+            if (markers.length > 0) markers.pop().setMap(null);
+            updatePolylinePreview();
+            updateUI();
+        }
+        
+        function finishCurrentArea() {
+            if (!currentDrawing || currentDrawing.length < 3) return;
+            
+            const colors = currentAreaType === 'mulch' ? mulchColors : turfColors;
+            const count = currentAreaType === 'mulch' ? mulchAreaCount : turfAreaCount;
+            const colorIndex = count % colors.length;
+            const colorSet = colors[colorIndex];
+            
+            const polygon = new google.maps.Polygon({
+                paths: currentDrawing,
+                fillColor: colorSet.fill,
+                fillOpacity: 0.35,
+                strokeColor: colorSet.stroke,
+                strokeWeight: 3,
+                editable: false,
+                clickable: true,
+                map: map
+            });
+            
+            polygon.addListener('dblclick', () => {
+                areas.forEach(a => a.polygon.setEditable(false));
+                polygon.setEditable(true);
+            });
+            
+            const areaMeters = google.maps.geometry.spherical.computeArea(polygon.getPath());
+            const sqft = Math.round(areaMeters * 10.764);
+            
+            const area = { polygon, sqft, color: colorSet.fill, name: colorSet.name, type: currentAreaType };
+            areas.push(area);
+            
+            google.maps.event.addListener(polygon.getPath(), 'set_at', () => {
+                area.sqft = Math.round(google.maps.geometry.spherical.computeArea(polygon.getPath()) * 10.764);
+                calculateTotalArea();
+            });
+            google.maps.event.addListener(polygon.getPath(), 'insert_at', () => {
+                area.sqft = Math.round(google.maps.geometry.spherical.computeArea(polygon.getPath()) * 10.764);
+                calculateTotalArea();
+            });
+            
+            if (currentAreaType === 'mulch') {
+                mulchAreaCount++;
+            } else {
+                turfAreaCount++;
+            }
+            
+            clearDrawingState();
+            calculateTotalArea();
+            
+            // Auto-continue drawing in same mode
+            currentDrawing = [];
+            updateModeToggle();
+            updateUI();
+        }
+        
+        function clearDrawingState() {
+            currentDrawing = null;
+            if (currentPolyline) { currentPolyline.setMap(null); currentPolyline = null; }
+            markers.forEach(m => m.setMap(null));
+            markers = [];
+        }
+        
+        function startNewArea(type) {
+            clearDrawingState();
+            currentDrawing = [];
+            if (type) {
+                currentAreaType = type;
+            } else {
+                currentAreaType = measureMode === 'mulch' ? 'mulch' : 'turf';
+            }
+            updateModeToggle();
+            updateUI();
+            updateMapHint();
+        }
+        
+        function clearAllAreas() {
+            areas.forEach(a => a.polygon.setMap(null));
+            areas = [];
+            turfAreaCount = 0;
+            mulchAreaCount = 0;
+            clearDrawingState();
+            currentSqft = 0;
+            document.getElementById('resultBox').style.display = 'none';
+            document.getElementById('mulchCalc').style.display = 'none';
+            startNewArea();
+        }
+        
+        function removeArea(index) {
+            if (index >= 0 && index < areas.length) {
+                areas[index].polygon.setMap(null);
+                areas.splice(index, 1);
+                calculateTotalArea();
+                updateUI();
+                if (areas.length === 0) {
+                    document.getElementById('resultBox').style.display = 'none';
+                    document.getElementById('mulchCalc').style.display = 'none';
+                    startNewArea();
+                }
+            }
+        }
+        
+        function calculateTotalArea() {
+            const turfAreas = areas.filter(a => a.type === 'turf');
+            const mulchAreas = areas.filter(a => a.type === 'mulch');
+            const turfSqft = turfAreas.reduce((sum, a) => sum + a.sqft, 0);
+            const mulchSqft = mulchAreas.reduce((sum, a) => sum + a.sqft, 0);
+            currentSqft = turfSqft + mulchSqft;
+            
+            let displayText = '';
+            if (turfSqft > 0 && mulchSqft > 0) {
+                displayText = `<span class="turf">${turfSqft.toLocaleString()}</span> + <span class="mulch">${mulchSqft.toLocaleString()}</span> sq ft`;
+            } else if (mulchSqft > 0) {
+                displayText = `<span class="mulch">${mulchSqft.toLocaleString()}</span> sq ft`;
+            } else {
+                displayText = `<span class="turf">${turfSqft.toLocaleString()}</span> sq ft`;
+            }
+            document.getElementById('sqftValue').innerHTML = displayText;
+            document.getElementById('resultBox').style.display = currentSqft > 0 ? 'block' : 'none';
+            
+            const listEl = document.getElementById('areaList');
+            if (areas.length > 0) {
+                listEl.innerHTML = areas.map((a, i) => `
+                    <div class="area-chip">
+                        <span class="area-chip-dot" style="background: ${a.color}"></span>
+                        <span class="area-chip-name">${a.name}</span>
+                        <span class="area-chip-sqft">${a.sqft.toLocaleString()}</span>
+                        <button class="area-chip-remove" onclick="removeArea(${i})">×</button>
+                    </div>
+                `).join('');
+            }
+            
+            const mulchCalc = document.getElementById('mulchCalc');
+            if (mulchSqft > 0) {
+                mulchCalc.style.display = 'block';
+                document.getElementById('mulchSqftDisplay').textContent = mulchSqft.toLocaleString() + ' sq ft';
+                calculateMulch();
+            } else {
+                mulchCalc.style.display = 'none';
+            }
+        }
+        
+        function calculateMulch() {
+            const mulchSqft = areas.filter(a => a.type === 'mulch').reduce((sum, a) => sum + a.sqft, 0);
+            const thickness = parseFloat(document.getElementById('mulchThickness').value);
+            const cubicFeet = Math.ceil((mulchSqft * thickness / 12) * 1.10);
+            document.getElementById('mulchCuFt').textContent = cubicFeet.toLocaleString();
+        }
+        
+        async function submitRequest() {
+            const turfAreas = areas.filter(a => a.type === 'turf');
+            const mulchAreas = areas.filter(a => a.type === 'mulch');
+            const mulchSqftTotal = mulchAreas.reduce((sum, a) => sum + a.sqft, 0);
+            const mulchThickness = mulchSqftTotal > 0 ? parseFloat(document.getElementById('mulchThickness').value) : 0;
+            const mulchCuFt = mulchSqftTotal > 0 ? Math.ceil((mulchSqftTotal * mulchThickness / 12) * 1.10) : 0;
+            
+            const submissionId = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            
+            const data = {
+                ...formData,
+                submissionId,
+                turfSqft: turfAreas.reduce((sum, a) => sum + a.sqft, 0),
+                mulchSqft: mulchSqftTotal,
+                mulchThickness,
+                mulchCuFt,
+                areas: areas.map(a => ({ name: a.name, sqft: a.sqft, type: a.type })),
+                photos: uploadedPhotos,
+                timestamp: new Date().toISOString()
+            };
+            
+            let snapshotData = null;
+            if (areas.length > 0 && map) {
+                try {
+                    const allBounds = new google.maps.LatLngBounds();
+                    areas.forEach(area => {
+                        const path = area.polygon.getPath();
+                        for (let i = 0; i < path.getLength(); i++) allBounds.extend(path.getAt(i));
+                    });
+                    
+                    map.fitBounds(allBounds, { top: 50, bottom: 50, left: 50, right: 50 });
+                    await new Promise(r => setTimeout(r, 500));
+                    
+                    const ne = allBounds.getNorthEast();
+                    const sw = allBounds.getSouthWest();
+                    const latPadding = (ne.lat() - sw.lat()) * 0.15;
+                    const lngPadding = (ne.lng() - sw.lng()) * 0.15;
+                    
+                    const paddedBounds = {
+                        north: ne.lat() + latPadding,
+                        south: sw.lat() - latPadding,
+                        east: ne.lng() + lngPadding,
+                        west: sw.lng() - lngPadding
+                    };
+                    
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const mapWidth = 640;
+                    const mapHeight = 480;
+                    const padding = 24;
+                    const headerHeight = 100;
+                    const areaRowHeight = 32;
+                    const resultsHeight = 60 + (areas.length * areaRowHeight) + (mulchSqftTotal > 0 ? 80 : 0);
+                    
+                    canvas.width = mapWidth + padding * 2;
+                    canvas.height = headerHeight + mapHeight + resultsHeight + padding * 2;
+                    
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    ctx.fillStyle = '#22c55e';
+                    ctx.fillRect(0, 0, canvas.width, 6);
+                    
+                    ctx.fillStyle = '#22c55e';
+                    ctx.font = 'bold 22px Plus Jakarta Sans, sans-serif';
+                    ctx.fillText('No Mow Worries', padding, padding + 24);
+                    
+                    ctx.fillStyle = '#525252';
+                    ctx.font = '12px Plus Jakarta Sans, sans-serif';
+                    ctx.fillText('LAWN CARE', padding + 175, padding + 24);
+                    
+                    ctx.fillStyle = '#171717';
+                    ctx.font = 'bold 16px Plus Jakarta Sans, sans-serif';
+                    ctx.fillText(formData.name, padding, padding + 52);
+                    
+                    ctx.fillStyle = '#525252';
+                    ctx.font = '13px Plus Jakarta Sans, sans-serif';
+                    ctx.fillText(formData.address, padding, padding + 72);
+                    
+                    ctx.fillStyle = '#a3a3a3';
+                    ctx.font = '11px Plus Jakarta Sans, sans-serif';
+                    ctx.fillText(new Date().toLocaleDateString() + '  •  ' + formData.email, padding, padding + 90);
+                    
+                    const centerLat = (paddedBounds.north + paddedBounds.south) / 2;
+                    const centerLng = (paddedBounds.east + paddedBounds.west) / 2;
+                    
+                    const latDiff = paddedBounds.north - paddedBounds.south;
+                    const lngDiff = paddedBounds.east - paddedBounds.west;
+                    const maxDiff = Math.max(latDiff * 111000, lngDiff * 111000 * Math.cos(centerLat * Math.PI / 180));
+                    let zoom = 21;
+                    if (maxDiff > 20) zoom = 20;
+                    if (maxDiff > 40) zoom = 19;
+                    if (maxDiff > 80) zoom = 18;
+                    if (maxDiff > 160) zoom = 17;
+                    if (maxDiff > 320) zoom = 16;
+                    
+                    const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${centerLat},${centerLng}&zoom=${zoom}&size=${mapWidth}x${mapHeight}&maptype=satellite&key=AIzaSyA1Ta2LKaz1kDpx6EvSKKV8ipnt34rY1_0`;
+                    
+                    const mapImg = new Image();
+                    mapImg.crossOrigin = 'anonymous';
+                    
+                    await new Promise((resolve, reject) => {
+                        mapImg.onload = resolve;
+                        mapImg.onerror = reject;
+                        mapImg.src = staticMapUrl;
+                    });
+                    
+                    const mapY = headerHeight;
+                    ctx.drawImage(mapImg, padding, mapY, mapWidth, mapHeight);
+                    
+                    ctx.strokeStyle = '#e5e5e5';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(padding, mapY, mapWidth, mapHeight);
+                    
+                    const metersPerPixel = 156543.03392 * Math.cos(centerLat * Math.PI / 180) / Math.pow(2, zoom);
+                    const mapWidthMeters = mapWidth * metersPerPixel;
+                    const mapHeightMeters = mapHeight * metersPerPixel;
+                    const latDegreesPerMeter = 1 / 111320;
+                    const lngDegreesPerMeter = 1 / (111320 * Math.cos(centerLat * Math.PI / 180));
+                    
+                    const actualBounds = {
+                        north: centerLat + (mapHeightMeters / 2) * latDegreesPerMeter,
+                        south: centerLat - (mapHeightMeters / 2) * latDegreesPerMeter,
+                        east: centerLng + (mapWidthMeters / 2) * lngDegreesPerMeter,
+                        west: centerLng - (mapWidthMeters / 2) * lngDegreesPerMeter
+                    };
+                    
+                    function latLngToPixel(latLng) {
+                        const lat = latLng.lat();
+                        const lng = latLng.lng();
+                        const x = padding + ((lng - actualBounds.west) / (actualBounds.east - actualBounds.west)) * mapWidth;
+                        const y = mapY + ((actualBounds.north - lat) / (actualBounds.north - actualBounds.south)) * mapHeight;
+                        return { x, y };
+                    }
+                    
+                    areas.forEach(area => {
+                        const path = area.polygon.getPath();
+                        if (path.getLength() < 3) return;
+                        
+                        ctx.beginPath();
+                        const firstPoint = latLngToPixel(path.getAt(0));
+                        ctx.moveTo(firstPoint.x, firstPoint.y);
+                        
+                        for (let i = 1; i < path.getLength(); i++) {
+                            const point = latLngToPixel(path.getAt(i));
+                            ctx.lineTo(point.x, point.y);
+                        }
+                        ctx.closePath();
+                        
+                        ctx.fillStyle = area.type === 'mulch' ? 'rgba(249, 115, 22, 0.45)' : 'rgba(34, 197, 94, 0.45)';
+                        ctx.fill();
+                        ctx.strokeStyle = area.type === 'mulch' ? '#ea580c' : '#16a34a';
+                        ctx.lineWidth = 3;
+                        ctx.stroke();
+                    });
+                    
+                    const resultsY = mapY + mapHeight + padding;
+                    
+                    ctx.fillStyle = '#525252';
+                    ctx.font = '600 12px Plus Jakarta Sans, sans-serif';
+                    ctx.fillText('MEASURED AREAS', padding, resultsY + 4);
+                    
+                    const turfTotal = turfAreas.reduce((s, a) => s + a.sqft, 0);
+                    const mulchTotal = mulchAreas.reduce((s, a) => s + a.sqft, 0);
+                    
+                    ctx.textAlign = 'right';
+                    ctx.font = 'bold 16px Plus Jakarta Sans, sans-serif';
+                    
+                    if (turfTotal > 0 && mulchTotal > 0) {
+                        ctx.fillStyle = '#22c55e';
+                        ctx.fillText(turfTotal.toLocaleString(), padding + mapWidth - 130, resultsY + 4);
+                        ctx.fillStyle = '#525252';
+                        ctx.font = '16px Plus Jakarta Sans, sans-serif';
+                        ctx.fillText(' + ', padding + mapWidth - 80, resultsY + 4);
+                        ctx.fillStyle = '#f97316';
+                        ctx.font = 'bold 16px Plus Jakarta Sans, sans-serif';
+                        ctx.fillText(mulchTotal.toLocaleString() + ' sq ft', padding + mapWidth, resultsY + 4);
+                    } else if (mulchTotal > 0) {
+                        ctx.fillStyle = '#f97316';
+                        ctx.fillText(mulchTotal.toLocaleString() + ' sq ft', padding + mapWidth, resultsY + 4);
+                    } else {
+                        ctx.fillStyle = '#22c55e';
+                        ctx.fillText(turfTotal.toLocaleString() + ' sq ft', padding + mapWidth, resultsY + 4);
+                    }
+                    ctx.textAlign = 'left';
+                    
+                    ctx.strokeStyle = '#e5e5e5';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(padding, resultsY + 18);
+                    ctx.lineTo(padding + mapWidth, resultsY + 18);
+                    ctx.stroke();
+                    
+                    let areaY = resultsY + 40;
+                    areas.forEach(area => {
+                        ctx.beginPath();
+                        ctx.arc(padding + 8, areaY, 6, 0, Math.PI * 2);
+                        ctx.fillStyle = area.type === 'mulch' ? '#f97316' : '#22c55e';
+                        ctx.fill();
+                        
+                        ctx.fillStyle = '#404040';
+                        ctx.font = '14px Plus Jakarta Sans, sans-serif';
+                        ctx.fillText(area.name, padding + 24, areaY + 5);
+                        
+                        ctx.textAlign = 'right';
+                        ctx.font = '600 14px Plus Jakarta Sans, sans-serif';
+                        ctx.fillStyle = '#171717';
+                        ctx.fillText(area.sqft.toLocaleString() + ' sq ft', padding + mapWidth, areaY + 5);
+                        ctx.textAlign = 'left';
+                        
+                        areaY += areaRowHeight;
+                    });
+                    
+                    if (mulchTotal > 0) {
+                        areaY += 8;
+                        const gradient = ctx.createLinearGradient(padding, areaY, padding + mapWidth, areaY);
+                        gradient.addColorStop(0, '#f97316');
+                        gradient.addColorStop(1, '#ea580c');
+                        ctx.fillStyle = gradient;
+                        
+                        const barHeight = 56;
+                        const radius = 8;
+                        ctx.beginPath();
+                        ctx.moveTo(padding + radius, areaY);
+                        ctx.lineTo(padding + mapWidth - radius, areaY);
+                        ctx.quadraticCurveTo(padding + mapWidth, areaY, padding + mapWidth, areaY + radius);
+                        ctx.lineTo(padding + mapWidth, areaY + barHeight - radius);
+                        ctx.quadraticCurveTo(padding + mapWidth, areaY + barHeight, padding + mapWidth - radius, areaY + barHeight);
+                        ctx.lineTo(padding + radius, areaY + barHeight);
+                        ctx.quadraticCurveTo(padding, areaY + barHeight, padding, areaY + barHeight - radius);
+                        ctx.lineTo(padding, areaY + radius);
+                        ctx.quadraticCurveTo(padding, areaY, padding + radius, areaY);
+                        ctx.fill();
+                        
+                        ctx.fillStyle = '#ffffff';
+                        ctx.font = 'bold 28px Plus Jakarta Sans, sans-serif';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(mulchCuFt, padding + mapWidth / 2, areaY + 32);
+                        ctx.font = '13px Plus Jakarta Sans, sans-serif';
+                        ctx.fillText('cubic feet of mulch needed', padding + mapWidth / 2, areaY + 48);
+                        ctx.textAlign = 'left';
+                    }
+                    
+                    snapshotData = canvas.toDataURL('image/png');
+                } catch (e) {
+                    console.log('Snapshot capture failed:', e);
+                }
+            }
+            
+            if (snapshotData) data.snapshot = snapshotData;
+            
+            try {
+                await fetch('/api/quote-request', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+            } catch (e) {
+                console.log('Save failed, continuing');
+            }
+            
+            document.getElementById('confirmName').textContent = formData.name;
+            document.getElementById('confirmService').textContent = formData.services.map(s => serviceNames[s] || s).join(', ');
+            document.getElementById('confirmAddress').textContent = formData.address;
+            
+            const turfSqft = turfAreas.reduce((sum, a) => sum + a.sqft, 0);
+            const mulchSqft = mulchAreas.reduce((sum, a) => sum + a.sqft, 0);
+            
+            if (turfSqft > 0 || mulchSqft > 0) {
+                document.getElementById('confirmSqftRow').style.display = 'flex';
+                let sqftText = '';
+                if (turfSqft > 0 && mulchSqft > 0) {
+                    sqftText = `${turfSqft.toLocaleString()} lawn + ${mulchSqft.toLocaleString()} mulch`;
+                } else if (mulchSqft > 0) {
+                    sqftText = `${mulchSqft.toLocaleString()} sq ft mulch`;
+                } else {
+                    sqftText = `${turfSqft.toLocaleString()} sq ft lawn`;
+                }
+                if (mulchCuFt > 0) sqftText += ` (${mulchCuFt} cu.ft.)`;
+                document.getElementById('confirmSqft').textContent = sqftText;
+            } else {
+                document.getElementById('confirmSqftRow').style.display = 'none';
+            }
+            
+            showSection(3);
+        }
+        
+        function goBack() { showSection(1); }
+        
+        function startOver() {
+            formData = {};
+            currentSqft = 0;
+            document.getElementById('infoForm').reset();
+            document.getElementById('continueBtn').innerHTML = 'Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+            showSection(1);
+        }
+        
+        function showSection(num) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById('section' + num).classList.add('active');
+            
+            const progress = document.getElementById('progressFill');
+            progress.style.width = num === 1 ? '33%' : num === 2 ? '66%' : '100%';
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
