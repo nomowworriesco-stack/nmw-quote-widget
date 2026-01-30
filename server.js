@@ -3,12 +3,201 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const { processQuote: processCopilot, sendQuoteConfirmationEmail } = require('./copilot');
+const { sendQuoteNotification } = require('./email-notify');
 
 const PORT = 3000;
+const GOOGLE_MAPS_API_KEY = 'AIzaSyDutgNGfggQz618lCQZkBVkMZkE0xtDRKQ';
 
-// Discord webhook for notifications (Chris's DM or a channel)
-const DISCORD_WEBHOOK = process.env.DISCORD_WEBHOOK || '';
+/**
+ * Encode polyline using Google's algorithm
+ * @param {Array} coords - Array of {lat, lng} objects
+ * @returns {string} - Encoded polyline string
+ */
+function encodePolyline(coords) {
+    let encoded = '';
+    let prevLat = 0;
+    let prevLng = 0;
+    
+    for (const coord of coords) {
+        const lat = Math.round(coord.lat * 1e5);
+        const lng = Math.round(coord.lng * 1e5);
+        
+        encoded += encodeSignedNumber(lat - prevLat);
+        encoded += encodeSignedNumber(lng - prevLng);
+        
+        prevLat = lat;
+        prevLng = lng;
+    }
+    
+    return encoded;
+}
+
+function encodeSignedNumber(num) {
+    let sgn_num = num << 1;
+    if (num < 0) {
+        sgn_num = ~sgn_num;
+    }
+    return encodeNumber(sgn_num);
+}
+
+function encodeNumber(num) {
+    let encoded = '';
+    while (num >= 0x20) {
+        encoded += String.fromCharCode((0x20 | (num & 0x1f)) + 63);
+        num >>= 5;
+    }
+    encoded += String.fromCharCode(num + 63);
+    return encoded;
+}
+
+/**
+ * Generate a static map image from Google Maps API
+ * @param {string} address - Full address string
+ * @param {object} mapCenter - {lat, lng} optional center override
+ * @param {Array} polygons - Optional array of polygon data with coords
+ * @returns {Promise<Buffer|null>} - Image buffer or null on failure
+ */
+async function generateStaticMap(address, mapCenter = null, polygons = null) {
+    return new Promise((resolve) => {
+        // Build Static Maps URL
+        const params = new URLSearchParams({
+            size: '600x400',
+            maptype: 'satellite',
+            zoom: '19',
+            key: GOOGLE_MAPS_API_KEY
+        });
+        
+        // Use center coordinates if available, otherwise geocode address
+        if (mapCenter && mapCenter.lat && mapCenter.lng) {
+            params.set('center', `${mapCenter.lat},${mapCenter.lng}`);
+        } else if (address) {
+            const encodedAddr = encodeURIComponent(address);
+            params.set('center', encodedAddr);
+        } else {
+            resolve(null);
+            return;
+        }
+        
+        // Build URL with polygon paths
+        let url = `https://maps.googleapis.com/maps/api/staticmap?${params.toString()}`;
+        
+        // Add polygons if available
+        if (polygons && polygons.length > 0) {
+            for (const poly of polygons) {
+                if (poly.coords && poly.coords.length >= 3) {
+                    // Close the polygon by adding first point at end
+                    const closedCoords = [...poly.coords, poly.coords[0]];
+                    const encoded = encodePolyline(closedCoords);
+                    
+                    // Color based on type (lawn=green, mulch=brown)
+                    const fillColor = poly.type === 'lawn' ? '00FF0040' : '8B451340';
+                    const strokeColor = poly.type === 'lawn' ? '00FF00' : '8B4513';
+                    
+                    url += `&path=fillcolor:0x${fillColor}|color:0x${strokeColor}|weight:2|enc:${encoded}`;
+                }
+            }
+        } else {
+            // Just add a marker if no polygons
+            if (mapCenter && mapCenter.lat && mapCenter.lng) {
+                url += `&markers=color:green|${mapCenter.lat},${mapCenter.lng}`;
+            }
+        }
+        
+        https.get(url, (res) => {
+            if (res.statusCode !== 200) {
+                console.log(`   ⚠️  Static map failed: HTTP ${res.statusCode}`);
+                resolve(null);
+                return;
+            }
+            
+            const chunks = [];
+            res.on('data', chunk => chunks.push(chunk));
+            res.on('end', () => {
+                const buffer = Buffer.concat(chunks);
+                console.log(`   🗺️  Static map generated: ${buffer.length} bytes`);
+                resolve(buffer);
+            });
+        }).on('error', (e) => {
+            console.log(`   ⚠️  Static map error: ${e.message}`);
+            resolve(null);
+        });
+    });
+}
+
+// Service name mapping for display (includes all frequency options)
+const SERVICE_LABELS = {
+    // Mowing frequencies
+    'mowing': 'Weekly Mowing',
+    'weekly': 'Weekly Mowing',
+    'biweekly': 'Bi-Weekly Mowing',
+    'onetime': 'One-Time Mowing',
+    
+    // Lawn services
+    'aeration': 'Aeration',
+    'overseeding': 'Overseeding',
+    'weed_control': 'Weed Control',
+    
+    // Fertilization frequencies
+    'fertilization': 'Fertilization',
+    'standard_fert': 'Standard Fertilization',
+    'premium_fert': 'Premium Fertilization',
+    'fertilizer': 'Fertilization',
+    'recurring': 'Fertilization (Every 4-6 Weeks)',
+    
+    // Mulch colors
+    'mulch': 'Mulch Install',
+    'black': 'Black Mulch',
+    'brown': 'Brown Mulch',
+    'red': 'Red Mulch',
+    
+    // Cleanup services
+    'cleanup': 'Cleanup',
+    'yard_cleanup': 'Yard Cleanup',
+    'leaf_cleanup': 'Leaf Cleanup',
+    
+    // Bush trimming frequencies
+    'bush_trimming': 'Bush Trimming',
+    'once': 'One-Time Bush Trimming',
+    'twice': 'Twice Yearly Trimming',
+    'monthly': 'Bush Trimming (Monthly)',
+    'bimonthly': 'Bush Trimming (Every 2 Months)',
+    'quarterly': 'Bush Trimming (Every 3 Months)',
+    
+    // Other
+    'snow': 'Snow Removal',
+    'in_person': 'In-Person Estimate'
+};
+
+// Normalize services from object or array to readable array of strings
+function normalizeServices(services) {
+    if (!services) return [];
+    
+    // If already an array, just map to labels
+    if (Array.isArray(services)) {
+        return services.map(s => SERVICE_LABELS[s] || s);
+    }
+    
+    // If object, extract keys/values
+    if (typeof services === 'object') {
+        const result = [];
+        for (const [key, value] of Object.entries(services)) {
+            if (value === true) {
+                result.push(SERVICE_LABELS[key] || key);
+            } else if (typeof value === 'string') {
+                // e.g., mowing: 'weekly', mulch: 'black'
+                result.push(SERVICE_LABELS[value] || SERVICE_LABELS[key] || `${key}: ${value}`);
+            }
+        }
+        return result;
+    }
+    
+    return [];
+}
+
+// Discord webhook for notifications (posts to #general)
+const DISCORD_WEBHOOK = process.env.DISCORD_WEBHOOK || 'https://discord.com/api/webhooks/1466597465355456685/bNW5bKm93ATWSIc5unPS3Z9Eto6biCKXqBPNcD3rixO9iMBLDS3bLwlzQpQK4f7ZngaH';
 const DISCORD_USER_ID = '402602300184461322'; // Chris's Discord ID for mentions
+const CLAWD_USER_ID = '1465090401172979803'; // Clawd's Discord ID for mentions
 
 // Store quote requests
 const QUOTES_FILE = path.join(__dirname, 'quote-requests.json');
@@ -31,9 +220,7 @@ function loadQuotes() {
     return [];
 }
 
-function saveSnapshot(quote) {
-    if (!quote.snapshot) return null;
-    
+async function saveSnapshot(quote) {
     const date = new Date().toISOString().split('T')[0];
     const dateDir = path.join(SNAPSHOTS_DIR, date);
     if (!fs.existsSync(dateDir)) {
@@ -44,11 +231,31 @@ function saveSnapshot(quote) {
     const filename = `${cleanEmail}_${quote.submissionId || Date.now()}.png`;
     const filepath = path.join(dateDir, filename);
     
-    const base64Data = quote.snapshot.replace(/^data:image\/png;base64,/, '');
-    fs.writeFileSync(filepath, base64Data, 'base64');
+    // Try to use client-provided snapshot first
+    if (quote.snapshot) {
+        const base64Data = quote.snapshot.replace(/^data:image\/png;base64,/, '');
+        const buffer = Buffer.from(base64Data, 'base64');
+        
+        // Validate the snapshot - a valid PNG is at least 100 bytes
+        if (buffer.length > 100) {
+            fs.writeFileSync(filepath, buffer);
+            console.log(`   📸 Client snapshot saved: ${filepath} (${buffer.length} bytes)`);
+            return filepath;
+        } else {
+            console.log(`   ⚠️  Client snapshot invalid (${buffer.length} bytes), using static map fallback`);
+        }
+    }
     
-    console.log(`   📸 Snapshot saved: ${filepath}`);
-    return filepath;
+    // Fallback: Generate static map from Google Maps API with polygons
+    const staticMapBuffer = await generateStaticMap(quote.address, quote.mapCenter, quote.polygons);
+    if (staticMapBuffer) {
+        fs.writeFileSync(filepath, staticMapBuffer);
+        console.log(`   📸 Static map saved: ${filepath}`);
+        return filepath;
+    }
+    
+    console.log(`   ⚠️  No map snapshot available`);
+    return null;
 }
 
 function savePhotos(quote) {
@@ -64,11 +271,17 @@ function savePhotos(quote) {
     
     const savedPaths = [];
     quote.photos.forEach((photo, i) => {
-        const ext = photo.type === 'image/png' ? 'png' : 'jpg';
+        // Handle both formats: string (base64 data URI) or object with {type, data}
+        const photoData = typeof photo === 'string' ? photo : photo.data;
+        const photoType = typeof photo === 'string' 
+            ? (photoData.includes('image/png') ? 'image/png' : 'image/jpeg')
+            : photo.type;
+        
+        const ext = photoType === 'image/png' ? 'png' : 'jpg';
         const filename = `photo_${i + 1}.${ext}`;
         const filepath = path.join(dateDir, filename);
         
-        const base64Data = photo.data.replace(/^data:image\/[a-z]+;base64,/, '');
+        const base64Data = photoData.replace(/^data:image\/[a-z]+;base64,/, '');
         fs.writeFileSync(filepath, base64Data, 'base64');
         savedPaths.push(filepath);
     });
@@ -113,7 +326,7 @@ async function wakeClawdbot(message) {
 }
 
 async function sendDiscordNotification(quote, snapshotPath, photoPaths, copilotResult) {
-    // Save notification for Clawdbot to process
+    // Save notification for backup/reference
     const notificationFile = path.join(__dirname, 'pending-notifications.json');
     
     const notification = {
@@ -125,9 +338,11 @@ async function sendDiscordNotification(quote, snapshotPath, photoPaths, copilotR
             address: quote.address,
             services: quote.services,
             turfSqft: quote.turfSqft,
+            lawnSqft: quote.lawnSqft,
             mulchSqft: quote.mulchSqft,
             mulchCuFt: quote.mulchCuFt,
-            notes: quote.notes
+            notes: quote.notes,
+            referralSource: quote.referralSource
         },
         snapshotPath,
         photoPaths,
@@ -148,15 +363,203 @@ async function sendDiscordNotification(quote, snapshotPath, photoPaths, copilotR
     
     notifications.push(notification);
     fs.writeFileSync(notificationFile, JSON.stringify(notifications, null, 2));
-    console.log(`   🔔 Notification queued`);
     
-    // Wake Clawdbot to process the new quote request immediately
-    const wakeMessage = `NEW QUOTE REQUEST: ${quote.name} at ${quote.address} wants ${(quote.services || []).join(', ')}. Check pending-notifications and run the estimate workflow.`;
-    await wakeClawdbot(wakeMessage);
+    // Post directly to Discord via webhook
+    if (DISCORD_WEBHOOK) {
+        try {
+            const services = normalizeServices(quote.services);
+            
+            // Build the message content
+            let content = `🆕 **New Quote Request**\n\n`;
+            content += `**Name:** ${quote.name || 'Not provided'}\n`;
+            content += `**Email:** ${quote.email || 'Not provided'}\n`;
+            content += `**Phone:** ${quote.phone || 'Not provided'}\n`;
+            content += `**Address:** ${quote.address || 'Not provided'}\n\n`;
+            content += `**Services Requested:**\n`;
+            services.forEach(s => content += `• ${s}\n`);
+            content += `\n`;
+            if (quote.turfSqft || quote.lawnSqft) {
+                content += `**Lawn Sqft:** ${quote.turfSqft || quote.lawnSqft} sq ft\n`;
+            }
+            if (quote.mulchSqft) {
+                content += `**Mulch:** ${quote.mulchSqft} sqft / ${quote.mulchCuFt || 'N/A'} cu ft\n`;
+            }
+            content += `\n**Property Details:**\n`;
+            // Gate - always show
+            if (quote.hasGate) {
+                let gateInfo = 'Yes';
+                if (quote.gateWidth) gateInfo += ` (${quote.gateWidth}" wide)`;
+                if (quote.gateCode) gateInfo += ` — Code: ${quote.gateCode}`;
+                content += `• Gate: ${gateInfo}\n`;
+            } else {
+                content += `• Gate: No\n`;
+            }
+            // Dogs - always show
+            content += `• Dogs: ${quote.hasDog ? 'Yes' : 'No'}\n`;
+            // Overgrown - always show
+            if (quote.isOvergrown) {
+                let overgrownInfo = 'Yes';
+                if (quote.grassHeight) overgrownInfo += ` (~${quote.grassHeight}" tall)`;
+                content += `• Lawn Overgrown: ${overgrownInfo}\n`;
+            } else {
+                content += `• Lawn Overgrown: No\n`;
+            }
+            // Stairs - always show
+            content += `• Stairs to Backyard: ${quote.hasStairs ? 'Yes' : 'No'}\n`;
+            content += `\n`;
+            content += `**Notes:** ${quote.notes || 'None'}\n\n`;
+            content += `**How found us:** ${quote.referralSource || 'Not specified'}\n`;
+            if (copilotResult?.customer?.customerId) {
+                content += `**Copilot:** Customer ID ${copilotResult.customer.customerId}`;
+                if (copilotResult.property?.propertyId) {
+                    content += `, Property ID ${copilotResult.property.propertyId}`;
+                }
+                content += ` ✅\n`;
+            }
+            content += `\n<@${DISCORD_USER_ID}> <@${CLAWD_USER_ID}>`;
+            
+            const webhookData = {
+                content: content,
+                allowed_mentions: {
+                    users: [DISCORD_USER_ID, CLAWD_USER_ID]
+                }
+            };
+            
+            const webhookUrl = new URL(DISCORD_WEBHOOK);
+            
+            // Collect all files to attach (snapshot first, then customer photos, max 10)
+            const filesToAttach = [];
+            
+            // Add snapshot as first file if it exists
+            if (snapshotPath && fs.existsSync(snapshotPath)) {
+                filesToAttach.push({
+                    path: snapshotPath,
+                    filename: 'property_map.png',
+                    contentType: 'image/png'
+                });
+            }
+            
+            // Add customer photos (up to 9 more, total 10 max)
+            if (photoPaths && photoPaths.length > 0) {
+                const maxPhotos = Math.min(photoPaths.length, 10 - filesToAttach.length);
+                for (let i = 0; i < maxPhotos; i++) {
+                    const photoPath = photoPaths[i];
+                    if (fs.existsSync(photoPath)) {
+                        const ext = path.extname(photoPath).toLowerCase();
+                        const contentType = ext === '.png' ? 'image/png' : 'image/jpeg';
+                        filesToAttach.push({
+                            path: photoPath,
+                            filename: `customer_photo_${i + 1}${ext}`,
+                            contentType: contentType
+                        });
+                    }
+                }
+            }
+            
+            // If we have files to attach, use multipart/form-data
+            if (filesToAttach.length > 0) {
+                const boundary = '----WebKitFormBoundary' + Math.random().toString(36).substring(2);
+                
+                // Build multipart form data as array of buffers
+                const parts = [];
+                
+                // Add payload_json field
+                parts.push(Buffer.from(
+                    `--${boundary}\r\n` +
+                    `Content-Disposition: form-data; name="payload_json"\r\n` +
+                    `Content-Type: application/json\r\n\r\n` +
+                    JSON.stringify(webhookData) + '\r\n'
+                ));
+                
+                // Add each file
+                for (let i = 0; i < filesToAttach.length; i++) {
+                    const file = filesToAttach[i];
+                    const fileBuffer = fs.readFileSync(file.path);
+                    
+                    // File header
+                    parts.push(Buffer.from(
+                        `--${boundary}\r\n` +
+                        `Content-Disposition: form-data; name="files[${i}]"; filename="${file.filename}"\r\n` +
+                        `Content-Type: ${file.contentType}\r\n\r\n`
+                    ));
+                    
+                    // File data
+                    parts.push(fileBuffer);
+                    
+                    // File footer
+                    parts.push(Buffer.from('\r\n'));
+                }
+                
+                // Final boundary
+                parts.push(Buffer.from(`--${boundary}--\r\n`));
+                
+                // Combine all parts
+                const fullBody = Buffer.concat(parts);
+                
+                const req = https.request(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': `multipart/form-data; boundary=${boundary}`,
+                        'Content-Length': fullBody.length
+                    }
+                }, (res) => {
+                    let resBody = '';
+                    res.on('data', chunk => resBody += chunk);
+                    res.on('end', () => {
+                        if (res.statusCode === 200 || res.statusCode === 204) {
+                            const photoCount = filesToAttach.length - (snapshotPath ? 1 : 0);
+                            console.log(`   🔔 Discord notification posted with ${filesToAttach.length} attachments (map + ${photoCount} photos)!`);
+                            notification.notified = true;
+                            notifications[notifications.length - 1] = notification;
+                            fs.writeFileSync(notificationFile, JSON.stringify(notifications, null, 2));
+                        } else {
+                            console.log(`   ⚠️  Discord webhook failed: HTTP ${res.statusCode} - ${resBody}`);
+                        }
+                    });
+                });
+                
+                req.on('error', (e) => {
+                    console.log(`   ⚠️  Discord webhook error: ${e.message}`);
+                });
+                
+                req.write(fullBody);
+                req.end();
+            } else {
+                // No files, send JSON only
+                const postData = JSON.stringify(webhookData);
+                
+                const req = https.request(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Content-Length': Buffer.byteLength(postData)
+                    }
+                }, (res) => {
+                    if (res.statusCode === 200 || res.statusCode === 204) {
+                        console.log(`   🔔 Discord notification posted!`);
+                        notification.notified = true;
+                        notifications[notifications.length - 1] = notification;
+                        fs.writeFileSync(notificationFile, JSON.stringify(notifications, null, 2));
+                    } else {
+                        console.log(`   ⚠️  Discord webhook failed: HTTP ${res.statusCode}`);
+                    }
+                });
+                
+                req.on('error', (e) => {
+                    console.log(`   ⚠️  Discord webhook error: ${e.message}`);
+                });
+                
+                req.write(postData);
+                req.end();
+            }
+        } catch (e) {
+            console.log(`   ⚠️  Discord notification error: ${e.message}`);
+        }
+    }
 }
 
 async function saveQuote(quote) {
-    const snapshotPath = saveSnapshot(quote);
+    const snapshotPath = await saveSnapshot(quote);
     const photoPaths = savePhotos(quote);
     
     // Process with Copilot CRM
@@ -186,6 +589,19 @@ async function saveQuote(quote) {
     
     // Queue Discord notification
     sendDiscordNotification(quote, snapshotPath, photoPaths, copilotResult);
+    
+    // Send email notification to Chris with all details + photos + map
+    try {
+        console.log('   📧 Sending notification email to Chris...');
+        const emailNotifyResult = await sendQuoteNotification(quote, snapshotPath, photoPaths, copilotResult);
+        if (emailNotifyResult.success) {
+            console.log('   ✅ Notification email sent to Chris!');
+        } else {
+            console.log(`   ⚠️  Notification email failed: ${emailNotifyResult.error}`);
+        }
+    } catch (e) {
+        console.error('   ⚠️  Notification email error:', e.message);
+    }
     
     // Remove large data from quote
     const quoteData = { ...quote };
@@ -230,8 +646,19 @@ const server = http.createServer((req, res) => {
         return;
     }
     
-    // API: Save quote request
-    if (url === '/api/quote-request' && req.method === 'POST') {
+    // Serve index-updated
+    if (url === '/index-updated.html') {
+        const content = fs.readFileSync(path.join(__dirname, 'index-updated.html'), 'utf8');
+        res.writeHead(200, { 
+            'Content-Type': 'text/html',
+            'Cache-Control': 'no-cache'
+        });
+        res.end(content);
+        return;
+    }
+    
+    // API: Save quote request (accepts both endpoints)
+    if ((url === '/api/quote-request' || url === '/api/quote') && req.method === 'POST') {
         let body = '';
         req.on('data', chunk => body += chunk);
         req.on('end', async () => {
@@ -239,25 +666,12 @@ const server = http.createServer((req, res) => {
                 const quote = JSON.parse(body);
                 const result = await saveQuote(quote);
                 
-                const serviceNames = {
-                    'mowing': 'Weekly Mowing',
-                    'aeration': 'Aeration',
-                    'overseeding': 'Overseeding',
-                    'fertilizer': 'Fertilization',
-                    'weed_control': 'Weed Control',
-                    'mulch': 'Mulch Install',
-                    'cleanup': 'Cleanup',
-                    'bush_trimming': 'Bush Trimming',
-                    'snow': 'Snow Removal',
-                    'in_person': 'In-Person Estimate'
-                };
-                
                 console.log('\n🎉 NEW QUOTE REQUEST:');
                 console.log(`   Name: ${quote.name}`);
                 console.log(`   Email: ${quote.email}`);
                 console.log(`   Phone: ${quote.phone}`);
                 console.log(`   Address: ${quote.address}`);
-                console.log(`   Services: ${(quote.services || []).map(s => serviceNames[s] || s).join(', ')}`);
+                console.log(`   Services: ${normalizeServices(quote.services).join(', ')}`);
                 if (quote.turfSqft) console.log(`   Lawn: ${quote.turfSqft} sq ft`);
                 if (quote.mulchSqft) console.log(`   Mulch: ${quote.mulchSqft} sq ft (${quote.mulchCuFt} cu ft)`);
                 if (quote.photos?.length) console.log(`   Photos: ${quote.photos.length} uploaded`);

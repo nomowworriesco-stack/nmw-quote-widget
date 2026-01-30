@@ -9,6 +9,67 @@ const path = require('path');
 
 const CONFIG_FILE = path.join(__dirname, 'copilot-config.json');
 
+// Service name mapping for display
+const SERVICE_LABELS = {
+    'mowing': 'Weekly Mowing',
+    'weekly': 'Weekly Mowing',
+    'biweekly': 'Bi-Weekly Mowing',
+    'onetime': 'One-Time Mowing',
+    'aeration': 'Aeration',
+    'overseeding': 'Overseeding',
+    'fertilization': 'Fertilization',
+    'standard_fert': 'Standard Fertilization',
+    'premium_fert': 'Premium Fertilization',
+    'fertilizer': 'Fertilization',
+    'weed_control': 'Weed Control',
+    'mulch': 'Mulch Install',
+    'black': 'Black Mulch',
+    'brown': 'Brown Mulch',
+    'red': 'Red Mulch',
+    'cleanup': 'Cleanup',
+    'yard_cleanup': 'Yard Cleanup',
+    'leaf_cleanup': 'Leaf Cleanup',
+    'bush_trimming': 'Bush Trimming',
+    'once': 'One-Time Bush Trimming',
+    'twice': 'Twice Yearly Trimming',
+    'snow': 'Snow Removal',
+    'in_person': 'In-Person Estimate'
+};
+
+// Normalize services from object or array to readable array of strings
+function normalizeServices(services) {
+    if (!services) return [];
+    
+    // If already an array, just map to labels
+    if (Array.isArray(services)) {
+        return services.map(s => SERVICE_LABELS[s] || s);
+    }
+    
+    // If object, extract keys/values
+    if (typeof services === 'object') {
+        const result = [];
+        for (const [key, value] of Object.entries(services)) {
+            if (value === true) {
+                result.push(SERVICE_LABELS[key] || key);
+            } else if (typeof value === 'string') {
+                // e.g., mowing: 'weekly', mulch: 'black'
+                result.push(SERVICE_LABELS[value] || SERVICE_LABELS[key] || `${key}: ${value}`);
+            }
+        }
+        return result;
+    }
+    
+    return [];
+}
+
+// Check if a specific service is selected (handles both object and array formats)
+function hasService(services, serviceName) {
+    if (!services) return false;
+    if (Array.isArray(services)) return services.includes(serviceName);
+    if (typeof services === 'object') return !!services[serviceName];
+    return false;
+}
+
 function loadConfig() {
     try {
         if (fs.existsSync(CONFIG_FILE)) {
@@ -216,19 +277,42 @@ function parseAddress(address) {
     
     if (!address) return result;
     
+    // Try to extract state code (2 uppercase letters) and zip code together
+    // This ensures we get the REAL zip code after the state, not a house number
+    const stateZipMatch = address.match(/\b([A-Z]{2})\s*(\d{5})(?:-\d{4})?\b/);
+    if (stateZipMatch) {
+        result.state = stateZipMatch[1];
+        result.zip = stateZipMatch[2];
+    } else {
+        // Fallback: try to extract zip code from end of address (last 5 digits)
+        const endZipMatch = address.match(/(\d{5})(?:-\d{4})?(?:\s*,?\s*USA?)?\s*$/i);
+        if (endZipMatch) {
+            result.zip = endZipMatch[1];
+        }
+        
+        // Try to extract state code separately
+        const stateMatch = address.match(/\b([A-Z]{2})\s*(?:\d{5}|$)/);
+        if (stateMatch) {
+            result.state = stateMatch[1];
+        }
+    }
+    
     // Split by comma
     const parts = address.split(',').map(p => p.trim());
     
     if (parts.length >= 1) {
-        result.street = parts[0];
+        // Street is first part, but remove any state/zip that might be there
+        result.street = parts[0].replace(/\s+[A-Z]{2}\s*\d{5}.*$/, '').trim();
     }
     
     if (parts.length >= 2) {
-        result.city = parts[1];
+        // City is second part, clean it up
+        result.city = parts[1].replace(/\s+[A-Z]{2}\s*\d{5}.*$/, '').trim();
     }
     
     if (parts.length >= 3) {
-        // Last part might be "CO 80015" or just "80015"
+        // Last part might be "CO 80015" or just "80015" - already extracted above
+        // But might also have city name embedded
         const lastPart = parts[parts.length - 1];
         const stateZipMatch = lastPart.match(/([A-Z]{2})?\s*(\d{5})?/);
         if (stateZipMatch) {
@@ -237,7 +321,138 @@ function parseAddress(address) {
         }
     }
     
+    // If no city found but we have a zip, try to infer Aurora area
+    if (!result.city && result.zip) {
+        // Aurora/Centennial area zips
+        const auroraZips = ['80010', '80011', '80012', '80013', '80014', '80015', '80016', '80017', '80018', '80019', '80040', '80041', '80042', '80044', '80045', '80046', '80047'];
+        if (auroraZips.includes(result.zip)) {
+            result.city = 'Aurora';
+        }
+    }
+    
     return result;
+}
+
+/**
+ * Map referral source to Copilot's "How This Customer Found Out About Us" field
+ * These values match Copilot's dropdown options
+ */
+const COPILOT_SOURCE_MAP = {
+    'google': 'Google',
+    'nextdoor': 'Nextdoor',
+    'referral': 'Referral',
+    'facebook': 'Facebook',
+    'yard_sign': 'Yard Sign',
+    'flyer': 'Flyer/Door Hanger',
+    'other': 'Other'
+};
+
+/**
+ * Build CUSTOMER notes (general info + customer's written notes)
+ * IMPORTANT: Include services here so they're visible when opening a customer!
+ */
+function buildCustomerNotes(quote) {
+    const lines = [];
+    
+    // Services requested - FIRST so Chris sees them immediately!
+    const servicesText = normalizeServices(quote.services).join(', ');
+    if (servicesText) {
+        lines.push(`🎯 Services Requested: ${servicesText}`);
+        lines.push('');
+    }
+    
+    // Measurements summary
+    if (quote.lawnSqft || quote.turfSqft) {
+        lines.push(`📐 Lawn: ${(quote.lawnSqft || quote.turfSqft).toLocaleString()} sq ft`);
+    }
+    if (quote.mulchSqft) {
+        const mulchInfo = `Mulch: ${quote.mulchSqft.toLocaleString()} sq ft`;
+        const colorInfo = quote.mulchColor ? ` (${quote.mulchColor})` : '';
+        lines.push(`🌿 ${mulchInfo}${colorInfo}`);
+    }
+    if (lines.length > 1) lines.push(''); // Add separator after measurements
+    
+    // Customer's additional notes - very visible!
+    if (quote.notes && quote.notes.trim()) {
+        lines.push(`📝 Customer Notes: ${quote.notes.trim()}`);
+        lines.push('');  // Blank line separator
+    }
+    
+    // Consent
+    if (quote.smsConsent) {
+        lines.push('SMS/Email consent: ✓');
+    }
+    
+    // Timestamp
+    lines.push(`Quote submitted: ${new Date(quote.timestamp || Date.now()).toLocaleDateString()}`);
+    
+    return lines.join('\n');
+}
+
+/**
+ * Build PROPERTY notes (service-specific details)
+ */
+function buildPropertyNotes(quote) {
+    const lines = [];
+    
+    // Services requested (normalizeServices handles both object and array formats)
+    const servicesText = normalizeServices(quote.services).join(', ');
+    lines.push(`Services: ${servicesText}`);
+    
+    // Mowing type if applicable
+    if (quote.mowingType && hasService(quote.services, 'mowing')) {
+        const mowingTypeMap = { 'weekly': 'Weekly', 'biweekly': 'Bi-Weekly', 'onetime': 'One-Time' };
+        lines.push(`Mowing frequency: ${mowingTypeMap[quote.mowingType] || quote.mowingType}`);
+    }
+    
+    // Measurements
+    if (quote.lawnSqft) lines.push(`Lawn size: ${quote.lawnSqft.toLocaleString()} sq ft`);
+    if (quote.mulchSqft) {
+        lines.push(`Mulch area: ${quote.mulchSqft.toLocaleString()} sq ft`);
+        if (quote.mulchCuYards) lines.push(`Mulch volume: ${quote.mulchCuYards} cu yards`);
+    }
+    if (quote.mulchColor) {
+        const colorMap = { 'red': 'Red', 'black': 'Black', 'brown': 'Brown' };
+        lines.push(`Mulch color: ${colorMap[quote.mulchColor] || quote.mulchColor}`);
+    }
+    
+    // Property access
+    if (quote.hasGate) {
+        let gateInfo = 'Gate: Yes';
+        if (quote.gateWidth) gateInfo += ` (${quote.gateWidth}" wide)`;
+        if (quote.gateCode) gateInfo += ` [Code: ${quote.gateCode}]`;
+        lines.push(gateInfo);
+    } else if (quote.hasGate === false) {
+        lines.push('Gate: No');
+    }
+    
+    if (quote.hasStairs === true) {
+        lines.push('Stairs to backyard: Yes');
+    } else if (quote.hasStairs === false) {
+        lines.push('Stairs to backyard: No');
+    }
+    
+    if (quote.hasDog === true) {
+        lines.push('Dogs: Yes ⚠️');
+    } else if (quote.hasDog === false) {
+        lines.push('Dogs: No');
+    }
+    
+    // Lawn condition
+    if (quote.isOvergrown) {
+        let overgrownInfo = 'Lawn condition: OVERGROWN ⚠️';
+        if (quote.grassHeight) overgrownInfo += ` (${quote.grassHeight})`;
+        lines.push(overgrownInfo);
+    } else if (quote.isOvergrown === false) {
+        lines.push('Lawn condition: Normal');
+    }
+    
+    // Customer's additional notes
+    if (quote.notes) {
+        lines.push(`\nCustomer notes:\n${quote.notes}`);
+    }
+    
+    return lines.join('\n');
 }
 
 /**
@@ -247,25 +462,8 @@ async function createCustomer(quote, config) {
     const { firstName, lastName } = parseName(quote.name);
     const address = parseAddress(quote.address);
     
-    // Build service notes
-    const serviceNames = {
-        'mowing': 'Weekly Mowing',
-        'aeration': 'Aeration',
-        'overseeding': 'Overseeding',
-        'fertilizer': 'Fertilization',
-        'weed_control': 'Weed Control',
-        'mulch': 'Mulch Install',
-        'cleanup': 'Cleanup',
-        'bush_trimming': 'Bush Trimming',
-        'snow': 'Snow Removal',
-        'in_person': 'In-Person Estimate'
-    };
-    
-    const servicesText = (quote.services || []).map(s => serviceNames[s] || s).join(', ');
-    let notes = `Quote request from website.\nServices: ${servicesText}`;
-    if (quote.turfSqft) notes += `\nLawn size: ${quote.turfSqft} sq ft`;
-    if (quote.mulchSqft) notes += `\nMulch area: ${quote.mulchSqft} sq ft (${quote.mulchCuFt} cu ft)`;
-    if (quote.notes) notes += `\nCustomer notes: ${quote.notes}`;
+    // Build customer-level notes (general info only)
+    const notes = buildCustomerNotes(quote);
     
     // Get current date for sdate
     const now = new Date();
@@ -288,7 +486,7 @@ async function createCustomer(quote, config) {
         phone: '',
         ccemail2: '',
         ccemail3: '',
-        custom_source_id: '',
+        custom_source_id: quote.referralSource ? (COPILOT_SOURCE_MAP[quote.referralSource] || quote.referralSource) : '',
         invoice_delivery_preference: '1',
         is_tax_exempt: '1',
         discount: '',
@@ -343,6 +541,9 @@ async function createCustomer(quote, config) {
 async function createProperty(customerId, quote, config) {
     const address = parseAddress(quote.address);
     
+    // Build property-specific notes with all service details
+    const propertyNotes = buildPropertyNotes(quote);
+    
     const data = {
         customer: customerId,
         asset_name: 'Primary',
@@ -351,7 +552,8 @@ async function createProperty(customerId, quote, config) {
         asset_state: address.state || config.defaultState || 'CO',
         zip: address.zip,
         asset_country: config.defaultCountry || 'US',
-        assets_size: quote.turfSqft || '',
+        assets_size: quote.lawnSqft || quote.turfSqft || '',
+        desc: propertyNotes, // Property notes field
         appliesTo: 'assets'
     };
 

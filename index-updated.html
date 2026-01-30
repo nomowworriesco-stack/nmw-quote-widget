@@ -1,0 +1,2249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Get a Quote | No Mow Worries</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        :root {
+            --primary: #059669;
+            --primary-light: #d1fae5;
+            --primary-hover: #10b981;
+            --primary-dark: #047857;
+            --bg: #fafafa;
+            --card-bg: #ffffff;
+            --border: #e5e7eb;
+            --border-light: #f3f4f6;
+            --text: #1f2937;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -1px rgba(0,0,0,0.04);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -2px rgba(0,0,0,0.04);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --radius-lg: 16px;
+            --warning-bg: #fef3c7;
+            --warning-text: #92400e;
+            --danger-bg: #fee2e2;
+            --danger-text: #991b1b;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 32px 20px 100px;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
+        }
+        
+        .logo-icon svg { width: 22px; height: 22px; }
+        
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.3px;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text);
+            letter-spacing: -0.5px;
+        }
+        
+        .header p {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+        
+        /* Progress Steps */
+        .steps {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 32px;
+            background: var(--card-bg);
+            padding: 16px 24px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            transition: color 0.2s;
+        }
+        
+        .step.active { color: var(--primary); }
+        .step.done { color: var(--primary); }
+        
+        .step-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+        
+        .step.active .step-num { 
+            background: var(--primary); 
+            color: white;
+            box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
+        }
+        .step.done .step-num { 
+            background: var(--primary-light); 
+            color: var(--primary); 
+        }
+        
+        .step-line {
+            width: 48px;
+            height: 2px;
+            background: var(--border-light);
+            margin: 0 12px;
+            border-radius: 1px;
+            transition: background 0.2s;
+        }
+        
+        .step.done + .step-line { background: var(--primary-light); }
+        
+        /* Card */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            padding: 28px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow 0.2s;
+        }
+        
+        .card:hover {
+            box-shadow: var(--shadow);
+        }
+        
+        .card-title {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text);
+            letter-spacing: -0.2px;
+        }
+        
+        .card-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+        
+        /* Form Fields */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .form-row.single { grid-template-columns: 1fr; }
+        .form-row:last-child { margin-bottom: 0; }
+        
+        .field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+        
+        .field input,
+        .field select,
+        .field textarea {
+            width: 100%;
+            padding: 12px 14px;
+            font-size: 15px;
+            font-family: inherit;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--card-bg);
+            color: var(--text);
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        
+        .field input::placeholder,
+        .field textarea::placeholder { 
+            color: var(--text-muted); 
+        }
+        
+        .field input:focus,
+        .field select:focus,
+        .field textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+        
+        .field select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 40px;
+        }
+        
+        /* Service Selection */
+        .services-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .service-with-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .service-pill {
+            position: relative;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 20px;
+            min-height: 48px;
+            min-width: 140px;
+            background: var(--card-bg);
+            border: 1.5px solid var(--border);
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: inherit;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+            text-align: center;
+        }
+        
+        .service-pill:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+        
+        .service-pill.selected {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(5, 150, 105, 0.25);
+        }
+        
+        .pill-sublabel {
+            display: none;
+            font-size: 10px;
+            font-weight: 400;
+            opacity: 0.85;
+            margin-top: 1px;
+        }
+        
+        .service-pill.selected .pill-sublabel.show {
+            display: block;
+        }
+        
+        /* Hover tooltip */
+        .pill-tooltip {
+            position: absolute;
+            left: calc(100% + 8px);
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 8px 12px;
+            background: var(--text);
+            color: white;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 1.4;
+            border-radius: 6px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.15s, visibility 0.15s;
+            z-index: 1000;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        
+        .pill-tooltip::after {
+            content: '';
+            position: absolute;
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 5px solid transparent;
+            border-right-color: var(--text);
+        }
+        
+        .service-pill:hover .pill-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Service dropdown */
+        .service-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 8px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            z-index: 100;
+            min-width: 200px;
+            overflow: hidden;
+        }
+        
+        .service-dropdown.show { display: block; }
+        
+        .dropdown-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-family: inherit;
+            text-align: left;
+            background: white;
+            border: none;
+            cursor: pointer;
+            transition: background 0.1s;
+            color: var(--text);
+        }
+        
+        .dropdown-option:hover {
+            background: var(--primary-light);
+        }
+        
+        .dropdown-option.selected {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            font-weight: 500;
+        }
+        
+        .dropdown-option.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            color: var(--text-muted);
+        }
+        
+        .dropdown-option.disabled:hover {
+            background: white;
+        }
+        
+        .dropdown-option-content { flex: 1; }
+        
+        .dropdown-note {
+            display: block;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+            font-weight: 400;
+        }
+        
+        .dropdown-deselect {
+            display: none;
+            width: 18px;
+            height: 18px;
+            margin-left: 8px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            font-size: 12px;
+            line-height: 18px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        
+        .dropdown-option.selected .dropdown-deselect {
+            display: block;
+        }
+        
+        /* Info notes */
+        .info-note {
+            display: none;
+            margin-top: 16px;
+            padding: 14px 16px;
+            background: var(--warning-bg);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            color: var(--warning-text);
+            line-height: 1.5;
+        }
+        
+        .info-note.show { display: block; }
+        
+        .info-note.danger {
+            background: var(--danger-bg);
+            color: var(--danger-text);
+        }
+        
+        /* Property Questions */
+        .question-section {
+            border-bottom: 1px solid var(--border-light);
+            padding: 20px 0;
+        }
+        
+        .question-section:first-child { padding-top: 0; }
+        .question-section:last-child { border-bottom: none; padding-bottom: 0; }
+        
+        .question-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+        
+        .question-text {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text);
+        }
+        
+        .toggle-group {
+            display: flex;
+            gap: 0;
+            background: var(--border-light);
+            padding: 3px;
+            border-radius: var(--radius-sm);
+        }
+        
+        .toggle-btn {
+            padding: 8px 18px;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: inherit;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: var(--text-secondary);
+        }
+        
+        .toggle-btn:hover {
+            color: var(--text);
+        }
+        
+        .toggle-btn.selected {
+            background: var(--card-bg);
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        /* Conditional Fields */
+        .conditional-field {
+            display: none;
+            margin-top: 16px;
+            padding: 16px;
+            background: var(--border-light);
+            border-radius: var(--radius-sm);
+        }
+        
+        .conditional-field.show { display: block; }
+        
+        .conditional-field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+        
+        .inline-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        
+        .inline-input:last-child { margin-bottom: 0; }
+        
+        .inline-input input {
+            width: 100px;
+            padding: 10px 14px;
+            font-size: 15px;
+            font-family: inherit;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            text-align: center;
+            background: var(--card-bg);
+        }
+        
+        .inline-input input.wider {
+            width: 160px;
+            text-align: left;
+        }
+        
+        .inline-input span {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .sub-question {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .sub-question-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        
+        .sub-question-text {
+            font-size: 14px;
+            color: var(--text);
+        }
+        
+        .nested-field {
+            display: none;
+            margin-top: 12px;
+        }
+        
+        .nested-field.show { display: block; }
+        
+        .inline-warning {
+            display: none;
+            margin-top: 12px;
+            padding: 12px 14px;
+            background: var(--warning-bg);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            color: var(--warning-text);
+            line-height: 1.5;
+        }
+        
+        .inline-warning.show { display: block; }
+        
+        .inline-warning.danger {
+            background: var(--danger-bg);
+            color: var(--danger-text);
+        }
+        
+        /* Dog confirmation */
+        .dog-confirm {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-top: 14px;
+            padding: 14px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: border-color 0.15s;
+        }
+        
+        .dog-confirm:hover {
+            border-color: var(--primary);
+        }
+        
+        .dog-confirm input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 1px;
+            accent-color: var(--primary);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        
+        .dog-confirm-text {
+            font-size: 13px;
+            color: var(--text);
+            line-height: 1.5;
+        }
+        
+        /* Photo Upload */
+        .photo-section {
+            display: none;
+        }
+        
+        .photo-section.show { display: block; }
+        
+        .photo-encourage {
+            padding: 14px 16px;
+            background: #dbeafe;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            color: #1e40af;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+        
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 32px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+        
+        .upload-area.dragover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+        
+        .upload-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+        }
+        
+        .upload-icon svg {
+            width: 24px;
+            height: 24px;
+            color: var(--primary);
+        }
+        
+        .upload-text {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+        
+        .upload-hint {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        
+        .photo-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .photo-preview:empty { display: none; }
+        
+        .photo-item {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .photo-remove {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 24px;
+            height: 24px;
+            background: rgba(0,0,0,0.7);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: background 0.15s;
+        }
+        
+        .photo-remove:hover {
+            background: #ef4444;
+        }
+        
+        /* Notes */
+        .notes-section textarea {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+            line-height: 1.5;
+        }
+        
+        /* Map Section */
+        .map-container {
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow);
+        }
+        
+        #map {
+            width: 100%;
+            height: 400px;
+            background: var(--border-light);
+        }
+        
+        .map-instructions {
+            padding: 16px 20px;
+            background: var(--card-bg);
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-align: center;
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .map-instructions strong { color: var(--text); }
+        
+        .map-toolbar {
+            display: flex;
+            gap: 8px;
+            padding: 14px 16px;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border-light);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .map-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: inherit;
+            background: var(--border-light);
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.15s;
+            color: var(--text-secondary);
+        }
+        
+        .map-btn:hover { 
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        
+        .map-btn.active { 
+            background: var(--primary); 
+            color: white;
+            box-shadow: 0 2px 6px rgba(5, 150, 105, 0.25);
+        }
+        
+        .map-btn:disabled { 
+            opacity: 0.4; 
+            cursor: not-allowed; 
+        }
+        
+        .map-btn svg { width: 14px; height: 14px; }
+        
+        .map-result {
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary-light) 0%, #a7f3d0 100%);
+            text-align: center;
+        }
+        
+        .map-result-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        
+        .map-result-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            letter-spacing: -0.5px;
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.15s;
+            border: none;
+            width: 100%;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
+        }
+        
+        .btn-primary:hover { 
+            background: var(--primary-dark);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.35);
+            transform: translateY(-1px);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: var(--card-bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-secondary:hover { 
+            background: var(--border-light);
+            border-color: var(--text-muted);
+        }
+        
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        
+        .btn-row .btn { flex: 1; }
+        
+        /* Screen visibility */
+        .screen { display: none; }
+        .screen.active { display: block; }
+        
+        /* Success Screen */
+        .success-card {
+            text-align: center;
+            padding: 48px 24px;
+        }
+        
+        .success-icon {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, var(--primary-light) 0%, #a7f3d0 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            box-shadow: 0 4px 16px rgba(5, 150, 105, 0.2);
+        }
+        
+        .success-icon svg {
+            width: 36px;
+            height: 36px;
+            color: var(--primary);
+        }
+        
+        .success-card h2 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.3px;
+        }
+        
+        .success-card p {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.6;
+            max-width: 360px;
+            margin: 0 auto;
+        }
+        
+        /* Summary */
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 14px;
+        }
+        
+        .summary-item:last-child { border-bottom: none; }
+        
+        .summary-label { color: var(--text-secondary); }
+        .summary-value { 
+            font-weight: 600; 
+            text-align: right; 
+            max-width: 60%;
+            color: var(--text);
+        }
+        
+        /* Info Tooltip */
+        .label-with-info {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .info-icon {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            background: var(--border-light);
+            border-radius: 50%;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: help;
+            flex-shrink: 0;
+            transition: all 0.15s;
+        }
+        
+        .info-icon:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        
+        .info-tooltip {
+            position: absolute;
+            left: calc(100% + 8px);
+            top: 50%;
+            transform: translateY(-50%);
+            width: 220px;
+            padding: 10px 12px;
+            background: var(--text);
+            color: white;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 1.5;
+            border-radius: 6px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.15s, visibility 0.15s;
+            z-index: 1000;
+            pointer-events: none;
+            text-align: left;
+        }
+        
+        .info-tooltip::after {
+            content: '';
+            position: absolute;
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 5px solid transparent;
+            border-right-color: var(--text);
+        }
+        
+        .info-icon:hover .info-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Google Places Autocomplete */
+        .pac-container {
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-lg);
+            font-family: 'Inter', -apple-system, sans-serif;
+            margin-top: 4px;
+        }
+        
+        .pac-item {
+            padding: 12px 14px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .pac-item:hover { background: var(--primary-light); }
+        .pac-item-selected { background: var(--primary-light); }
+        .pac-icon { display: none; }
+        .pac-item-query { font-size: 14px; color: var(--text); }
+        
+        /* Responsive */
+        @media (max-width: 560px) {
+            .form-row { grid-template-columns: 1fr; }
+            .container { padding: 24px 16px 100px; }
+            
+            .header h1 { font-size: 26px; }
+            .step span { display: none; }
+            .step-line { width: 32px; }
+            
+            .service-pill { 
+                font-size: 13px; 
+                padding: 10px 16px; 
+                min-width: 120px; 
+            }
+            
+            .card { padding: 24px 20px; }
+            
+            .question-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            
+            .toggle-group { width: 100%; }
+            .toggle-btn { flex: 1; text-align: center; }
+            
+            .info-tooltip { 
+                width: 180px; 
+                left: auto;
+                right: 0;
+                transform: translateY(-50%) translateX(50%);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                    </svg>
+                </div>
+                <span class="logo-text">No Mow Worries</span>
+            </div>
+            <h1>Get Your Free Quote</h1>
+            <p>Takes about 2 minutes</p>
+        </div>
+        
+        <!-- Progress Steps -->
+        <div class="steps">
+            <div class="step active" id="step1">
+                <div class="step-num">1</div>
+                <span>Details</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step" id="step2">
+                <div class="step-num">2</div>
+                <span>Measure</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step" id="step3">
+                <div class="step-num">3</div>
+                <span>Done</span>
+            </div>
+        </div>
+        
+        <!-- Screen 1: Contact & Services -->
+        <div class="screen active" id="screen1">
+            <!-- Contact Info -->
+            <div class="card">
+                <div class="card-title">Contact Info</div>
+                <div class="card-desc">We'll send your quote to this email</div>
+                
+                <div class="form-row">
+                    <div class="field">
+                        <label>Name</label>
+                        <input type="text" id="name" placeholder="John Smith" required>
+                    </div>
+                    <div class="field">
+                        <label>Phone</label>
+                        <input type="tel" id="phone" placeholder="(720) 555-1234" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="field">
+                        <label>
+                            <span class="label-with-info">
+                                Email
+                                <span class="info-icon">i
+                                    <span class="info-tooltip">Please provide the best email to reach you. Service updates and invoicing will be sent here. We don't spam.</span>
+                                </span>
+                            </span>
+                        </label>
+                        <input type="email" id="email" placeholder="john@email.com" required>
+                    </div>
+                    <div class="field">
+                        <label>How'd you find us?</label>
+                        <select id="referralSource">
+                            <option value="">Select...</option>
+                            <option value="google">Google</option>
+                            <option value="nextdoor">Nextdoor</option>
+                            <option value="referral">Friend/Neighbor</option>
+                            <option value="facebook">Facebook</option>
+                            <option value="yard_sign">Yard Sign</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row single">
+                    <div class="field">
+                        <label>
+                            <span class="label-with-info">
+                                Service Address
+                                <span class="info-icon">i
+                                    <span class="info-tooltip">Please double-check your address. You don't want to get quoted for the wrong property.</span>
+                                </span>
+                            </span>
+                        </label>
+                        <input type="text" id="address" placeholder="Start typing your address..." required autocomplete="off">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Services -->
+            <div class="card">
+                <div class="card-title">What do you need?</div>
+                <div class="card-desc">Select all that apply</div>
+                
+                <div class="services-wrap">
+                    <!-- Mowing Service with dropdown -->
+                    <div class="service-with-dropdown">
+                        <button type="button" class="service-pill" id="pillMowing" onclick="toggleServiceDropdown('mowing')">
+                            <span class="pill-label">Mowing Service</span>
+                            <span class="pill-sublabel" id="mowingSublabel"></span>
+                        </button>
+                        <div class="service-dropdown" id="mowingDropdown">
+                            <button type="button" class="dropdown-option" data-value="weekly" onclick="selectServiceOption('mowing', 'weekly', 'Weekly Mowing')">
+                                <span class="dropdown-option-content">
+                                    Weekly Mowing
+                                    <span class="dropdown-note">Most popular</span>
+                                </span>
+                                <span class="dropdown-deselect">×</span>
+                            </button>
+                            <button type="button" class="dropdown-option" id="biweeklyOption" data-value="biweekly" onclick="selectServiceOption('mowing', 'biweekly', 'Bi-Weekly')">
+                                <span class="dropdown-option-content">
+                                    Bi-Weekly Mowing
+                                    <span class="dropdown-note">Available after June 15 only</span>
+                                </span>
+                                <span class="dropdown-deselect">×</span>
+                            </button>
+                            <button type="button" class="dropdown-option" data-value="onetime" onclick="selectServiceOption('mowing', 'onetime', 'One-Time Mow')">
+                                <span class="dropdown-option-content">
+                                    One-Time Mow
+                                    <span class="dropdown-note">$115 minimum</span>
+                                </span>
+                                <span class="dropdown-deselect">×</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Other services -->
+                    <button type="button" class="service-pill" data-service="aeration" onclick="toggleSimpleService(this)">
+                        <span class="pill-label">Lawn Aeration</span>
+                    </button>
+                    
+                    <button type="button" class="service-pill" data-service="overseeding" onclick="toggleSimpleService(this)">
+                        <span class="pill-label">Overseeding</span>
+                    </button>
+                    
+                    <!-- Fertilization with frequency dropdown -->
+                    <div class="service-with-dropdown">
+                        <button type="button" class="service-pill" id="pillFertilization" onclick="toggleServiceDropdown('fertilization')">
+                            <span class="pill-label">Fertilization</span>
+                            <span class="pill-sublabel" id="fertilizationSublabel"></span>
+                        </button>
+                        <div class="service-dropdown" id="fertilizationDropdown">
+                            <button type="button" class="dropdown-option" data-value="onetime" onclick="selectServiceOption('fertilization', 'onetime', 'One-Time')">
+                                <span class="dropdown-option-content">
+                                    One-Time Service
+                                </span>
+                                <span class="dropdown-deselect">×</span>
+                            </button>
+                            <button type="button" class="dropdown-option" data-value="recurring" onclick="selectServiceOption('fertilization', 'recurring', 'Every 4-6 Weeks')">
+                                <span class="dropdown-option-content">
+                                    Every 4-6 Weeks
+                                    <span class="dropdown-note">Recommended for best results</span>
+                                </span>
+                                <span class="dropdown-deselect">×</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Weed Control with tooltip and sublabel -->
+                    <div class="service-with-dropdown">
+                        <button type="button" class="service-pill" id="pillWeedControl" onclick="toggleWeedControl(this)">
+                            <span class="pill-tooltip">Partnered with Weed Man</span>
+                            <span class="pill-label">Weed Control</span>
+                            <span class="pill-sublabel" id="weedControlSublabel">Partnered with Weed Man</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Mulch Install with color dropdown -->
+                    <div class="service-with-dropdown">
+                        <button type="button" class="service-pill" id="pillMulch" onclick="toggleServiceDropdown('mulch')">
+                            <span class="pill-label">Mulch Install</span>
+                            <span class="pill-sublabel" id="mulchSublabel"></span>
+                        </button>
+                        <div class="service-dropdown" id="mulchDropdown">
+                            <button type="button" class="dropdown-option" data-value="brown" onclick="selectServiceOption('mulch', 'brown', 'Brown')">
+                                <span class="dropdown-option-content">
+                                    Brown Mulch
+                                </span>
+                                <span class="dropdown-deselect">×</span>
+                            </button>
+                            <button type="button" class="dropdown-option" data-value="red" onclick="selectServiceOption('mulch', 'red', 'Red')">
+                                <span class="dropdown-option-content">
+                                    Red Mulch
+                                </span>
+                                <span class="dropdown-deselect">×</span>
+                            </button>
+                            <button type="button" class="dropdown-option" data-value="black" onclick="selectServiceOption('mulch', 'black', 'Black')">
+                                <span class="dropdown-option-content">
+                                    Black Mulch
+                                </span>
+                                <span class="dropdown-deselect">×</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="service-pill" data-service="yard_cleanup" onclick="toggleSimpleService(this)">
+                        <span class="pill-label">Yard Cleanup</span>
+                    </button>
+                    
+                    <button type="button" class="service-pill" data-service="leaf_cleanup" onclick="toggleSimpleService(this)">
+                        <span class="pill-label">Leaf Cleanup</span>
+                    </button>
+                    
+                    <!-- Bush Trimming with frequency dropdown -->
+                    <div class="service-with-dropdown">
+                        <button type="button" class="service-pill" id="pillBushTrimming" onclick="toggleServiceDropdown('bushTrimming')">
+                            <span class="pill-label">Bush Trimming</span>
+                            <span class="pill-sublabel" id="bushTrimmingSublabel"></span>
+                        </button>
+                        <div class="service-dropdown" id="bushTrimmingDropdown">
+                            <button type="button" class="dropdown-option" data-value="onetime" onclick="selectServiceOption('bushTrimming', 'onetime', 'One-Time')">
+                                <span class="dropdown-option-content">
+                                    One-Time Service
+                                </span>
+                                <span class="dropdown-deselect">×</span>
+                            </button>
+                            <button type="button" class="dropdown-option" data-value="monthly" onclick="selectServiceOption('bushTrimming', 'monthly', 'Once a Month')">
+                                <span class="dropdown-option-content">
+                                    Once a Month
+                                </span>
+                                <span class="dropdown-deselect">×</span>
+                            </button>
+                            <button type="button" class="dropdown-option" data-value="bimonthly" onclick="selectServiceOption('bushTrimming', 'bimonthly', 'Every 2 Months')">
+                                <span class="dropdown-option-content">
+                                    Every 2 Months
+                                </span>
+                                <span class="dropdown-deselect">×</span>
+                            </button>
+                            <button type="button" class="dropdown-option" data-value="quarterly" onclick="selectServiceOption('bushTrimming', 'quarterly', 'Every 3 Months')">
+                                <span class="dropdown-option-content">
+                                    Every 3 Months
+                                </span>
+                                <span class="dropdown-deselect">×</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- One-time mow warning -->
+                <div class="info-note" id="onetimeNote">
+                    ⚠️ One-time mowing has a <strong>minimum fee of $115</strong>, regardless of yard size or condition.
+                </div>
+            </div>
+            
+            <!-- Property Details -->
+            <div class="card">
+                <div class="card-title">Property Details</div>
+                <div class="card-desc">Help us give you the most accurate quote</div>
+                
+                <!-- Gate Question -->
+                <div class="question-section">
+                    <div class="question-row">
+                        <span class="question-text">Do you have a gate?</span>
+                        <div class="toggle-group">
+                            <button type="button" class="toggle-btn" onclick="setGate(false)" id="gateNo">No</button>
+                            <button type="button" class="toggle-btn" onclick="setGate(true)" id="gateYes">Yes</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Gate follow-up questions -->
+                    <div class="conditional-field" id="gateDetails">
+                        <label>How wide is your gate?</label>
+                        <div class="inline-input">
+                            <input type="number" id="gateWidth" placeholder="36" min="1" max="120" onchange="checkGateWidth()">
+                            <span>inches</span>
+                        </div>
+                        
+                        <div class="inline-warning" id="gateWarning">
+                            ⚠️ Gates under 36" may require a smaller mower which could affect pricing.
+                        </div>
+                        
+                        <div class="sub-question">
+                            <div class="sub-question-row">
+                                <span class="sub-question-text">Does your gate have a code?</span>
+                                <div class="toggle-group">
+                                    <button type="button" class="toggle-btn" onclick="setGateCode(false)" id="gateCodeNo">No</button>
+                                    <button type="button" class="toggle-btn" onclick="setGateCode(true)" id="gateCodeYes">Yes</button>
+                                </div>
+                            </div>
+                            
+                            <div class="nested-field" id="gateCodeField">
+                                <label>Enter your gate code (optional)</label>
+                                <div class="inline-input">
+                                    <input type="text" id="gateCode" placeholder="1234" class="wider">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Dog Question -->
+                <div class="question-section">
+                    <div class="question-row">
+                        <span class="question-text">Do you have a dog?</span>
+                        <div class="toggle-group">
+                            <button type="button" class="toggle-btn" onclick="setDog(false)" id="dogNo">No</button>
+                            <button type="button" class="toggle-btn" onclick="setDog(true)" id="dogYes">Yes</button>
+                        </div>
+                    </div>
+                    
+                    <div class="conditional-field" id="dogWarning">
+                        <div class="inline-warning danger show">
+                            Please ensure dogs are kept inside during service. We are not responsible for any pet injuries or escapes while servicing your property.
+                            <br><br>
+                            Please ensure the yard is picked up of waste, otherwise an additional cleaning fee may apply.
+                        </div>
+                        
+                        <label class="dog-confirm">
+                            <input type="checkbox" id="dogConfirm" onchange="updateDogConfirm()">
+                            <span class="dog-confirm-text">I confirm that I understand and will keep my dog(s) inside and yard picked up during service.</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Overgrown Question -->
+                <div class="question-section">
+                    <div class="question-row">
+                        <span class="question-text">Is your lawn overgrown?</span>
+                        <div class="toggle-group">
+                            <button type="button" class="toggle-btn" onclick="setOvergrown(false)" id="overgrownNo">No</button>
+                            <button type="button" class="toggle-btn" onclick="setOvergrown(true)" id="overgrownYes">Yes</button>
+                        </div>
+                    </div>
+                    
+                    <div class="conditional-field" id="overgrownDetails">
+                        <label>Approximately how tall is the grass?</label>
+                        <div class="inline-input">
+                            <input type="number" id="grassHeight" placeholder="8" min="1" max="48">
+                            <span>inches</span>
+                        </div>
+                        
+                        <div class="inline-warning show">
+                            ⚠️ Overgrown lawns may require additional time and affect pricing. Photos help us give you a more accurate quote.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Photo Upload (shows when overgrown or one-time services) -->
+            <div class="card photo-section" id="photoSection">
+                <div class="card-title">Photos</div>
+                <div class="photo-encourage" id="photoEncourage">
+                    📸 We encourage you to submit photos for the most accurate estimate, especially for overgrown lawns.
+                </div>
+                
+                <div class="upload-area" id="uploadArea" onclick="document.getElementById('photoInput').click()">
+                    <div class="upload-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                    </div>
+                    <div class="upload-text">Tap to upload photos</div>
+                    <div class="upload-hint">Or drag and drop images here</div>
+                </div>
+                <input type="file" id="photoInput" accept="image/*" multiple onchange="handlePhotos(this.files)" style="display:none;">
+                <div class="photo-preview" id="photoPreview"></div>
+            </div>
+            
+            <!-- Notes -->
+            <div class="card notes-section">
+                <div class="card-title">Additional Notes <span style="font-weight:400;color:var(--text-muted)">(optional)</span></div>
+                <textarea id="notes" rows="3" placeholder="Any special requests, access instructions, or details we should know..."></textarea>
+            </div>
+            
+            <div class="btn-row">
+                <button type="button" class="btn btn-primary" onclick="goToStep2()">
+                    Continue
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Screen 2: Map -->
+        <div class="screen" id="screen2">
+            <div class="map-container">
+                <div class="map-instructions">
+                    <strong>Outline your lawn area</strong> — Tap points around your lawn to measure square footage
+                </div>
+                <div id="map"></div>
+                <div class="map-toolbar">
+                    <button type="button" class="map-btn active" id="btnLawn" onclick="setDrawMode('lawn')">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg>
+                        Lawn
+                    </button>
+                    <button type="button" class="map-btn" id="btnMulch" onclick="setDrawMode('mulch')">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg>
+                        Mulch
+                    </button>
+                    <button type="button" class="map-btn" onclick="undoLastPoint()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10h10a5 5 0 0 1 5 5v2M3 10l4-4M3 10l4 4"/></svg>
+                        Undo
+                    </button>
+                    <button type="button" class="map-btn" onclick="clearAllAreas()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        Clear
+                    </button>
+                </div>
+                <div class="map-result" id="mapResult" style="display: none;">
+                    <div class="map-result-label">Total Lawn Area</div>
+                    <div class="map-result-value" id="totalSqft">0 sq ft</div>
+                </div>
+            </div>
+            
+            <div class="btn-row" style="margin-top: 20px;">
+                <button type="button" class="btn btn-secondary" onclick="goToStep1()">Back</button>
+                <button type="button" class="btn btn-primary" onclick="goToStep3()">Review & Submit</button>
+            </div>
+        </div>
+        
+        <!-- Screen 3: Review & Submit -->
+        <div class="screen" id="screen3">
+            <div class="card">
+                <div class="card-title">Review Your Request</div>
+                <div class="card-desc">Make sure everything looks correct</div>
+                
+                <div class="summary-item">
+                    <span class="summary-label">Name</span>
+                    <span class="summary-value" id="summaryName">—</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Email</span>
+                    <span class="summary-value" id="summaryEmail">—</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Phone</span>
+                    <span class="summary-value" id="summaryPhone">—</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Address</span>
+                    <span class="summary-value" id="summaryAddress">—</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Services</span>
+                    <span class="summary-value" id="summaryServices">—</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Lawn Size</span>
+                    <span class="summary-value" id="summarySqft">—</span>
+                </div>
+                <div class="summary-item" id="gateRow" style="display: none;">
+                    <span class="summary-label">Gate</span>
+                    <span class="summary-value" id="summaryGate">—</span>
+                </div>
+                <div class="summary-item" id="overgrownRow" style="display: none;">
+                    <span class="summary-label">Lawn Condition</span>
+                    <span class="summary-value" id="summaryOvergrown">—</span>
+                </div>
+            </div>
+            
+            <div class="btn-row">
+                <button type="button" class="btn btn-secondary" onclick="goToStep2()">Back</button>
+                <button type="button" class="btn btn-primary" id="submitBtn" onclick="submitQuote()">
+                    Submit Quote Request
+                </button>
+            </div>
+        </div>
+        
+        <!-- Success Screen -->
+        <div class="screen" id="screenSuccess">
+            <div class="card success-card">
+                <div class="success-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M20 6L9 17l-5-5"/>
+                    </svg>
+                </div>
+                <h2>Request Submitted!</h2>
+                <p>We'll review your request and send a quote to your email within 24 hours. For most requests, you'll hear from us much sooner.</p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDutgNGfggQz618lCQZkBVkMZkE0xtDRKQ&libraries=drawing,geometry,places">
+    <script>
+        // State
+        let selectedServices = {};
+        let mowingType = null;
+        let fertilizationType = null;
+        let mulchColor = null;
+        let bushTrimmingFrequency = null;
+        let hasGate = null;
+        let gateWidth = null;
+        let hasGateCode = null;
+        let gateCode = null;
+        let hasDog = null;
+        let dogConfirmed = false;
+        let isOvergrown = null;
+        let grassHeight = null;
+        let photos = [];
+        let map = null;
+        let drawMode = 'lawn';
+        let lawnPolygons = [];
+        let mulchPolygons = [];
+        let currentPoints = [];
+        let currentPolyline = null;
+        let totalLawnSqft = 0;
+        let totalMulchSqft = 0;
+        let markers = [];
+        
+        // Service state tracking
+        let serviceSelections = {
+            mowing: null,
+            fertilization: null,
+            mulch: null,
+            bushTrimming: null
+        };
+        
+        // Check if biweekly should be enabled (after June 15)
+        function isBiweeklyAvailable() {
+            const now = new Date();
+            const month = now.getMonth();
+            const day = now.getDate();
+            return month > 5 || (month === 5 && day >= 15);
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const biweeklyOption = document.getElementById('biweeklyOption');
+            if (!isBiweeklyAvailable()) {
+                biweeklyOption.classList.add('disabled');
+            }
+            initAddressAutocomplete();
+        });
+        
+        // Google Places Autocomplete
+        let addressAutocomplete = null;
+        
+        function initAddressAutocomplete() {
+            const addressInput = document.getElementById('address');
+            
+            addressAutocomplete = new google.maps.places.Autocomplete(addressInput, {
+                componentRestrictions: { country: 'us' },
+                fields: ['formatted_address', 'geometry', 'address_components'],
+                types: ['address']
+            });
+            
+            addressAutocomplete.addListener('place_changed', function() {
+                const place = addressAutocomplete.getPlace();
+                if (place.formatted_address) {
+                    addressInput.value = place.formatted_address;
+                }
+            });
+            
+            addressInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    const pacContainer = document.querySelector('.pac-container');
+                    if (pacContainer && pacContainer.style.display !== 'none') {
+                        e.preventDefault();
+                    }
+                }
+            });
+        }
+        
+        // Generic dropdown toggle for services with sub-options
+        function toggleServiceDropdown(serviceType) {
+            const pillId = {
+                mowing: 'pillMowing',
+                fertilization: 'pillFertilization',
+                mulch: 'pillMulch',
+                bushTrimming: 'pillBushTrimming'
+            }[serviceType];
+            
+            const dropdownId = serviceType + 'Dropdown';
+            const pill = document.getElementById(pillId);
+            const dropdown = document.getElementById(dropdownId);
+            
+            document.querySelectorAll('.service-dropdown.show').forEach(d => {
+                if (d.id !== dropdownId) {
+                    d.classList.remove('show');
+                }
+            });
+            
+            if (dropdown.classList.contains('show')) {
+                dropdown.classList.remove('show');
+                if (!serviceSelections[serviceType]) {
+                    pill.classList.remove('selected');
+                }
+            } else {
+                dropdown.classList.add('show');
+                pill.classList.add('selected');
+            }
+        }
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const dropdownTypes = ['mowing', 'fertilization', 'mulch', 'bushTrimming'];
+            
+            dropdownTypes.forEach(type => {
+                const dropdown = document.getElementById(type + 'Dropdown');
+                const pillId = {
+                    mowing: 'pillMowing',
+                    fertilization: 'pillFertilization',
+                    mulch: 'pillMulch',
+                    bushTrimming: 'pillBushTrimming'
+                }[type];
+                const pill = document.getElementById(pillId);
+                
+                if (dropdown && pill) {
+                    const clickedInDropdown = dropdown.contains(e.target);
+                    const clickedOnPill = pill.contains(e.target);
+                    
+                    if (!clickedInDropdown && !clickedOnPill && dropdown.classList.contains('show')) {
+                        dropdown.classList.remove('show');
+                        if (!serviceSelections[type]) {
+                            pill.classList.remove('selected');
+                        }
+                    }
+                }
+            });
+        });
+        
+        // Select option from dropdown
+        function selectServiceOption(serviceType, value, displayLabel) {
+            const pillId = {
+                mowing: 'pillMowing',
+                fertilization: 'pillFertilization',
+                mulch: 'pillMulch',
+                bushTrimming: 'pillBushTrimming'
+            }[serviceType];
+            
+            const sublabelId = serviceType + 'Sublabel';
+            const dropdownId = serviceType + 'Dropdown';
+            
+            const pill = document.getElementById(pillId);
+            const sublabel = document.getElementById(sublabelId);
+            const dropdown = document.getElementById(dropdownId);
+            
+            if (serviceType === 'mowing' && value === 'biweekly' && !isBiweeklyAvailable()) {
+                return;
+            }
+            
+            if (serviceSelections[serviceType] === value) {
+                serviceSelections[serviceType] = null;
+                delete selectedServices[serviceType === 'bushTrimming' ? 'bush_trimming' : serviceType];
+                
+                pill.classList.remove('selected');
+                sublabel.textContent = '';
+                sublabel.classList.remove('show');
+                
+                dropdown.querySelectorAll('.dropdown-option').forEach(o => o.classList.remove('selected'));
+                
+                if (serviceType === 'mowing') {
+                    mowingType = null;
+                    document.getElementById('onetimeNote').classList.remove('show');
+                }
+            } else {
+                serviceSelections[serviceType] = value;
+                
+                if (serviceType === 'mowing') {
+                    mowingType = value;
+                    selectedServices.mowing = value;
+                    document.getElementById('onetimeNote').classList.toggle('show', value === 'onetime');
+                } else if (serviceType === 'fertilization') {
+                    fertilizationType = value;
+                    selectedServices.fertilization = value;
+                } else if (serviceType === 'mulch') {
+                    mulchColor = value;
+                    selectedServices.mulch = value;
+                } else if (serviceType === 'bushTrimming') {
+                    bushTrimmingFrequency = value;
+                    selectedServices.bush_trimming = value;
+                }
+                
+                dropdown.querySelectorAll('.dropdown-option').forEach(o => {
+                    o.classList.toggle('selected', o.dataset.value === value);
+                });
+                
+                pill.classList.add('selected');
+                sublabel.textContent = displayLabel;
+                sublabel.classList.add('show');
+            }
+            
+            dropdown.classList.remove('show');
+            updatePhotoVisibility();
+        }
+        
+        function toggleMowingDropdown() { toggleServiceDropdown('mowing'); }
+        
+        function selectMowingType(type) {
+            const labels = { weekly: 'Weekly Mowing', biweekly: 'Bi-Weekly', onetime: 'One-Time Mow' };
+            selectServiceOption('mowing', type, labels[type]);
+        }
+        
+        function toggleSimpleService(btn) {
+            const service = btn.dataset.service;
+            btn.classList.toggle('selected');
+            
+            if (btn.classList.contains('selected')) {
+                selectedServices[service] = true;
+            } else {
+                delete selectedServices[service];
+            }
+            
+            updatePhotoVisibility();
+        }
+        
+        function toggleWeedControl(btn) {
+            btn.classList.toggle('selected');
+            const sublabel = document.getElementById('weedControlSublabel');
+            
+            if (btn.classList.contains('selected')) {
+                selectedServices.weed_control = true;
+                sublabel.classList.add('show');
+            } else {
+                delete selectedServices.weed_control;
+                sublabel.classList.remove('show');
+            }
+        }
+        
+        // Property question handlers
+        function setGate(hasIt) {
+            hasGate = hasIt;
+            document.getElementById('gateNo').classList.toggle('selected', !hasIt);
+            document.getElementById('gateYes').classList.toggle('selected', hasIt);
+            document.getElementById('gateDetails').classList.toggle('show', hasIt);
+            
+            if (!hasIt) {
+                gateWidth = null;
+                hasGateCode = null;
+                gateCode = null;
+                document.getElementById('gateWidth').value = '';
+                document.getElementById('gateWarning').classList.remove('show');
+                document.getElementById('gateCodeField').classList.remove('show');
+                document.getElementById('gateCodeNo').classList.remove('selected');
+                document.getElementById('gateCodeYes').classList.remove('selected');
+            }
+        }
+        
+        function checkGateWidth() {
+            const width = parseInt(document.getElementById('gateWidth').value);
+            gateWidth = width || null;
+            document.getElementById('gateWarning').classList.toggle('show', width && width < 36);
+        }
+        
+        function setGateCode(hasIt) {
+            hasGateCode = hasIt;
+            document.getElementById('gateCodeNo').classList.toggle('selected', !hasIt);
+            document.getElementById('gateCodeYes').classList.toggle('selected', hasIt);
+            document.getElementById('gateCodeField').classList.toggle('show', hasIt);
+            
+            if (!hasIt) {
+                gateCode = null;
+                document.getElementById('gateCode').value = '';
+            }
+        }
+        
+        function setDog(hasIt) {
+            hasDog = hasIt;
+            document.getElementById('dogNo').classList.toggle('selected', !hasIt);
+            document.getElementById('dogYes').classList.toggle('selected', hasIt);
+            document.getElementById('dogWarning').classList.toggle('show', hasIt);
+            
+            if (!hasIt) {
+                dogConfirmed = false;
+                document.getElementById('dogConfirm').checked = false;
+            }
+        }
+        
+        function updateDogConfirm() {
+            dogConfirmed = document.getElementById('dogConfirm').checked;
+        }
+        
+        function setOvergrown(isIt) {
+            isOvergrown = isIt;
+            document.getElementById('overgrownNo').classList.toggle('selected', !isIt);
+            document.getElementById('overgrownYes').classList.toggle('selected', isIt);
+            document.getElementById('overgrownDetails').classList.toggle('show', isIt);
+            
+            if (!isIt) {
+                grassHeight = null;
+                document.getElementById('grassHeight').value = '';
+            }
+            
+            updatePhotoVisibility();
+        }
+        
+        function updatePhotoVisibility() {
+            const needsPhotos = isOvergrown || 
+                mowingType === 'onetime' || 
+                selectedServices.yard_cleanup ||
+                selectedServices.leaf_cleanup ||
+                selectedServices.mulch ||
+                selectedServices.bush_trimming;
+            
+            document.getElementById('photoSection').classList.toggle('show', needsPhotos);
+        }
+        
+        document.querySelectorAll('.service-dropdown').forEach(dropdown => {
+            dropdown.addEventListener('click', function(e) { e.stopPropagation(); });
+        });
+        
+        // Photo handling
+        function handlePhotos(files) {
+            for (const file of files) {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        photos.push({ name: file.name, data: e.target.result, file });
+                        renderPhotos();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+        
+        function renderPhotos() {
+            const preview = document.getElementById('photoPreview');
+            preview.innerHTML = photos.map((p, i) => `
+                <div class="photo-item">
+                    <img src="${p.data}" alt="${p.name}">
+                    <button type="button" class="photo-remove" onclick="removePhoto(${i})">×</button>
+                </div>
+            `).join('');
+        }
+        
+        function removePhoto(index) {
+            photos.splice(index, 1);
+            renderPhotos();
+        }
+        
+        // Drag and drop
+        const uploadArea = document.getElementById('uploadArea');
+        if (uploadArea) {
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                handlePhotos(e.dataTransfer.files);
+            });
+        }
+        
+        // Navigation
+        function goToStep1() {
+            showScreen('screen1');
+            updateSteps(1);
+        }
+        
+        function goToStep2() {
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const address = document.getElementById('address').value.trim();
+            
+            if (!name || !email || !phone || !address) {
+                alert('Please fill in all contact information.');
+                return;
+            }
+            
+            if (Object.keys(selectedServices).length === 0) {
+                alert('Please select at least one service.');
+                return;
+            }
+            
+            if (document.getElementById('pillMowing').classList.contains('selected') && !mowingType) {
+                alert('Please select a mowing frequency (Weekly, Bi-Weekly, or One-Time).');
+                return;
+            }
+            
+            if (hasDog && !dogConfirmed) {
+                alert('Please confirm that you understand the dog policy by checking the confirmation box.');
+                return;
+            }
+            
+            showScreen('screen2');
+            updateSteps(2);
+            initMap();
+        }
+        
+        function goToStep3() {
+            showScreen('screen3');
+            updateSteps(3);
+            updateSummary();
+        }
+        
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+        
+        function updateSteps(current) {
+            for (let i = 1; i <= 3; i++) {
+                const step = document.getElementById('step' + i);
+                step.classList.remove('active', 'done');
+                if (i < current) step.classList.add('done');
+                if (i === current) step.classList.add('active');
+            }
+        }
+        
+        function updateSummary() {
+            document.getElementById('summaryName').textContent = document.getElementById('name').value;
+            document.getElementById('summaryEmail').textContent = document.getElementById('email').value;
+            document.getElementById('summaryPhone').textContent = document.getElementById('phone').value;
+            document.getElementById('summaryAddress').textContent = document.getElementById('address').value;
+            
+            const serviceLabels = {
+                mowing: { weekly: 'Weekly Mowing', biweekly: 'Bi-Weekly Mowing', onetime: 'One-Time Mow' },
+                aeration: 'Lawn Aeration',
+                overseeding: 'Overseeding',
+                fertilization: { onetime: 'Fertilization (One-Time)', recurring: 'Fertilization (Every 4-6 Weeks)' },
+                weed_control: 'Weed Control (via Weed Man)',
+                mulch: { brown: 'Mulch Install (Brown)', red: 'Mulch Install (Red)', black: 'Mulch Install (Black)' },
+                yard_cleanup: 'Yard Cleanup',
+                leaf_cleanup: 'Leaf Cleanup',
+                bush_trimming: {
+                    onetime: 'Bush Trimming (One-Time)',
+                    weekly: 'Bush Trimming (Weekly)',
+                    monthly: 'Bush Trimming (Monthly)',
+                    bimonthly: 'Bush Trimming (Every 2 Months)',
+                    quarterly: 'Bush Trimming (Every 3 Months)'
+                }
+            };
+            
+            const services = [];
+            for (const [key, value] of Object.entries(selectedServices)) {
+                if (key === 'mowing' && typeof serviceLabels.mowing === 'object') {
+                    services.push(serviceLabels.mowing[value]);
+                } else if (key === 'fertilization' && typeof serviceLabels.fertilization === 'object') {
+                    services.push(serviceLabels.fertilization[value]);
+                } else if (key === 'mulch' && typeof serviceLabels.mulch === 'object') {
+                    services.push(serviceLabels.mulch[value]);
+                } else if (key === 'bush_trimming' && typeof serviceLabels.bush_trimming === 'object') {
+                    services.push(serviceLabels.bush_trimming[value]);
+                } else if (typeof serviceLabels[key] === 'string') {
+                    services.push(serviceLabels[key]);
+                }
+            }
+            document.getElementById('summaryServices').textContent = services.join(', ') || '—';
+            
+            document.getElementById('summarySqft').textContent = totalLawnSqft > 0 ? `${totalLawnSqft.toLocaleString()} sq ft` : 'Not measured';
+            
+            if (hasGate) {
+                document.getElementById('gateRow').style.display = 'flex';
+                let gateText = gateWidth ? `${gateWidth}" wide` : 'Yes';
+                if (hasGateCode && document.getElementById('gateCode').value) {
+                    gateText += ` (Code: ${document.getElementById('gateCode').value})`;
+                }
+                document.getElementById('summaryGate').textContent = gateText;
+            } else {
+                document.getElementById('gateRow').style.display = 'none';
+            }
+            
+            if (isOvergrown) {
+                document.getElementById('overgrownRow').style.display = 'flex';
+                const height = document.getElementById('grassHeight').value;
+                document.getElementById('summaryOvergrown').textContent = height ? `Overgrown (~${height}")` : 'Overgrown';
+            } else {
+                document.getElementById('overgrownRow').style.display = 'none';
+            }
+        }
+        
+        // Map functions
+        function initMap() {
+            if (map) return;
+            
+            const address = document.getElementById('address').value;
+            const geocoder = new google.maps.Geocoder();
+            
+            geocoder.geocode({ address }, (results, status) => {
+                if (status === 'OK' && results[0]) {
+                    const center = results[0].geometry.location;
+                    createMap(center);
+                } else {
+                    createMap({ lat: 39.7294, lng: -104.8319 });
+                }
+            });
+        }
+        
+        function createMap(center) {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center,
+                zoom: 20,
+                mapTypeId: 'satellite',
+                tilt: 0,
+                disableDefaultUI: true,
+                zoomControl: true,
+                gestureHandling: 'greedy'
+            });
+            
+            map.addListener('click', (e) => addPoint(e.latLng));
+        }
+        
+        function setDrawMode(mode) {
+            finishPolygon();
+            drawMode = mode;
+            document.getElementById('btnLawn').classList.toggle('active', mode === 'lawn');
+            document.getElementById('btnMulch').classList.toggle('active', mode === 'mulch');
+        }
+        
+        function addPoint(latLng) {
+            currentPoints.push(latLng);
+            
+            const marker = new google.maps.Marker({
+                position: latLng,
+                map,
+                icon: {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    scale: 6,
+                    fillColor: drawMode === 'lawn' ? '#059669' : '#f97316',
+                    fillOpacity: 1,
+                    strokeColor: 'white',
+                    strokeWeight: 2
+                }
+            });
+            markers.push(marker);
+            
+            if (currentPolyline) {
+                currentPolyline.setPath(currentPoints);
+            } else {
+                currentPolyline = new google.maps.Polyline({
+                    path: currentPoints,
+                    strokeColor: drawMode === 'lawn' ? '#059669' : '#f97316',
+                    strokeOpacity: 1,
+                    strokeWeight: 3,
+                    map
+                });
+            }
+            
+            if (currentPoints.length >= 3) {
+                finishPolygon();
+            }
+        }
+        
+        function finishPolygon() {
+            if (currentPoints.length < 3) {
+                currentPoints = [];
+                if (currentPolyline) {
+                    currentPolyline.setMap(null);
+                    currentPolyline = null;
+                }
+                markers.forEach(m => m.setMap(null));
+                markers = [];
+                return;
+            }
+            
+            const polygon = new google.maps.Polygon({
+                paths: currentPoints,
+                strokeColor: drawMode === 'lawn' ? '#059669' : '#f97316',
+                strokeOpacity: 1,
+                strokeWeight: 2,
+                fillColor: drawMode === 'lawn' ? '#059669' : '#f97316',
+                fillOpacity: 0.35,
+                map
+            });
+            
+            const area = google.maps.geometry.spherical.computeArea(polygon.getPath());
+            const sqft = Math.round(area * 10.7639);
+            
+            if (drawMode === 'lawn') {
+                lawnPolygons.push({ polygon, sqft });
+                totalLawnSqft += sqft;
+            } else {
+                mulchPolygons.push({ polygon, sqft });
+                totalMulchSqft += sqft;
+            }
+            
+            updateMapResult();
+            
+            currentPoints = [];
+            if (currentPolyline) {
+                currentPolyline.setMap(null);
+                currentPolyline = null;
+            }
+            markers.forEach(m => m.setMap(null));
+            markers = [];
+        }
+        
+        function updateMapResult() {
+            const result = document.getElementById('mapResult');
+            if (totalLawnSqft > 0) {
+                result.style.display = 'block';
+                document.getElementById('totalSqft').textContent = `${totalLawnSqft.toLocaleString()} sq ft`;
+            } else {
+                result.style.display = 'none';
+            }
+        }
+        
+        function undoLastPoint() {
+            if (currentPoints.length > 0) {
+                currentPoints.pop();
+                if (currentPolyline) {
+                    currentPolyline.setPath(currentPoints);
+                }
+                if (markers.length > 0) {
+                    const m = markers.pop();
+                    m.setMap(null);
+                }
+            }
+        }
+        
+        function clearAllAreas() {
+            lawnPolygons.forEach(p => p.polygon.setMap(null));
+            mulchPolygons.forEach(p => p.polygon.setMap(null));
+            lawnPolygons = [];
+            mulchPolygons = [];
+            totalLawnSqft = 0;
+            totalMulchSqft = 0;
+            currentPoints = [];
+            if (currentPolyline) {
+                currentPolyline.setMap(null);
+                currentPolyline = null;
+            }
+            markers.forEach(m => m.setMap(null));
+            markers = [];
+            updateMapResult();
+        }
+        
+        // Submit quote
+        async function submitQuote() {
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
+            try {
+                const data = {
+                    name: document.getElementById('name').value.trim(),
+                    email: document.getElementById('email').value.trim(),
+                    phone: document.getElementById('phone').value.trim(),
+                    address: document.getElementById('address').value.trim(),
+                    referralSource: document.getElementById('referralSource').value,
+                    services: selectedServices,
+                    mowingType: mowingType,
+                    fertilizationType: fertilizationType,
+                    mulchColor: mulchColor,
+                    bushTrimmingFrequency: bushTrimmingFrequency,
+                    hasGate: hasGate,
+                    gateWidth: gateWidth,
+                    hasGateCode: hasGateCode,
+                    gateCode: hasGateCode ? document.getElementById('gateCode').value : null,
+                    hasDog: hasDog,
+                    dogConfirmed: dogConfirmed,
+                    isOvergrown: isOvergrown,
+                    grassHeight: isOvergrown ? document.getElementById('grassHeight').value : null,
+                    notes: document.getElementById('notes').value.trim(),
+                    lawnSqft: totalLawnSqft,
+                    mulchSqft: totalMulchSqft,
+                    photos: photos.map(p => p.data),
+                    timestamp: new Date().toISOString()
+                };
+                
+                if (map && totalLawnSqft > 0) {
+                    data.mapCenter = {
+                        lat: map.getCenter().lat(),
+                        lng: map.getCenter().lng()
+                    };
+                    data.mapZoom = map.getZoom();
+                }
+                
+                const response = await fetch('/api/quote', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    showScreen('screenSuccess');
+                } else {
+                    throw new Error('Failed to submit');
+                }
+            } catch (err) {
+                alert('Sorry, there was an error submitting your request. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Quote Request';
+            }
+        }
+    </script>
+</body>
+</html>
