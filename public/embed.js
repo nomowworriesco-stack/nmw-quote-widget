@@ -24,13 +24,17 @@
         return;
     }
     
-    // Create iframe
+    // Create iframe - seamless integration, no horizontal scroll
     const iframe = document.createElement('iframe');
     iframe.src = widgetUrl;
     iframe.id = 'nmw-widget-iframe';
-    iframe.style.cssText = 'width: 100%; border: none; display: block; overflow: hidden;';
+    iframe.style.cssText = 'width: 100%; max-width: 100%; border: none; display: block; overflow: hidden; -webkit-overflow-scrolling: touch;';
     iframe.setAttribute('scrolling', 'no');
     iframe.setAttribute('frameborder', '0');
+    iframe.setAttribute('allowtransparency', 'true');
+    
+    // Container styling to prevent horizontal scroll
+    container.style.cssText = (container.style.cssText || '') + '; max-width: 100%; overflow-x: hidden;';
     
     // Set initial height (will be updated dynamically)
     iframe.style.height = '800px';

@@ -5,15 +5,18 @@
 Add this to your website where you want the quote widget:
 
 ```html
-<div id="nmw-quote-widget" style="min-height: 800px;"></div>
+<div id="nmw-quote-widget" style="min-height: 800px; max-width: 100%; overflow-x: hidden;"></div>
 <iframe 
     src="https://estimate-widget.vercel.app/?embed=true" 
-    style="width: 100%; height: 900px; border: none; display: block;"
+    style="width: 100%; max-width: 100%; height: 900px; border: none; display: block; overflow: hidden;"
     scrolling="no"
     frameborder="0"
+    allowtransparency="true"
     title="Get a Quote">
 </iframe>
 ```
+
+**Mobile Note:** The widget is designed to feel native when embedded. Content scrolls with the page, no horizontal scroll.
 
 ## Alternative: Using the Embed Script
 
