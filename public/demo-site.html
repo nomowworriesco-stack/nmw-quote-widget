@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>No Mow Worries Lawn Care | Aurora, CO</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #2d5016 0%, #4a7c23 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .logo span {
+            color: #90EE90;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 2rem;
+            font-weight: 500;
+        }
+        
+        nav a:hover {
+            color: #90EE90;
+        }
+        
+        /* Hero */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                        url('https://images.unsplash.com/photo-1558904541-efa843a96f01?w=1600') center/cover;
+            color: white;
+            text-align: center;
+            padding: 6rem 2rem;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .cta-button {
+            background: #4a7c23;
+            color: white;
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(74, 124, 35, 0.4);
+        }
+        
+        /* Services */
+        .services {
+            padding: 4rem 2rem;
+            background: #f9f9f9;
+        }
+        
+        .services h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 3rem;
+            color: #2d5016;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .service-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .service-card h3 {
+            color: #2d5016;
+            margin-bottom: 1rem;
+        }
+        
+        .service-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Quote Section - WHERE THE WIDGET GOES */
+        .quote-section {
+            padding: 4rem 2rem;
+            background: white;
+        }
+        
+        .quote-section h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #2d5016;
+        }
+        
+        .quote-section > p {
+            text-align: center;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        
+        /* Snippet Display */
+        .snippet-section {
+            background: #1e1e1e;
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 900px;
+            border-radius: 10px;
+        }
+        
+        .snippet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .snippet-title {
+            color: #4a7c23;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .copy-btn {
+            background: #4a7c23;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .copy-btn:hover {
+            background: #3d6a1c;
+        }
+        
+        .copy-btn.copied {
+            background: #2d5016;
+        }
+        
+        .snippet-code {
+            background: #2d2d2d;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #f8f8f2;
+        }
+        
+        .snippet-code .comment {
+            color: #6272a4;
+        }
+        
+        .snippet-code .tag {
+            color: #ff79c6;
+        }
+        
+        .snippet-code .attr {
+            color: #50fa7b;
+        }
+        
+        .snippet-code .string {
+            color: #f1fa8c;
+        }
+        
+        .snippet-code .keyword {
+            color: #bd93f9;
+        }
+        
+        /* Footer */
+        footer {
+            background: #2d5016;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        footer a {
+            color: #90EE90;
+        }
+        
+        /* Demo Notice */
+        .demo-notice {
+            background: #fff3cd;
+            border: 2px dashed #ffc107;
+            padding: 1rem 2rem;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .demo-notice strong {
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-notice">
+        ⚠️ <strong>DEMO PAGE</strong> — This simulates your widget embedded on a website. Scroll down to see the snippet code. ⚠️
+    </div>
+    
+    <header>
+        <div class="logo">🌿 No Mow <span>Worries</span></div>
+        <nav>
+            <a href="#services">Services</a>
+            <a href="#quote">Get Quote</a>
+            <a href="#snippet">Snippet Code</a>
+        </nav>
+    </header>
+    
+    <section class="hero">
+        <h1>Professional Lawn Care in Aurora, CO</h1>
+        <p>Reliable, affordable lawn services so you can enjoy your weekends</p>
+        <a href="#quote" class="cta-button">Get Your Free Estimate</a>
+    </section>
+    
+    <section class="services" id="services">
+        <h2>Our Services</h2>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">🌾</div>
+                <h3>Weekly Mowing</h3>
+                <p>Professional mowing, trimming, edging, and debris cleanup every week.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🌱</div>
+                <h3>Fertilization</h3>
+                <p>Custom fertilization programs for a healthy, green lawn all season.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🍂</div>
+                <h3>Seasonal Cleanup</h3>
+                <p>Spring and fall cleanups to keep your property looking pristine.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">✨</div>
+                <h3>Aeration</h3>
+                <p>Core aeration to maximize water and fertilizer absorption.</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- SNIPPET CODE DISPLAY -->
+    <section class="snippet-section" id="snippet">
+        <div class="snippet-header">
+            <span class="snippet-title">📋 EMBED CODE — Copy this to your website</span>
+            <button class="copy-btn" onclick="copySnippet()">Copy Code</button>
+        </div>
+        <div class="snippet-code">
+<span class="comment">&lt;!-- No Mow Worries Estimate Widget --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">id</span>=<span class="string">"nmw-estimate-widget"</span><span class="tag">&gt;&lt;/div&gt;</span>
+<span class="tag">&lt;script&gt;</span>
+  (<span class="keyword">function</span>() {
+    <span class="keyword">var</span> iframe = document.createElement(<span class="string">'iframe'</span>);
+    iframe.src = <span class="string">'https://snap-pushing-starting-greatest.trycloudflare.com'</span>;
+    iframe.style.cssText = <span class="string">'width:100%;max-width:900px;height:800px;border:none;margin:0 auto;display:block;'</span>;
+    document.getElementById(<span class="string">'nmw-estimate-widget'</span>).appendChild(iframe);
+  })();
+<span class="tag">&lt;/script&gt;</span>
+<span class="comment">&lt;!-- End Widget Code --&gt;</span>
+        </div>
+    </section>
+    
+    <!-- THIS IS WHERE THE WIDGET IS EMBEDDED -->
+    <section class="quote-section" id="quote">
+        <h2>Get Your Free Estimate</h2>
+        <p>Enter your address below for an instant quote — no phone call required!</p>
+        
+        <!-- ========================================== -->
+        <!-- WIDGET EMBED CODE - WORKING EXAMPLE       -->
+        <!-- ========================================== -->
+        <div id="nmw-estimate-widget"></div>
+        <script>
+            (function() {
+                var iframe = document.createElement('iframe');
+                iframe.src = 'https://snap-pushing-starting-greatest.trycloudflare.com';
+                iframe.style.cssText = 'width:100%;max-width:900px;height:800px;border:none;margin:0 auto;display:block;';
+                document.getElementById('nmw-estimate-widget').appendChild(iframe);
+            })();
+        </script>
+        <!-- ========================================== -->
+        <!-- END WIDGET EMBED CODE                     -->
+        <!-- ========================================== -->
+        
+    </section>
+    
+    <footer id="contact">
+        <p>🌿 No Mow Worries Lawn Care | Aurora, CO</p>
+        <p>📧 <a href="mailto:nomowworriesco@gmail.com">nomowworriesco@gmail.com</a></p>
+        <p style="margin-top: 1rem; opacity: 0.7;">© 2025 No Mow Worries. All rights reserved.</p>
+    </footer>
+    
+    <script>
+        function copySnippet() {
+            const code = `<!-- No Mow Worries Estimate Widget -->
+<div id="nmw-estimate-widget"></div>
+<script>
+  (function() {
+    var iframe = document.createElement('iframe');
+    iframe.src = 'https://snap-pushing-starting-greatest.trycloudflare.com';
+    iframe.style.cssText = 'width:100%;max-width:900px;height:800px;border:none;margin:0 auto;display:block;';
+    document.getElementById('nmw-estimate-widget').appendChild(iframe);
+  })();
+<\/script>
+<!-- End Widget Code -->`;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.textContent = '✓ Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = 'Copy Code';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
