@@ -15,3 +15,4 @@ node_modules/
 # Test files
 test-*.js
 audit-*.js
+.vercel
