@@ -44,11 +44,11 @@
             padding: 40px 32px 120px;
         }
         
-        /* Embed mode - adds max-height with scroll to prevent overflow into host page */
+        /* Embed mode - let content grow naturally, iframe resizes to match */
         .embed-mode .container {
-            max-height: calc(100vh - 40px);
-            overflow-y: auto;
-            padding-bottom: 80px;
+            max-height: none;
+            overflow: visible;
+            padding-bottom: 40px;
         }
         
         /* Prevent container scrollbars when service dropdowns are open */
@@ -1225,35 +1225,244 @@
         
         .nested-field.show { display: block; }
         
+        /* Gate Width Slider */
+        .gate-slider-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .gate-slider-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .gate-slider-wrapper {
+            flex: 1;
+            position: relative;
+        }
+        
+        .gate-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 12px;
+            border-radius: 6px;
+            background: linear-gradient(to right, 
+                #dc2626 0%, 
+                #dc2626 30%, 
+                #22c55e 34%, 
+                #22c55e 100%);
+            outline: none;
+            cursor: pointer;
+            transition: opacity 0.15s;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.15);
+        }
+        
+        .gate-slider:hover {
+            opacity: 0.95;
+        }
+        
+        .gate-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--primary);
+            cursor: grab;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        
+        .gate-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+        }
+        
+        .gate-slider::-webkit-slider-thumb:active {
+            cursor: grabbing;
+            transform: scale(1.15);
+        }
+        
+        .gate-slider::-moz-range-thumb {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--primary);
+            cursor: grab;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        
+        .gate-slider::-moz-range-thumb:hover {
+            transform: scale(1.1);
+        }
+        
+        .gate-slider-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-top: 8px;
+            padding: 0 4px;
+        }
+        
+        .gate-slider-labels span:nth-child(2) {
+            color: #22c55e;
+            font-weight: 700;
+        }
+        
+        .gate-input-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 110px;
+        }
+        
+        .gate-input-group input {
+            width: 70px;
+            padding: 10px 12px;
+            font-size: 16px;
+            font-family: inherit;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            text-align: center;
+            transition: border-color 0.15s;
+        }
+        
+        .gate-input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .gate-input-group span {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        
+        .gate-slider-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: -4px;
+        }
+        
+        /* Live value display next to slider */
+        .gate-live-value {
+            display: none;
+            min-width: 60px;
+            padding: 10px 14px;
+            background: linear-gradient(135deg, var(--primary) 0%, #16a34a 100%);
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 10px;
+            text-align: center;
+            white-space: nowrap;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+        }
+        
+        /* Mobile optimizations for slider */
+        @media (max-width: 480px) {
+            .gate-slider::-webkit-slider-thumb {
+                width: 32px;
+                height: 32px;
+            }
+            
+            .gate-slider::-moz-range-thumb {
+                width: 32px;
+                height: 32px;
+            }
+            
+            .gate-slider-row {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 12px;
+            }
+            
+            .gate-slider-wrapper {
+                flex: 1;
+                min-width: 0;
+                order: 1;
+            }
+            
+            /* Hide the full input group on mobile, show compact live value on RIGHT */
+            .gate-input-group {
+                display: none;
+            }
+            
+            .gate-live-value {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                order: 2;
+                min-width: 65px;
+                height: 44px;
+            }
+            
+            .gate-slider-labels {
+                font-size: 11px;
+                font-weight: 500;
+            }
+            
+            .gate-slider-hint {
+                display: block;
+                font-size: 11px;
+                margin-top: 8px;
+            }
+        }
+
         /* Warning banners inside conditionals */
         .inline-warning {
             display: none;
-            margin-top: 10px;
-            padding: 12px 14px;
-            background: var(--warning-bg);
-            border-radius: 8px;
+            margin-top: 12px;
+            padding: 14px 16px;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 12px;
             font-size: 13px;
-            color: var(--warning-text);
+            color: #92400e;
+            border-left: 4px solid #f59e0b;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15);
         }
         
-        .inline-warning.show { display: block; }
+        .inline-warning.show { 
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
         
         .inline-warning.danger {
-            background: #fee2e2;
+            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
             color: #991b1b;
+            border-left-color: #ef4444;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15);
         }
         
         .inline-success {
             display: none;
-            margin-top: 10px;
-            padding: 12px 14px;
-            background: #dcfce7;
-            border-radius: 8px;
+            margin-top: 12px;
+            padding: 14px 16px;
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border-radius: 12px;
             font-size: 13px;
-            color: #166534;
+            color: #065f46;
+            border-left: 4px solid #10b981;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
         }
         
-        .inline-success.show { display: block; }
+        .inline-success.show { 
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
         
         /* Dog confirmation checkbox */
         .dog-confirm {
@@ -3222,9 +3431,23 @@
                     <!-- Gate follow-up questions -->
                     <div class="conditional-field" id="gateDetails">
                         <label>How wide is your gate?</label>
-                        <div class="inline-input">
-                            <input type="number" id="gateWidth" placeholder="36" min="1" max="120" onchange="checkGateWidth()">
-                            <span>inches</span>
+                        <div class="gate-slider-container">
+                            <div class="gate-slider-row">
+                                <div class="gate-slider-wrapper">
+                                    <input type="range" id="gateSlider" class="gate-slider" min="0" max="100" value="36" oninput="syncGateFromSlider(this.value)">
+                                    <div class="gate-slider-labels">
+                                        <span>0"</span>
+                                        <span>32" min</span>
+                                        <span>100"</span>
+                                    </div>
+                                </div>
+                                <div class="gate-live-value" id="gateLiveValue">36"</div>
+                                <div class="gate-input-group">
+                                    <input type="number" id="gateWidth" placeholder="36" min="0" max="120" oninput="syncGateFromInput(this.value)">
+                                    <span>inches</span>
+                                </div>
+                            </div>
+                            <div class="gate-slider-hint">Slide or type to set gate width</div>
                         </div>
                         
                         <div class="inline-warning" id="gateWarning">
@@ -4708,6 +4931,23 @@
             }
         }
         
+        // Sync gate slider and input bidirectionally
+        function syncGateFromSlider(value) {
+            const numValue = parseInt(value) || 0;
+            document.getElementById('gateWidth').value = numValue;
+            document.getElementById('gateLiveValue').textContent = numValue + '"';
+            checkGateWidth();
+        }
+        
+        function syncGateFromInput(value) {
+            const numValue = parseInt(value) || 0;
+            const slider = document.getElementById('gateSlider');
+            // Clamp to slider range (0-100) for visual, but allow higher values in input
+            slider.value = Math.min(Math.max(numValue, 0), 100);
+            document.getElementById('gateLiveValue').textContent = numValue + '"';
+            checkGateWidth();
+        }
+        
         function checkGateWidth() {
             const width = parseInt(document.getElementById('gateWidth').value);
             gateWidth = width || null;
@@ -4833,6 +5073,8 @@
                 toggle.classList.add('off');
                 content.classList.add('hidden');
             }
+            // Trigger height update after toggle
+            setTimeout(triggerHeightUpdate, 50);
         }
         
         // Toggle photo section (user clicks the toggle)
@@ -4902,10 +5144,18 @@
             const preview = document.getElementById('photoPreview');
             preview.innerHTML = photos.map((p, i) => `
                 <div class="photo-item">
-                    <img src="${p.data}" alt="${p.name}">
+                    <img src="${p.data}" alt="${p.name}" onload="triggerHeightUpdate()">
                     <button type="button" class="photo-remove" onclick="removePhoto(${i})">×</button>
                 </div>
             `).join('');
+            // Trigger height update after DOM change
+            triggerHeightUpdate();
+        }
+        
+        // Global function to trigger iframe height update
+        function triggerHeightUpdate() {
+            const height = document.body.scrollHeight;
+            window.parent.postMessage({ type: 'nmw-widget-height', height: height }, '*');
         }
         
         function updatePhotoCount() {
@@ -6617,6 +6867,28 @@
                     setTimeout(sendHeight, 200);
                 };
             }
+            
+            // ========================================
+            // LISTEN FOR PARENT PAGE MESSAGES
+            // ========================================
+            window.addEventListener('message', function(event) {
+                // Handle parent page resize notification
+                if (event.data && event.data.type === 'pageResize') {
+                    console.log('📨 Parent page resized:', event.data.pageHeight || 'height not provided');
+                    // Re-send our height to confirm sync
+                    sendHeight();
+                }
+                
+                // Handle parent requesting height update
+                if (event.data && event.data.type === 'requestHeight') {
+                    sendHeight();
+                }
+                
+                // Log for debugging
+                if (event.data && event.data.type) {
+                    console.log('Widget received message:', event.data.type);
+                }
+            });
         })();
     </script>
 </body>

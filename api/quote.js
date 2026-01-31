@@ -1,4 +1,4 @@
-// Vercel serverless function to proxy quote requests to local server via Cloudflare tunnel
+// Vercel serverless function to proxy quote requests to local server via Tailscale Funnel
 export default async function handler(req, res) {
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -13,13 +13,8 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
   
-  // Get the backend URL from environment variable
-  const backendUrl = process.env.BACKEND_URL;
-  
-  if (!backendUrl) {
-    console.error('BACKEND_URL not configured');
-    return res.status(500).json({ error: 'Backend not configured' });
-  }
+  // Use Tailscale Funnel URL (stable, no env var needed)
+  const backendUrl = process.env.BACKEND_URL || 'https://ip-172-31-3-196.tail8c8ee6.ts.net';
   
   try {
     const response = await fetch(`${backendUrl}/api/quote-request`, {

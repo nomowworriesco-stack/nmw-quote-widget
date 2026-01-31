@@ -16,3 +16,4 @@ node_modules/
 test-*.js
 audit-*.js
 .vercel
+.env*.local
