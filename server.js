@@ -132,9 +132,16 @@ const SERVICE_LABELS = {
     'biweekly': 'Bi-Weekly Mowing',
     'onetime': 'One-Time Mowing',
     
-    // Lawn services
+    // Lawn services - Aeration types
     'aeration': 'Aeration',
+    'single': 'Lawn Aeration (Single Pass)',
+    'double': 'Lawn Aeration (Double Pass)',
+    
+    // Overseeding types
     'overseeding': 'Overseeding',
+    'standard': 'Standard Overseeding',
+    'complete': 'Overseeding + Peat Moss + Starter Fertilizer',
+    
     'weed_control': 'Weed Control',
     
     // Fertilization frequencies
@@ -192,6 +199,46 @@ function normalizeServices(services) {
     }
     
     return [];
+}
+
+// Weed Man services (handled by our partner, not by NMW directly)
+const WEEDMAN_SERVICES = ['weed_control', 'fertilizer', 'fertilization', 'insect_control', 'weed_control_fertilizer', 'insect_control_only'];
+
+// Check if a quote request is Weed Man-only (no NMW services)
+function isWeedManOnly(services) {
+    if (!services) return false;
+    
+    let hasWeedMan = false;
+    let hasNmw = false;
+    
+    const checkService = (key, value) => {
+        const isWeedManService = WEEDMAN_SERVICES.includes(key) || 
+                                  WEEDMAN_SERVICES.includes(value) ||
+                                  key === 'weedMan' ||
+                                  (key === 'weed_control' || key === 'fertilizer' || key === 'insect_control');
+        if (value && isWeedManService) {
+            hasWeedMan = true;
+        } else if (value && !isWeedManService && key !== 'weedManPayment') {
+            hasNmw = true;
+        }
+    };
+    
+    if (Array.isArray(services)) {
+        services.forEach(s => checkService(s, true));
+    } else if (typeof services === 'object') {
+        for (const [key, value] of Object.entries(services)) {
+            // Skip nested weedMan object, check its contents
+            if (key === 'weedMan' && typeof value === 'object') {
+                for (const [wk, wv] of Object.entries(value)) {
+                    if (wk !== 'payment' && wv) hasWeedMan = true;
+                }
+            } else {
+                checkService(key, value);
+            }
+        }
+    }
+    
+    return hasWeedMan && !hasNmw;
 }
 
 // Discord webhook for notifications (posts to #general)
@@ -368,9 +415,12 @@ async function sendDiscordNotification(quote, snapshotPath, photoPaths, copilotR
     if (DISCORD_WEBHOOK) {
         try {
             const services = normalizeServices(quote.services);
+            const weedManOnly = isWeedManOnly(quote.services);
             
             // Build the message content
-            let content = `🆕 **New Quote Request**\n\n`;
+            let content = weedManOnly 
+                ? `🌿 **Weed Man Request** *(awaiting Weed Man pricing)*\n\n`
+                : `🆕 **New Quote Request**\n\n`;
             content += `**Name:** ${quote.name || 'Not provided'}\n`;
             content += `**Email:** ${quote.email || 'Not provided'}\n`;
             content += `**Phone:** ${quote.phone || 'Not provided'}\n`;
@@ -416,6 +466,12 @@ async function sendDiscordNotification(quote, snapshotPath, photoPaths, copilotR
                 }
                 content += ` ✅\n`;
             }
+            
+            // Add special note for Weed Man-only requests
+            if (weedManOnly) {
+                content += `\n⏳ **Action Required:** Contact Weed Man for pricing before sending estimate.\n`;
+            }
+            
             content += `\n<@${DISCORD_USER_ID}> <@${CLAWD_USER_ID}>`;
             
             const webhookData = {

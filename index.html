@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Get a Quote | No Mow Worries</title>
+    <title>Get a Quote | No Mow Worries Lawn Care</title>
+    <link rel="icon" type="image/png" href="https://nomowworriesco.com/wp-content/uploads/2023/09/Untitled-design-2024-02-27T142837.736-150x150.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://nomowworriesco.com/wp-content/uploads/2023/09/Untitled-design-2024-02-27T142837.736.png" sizes="192x192">
+    <link rel="apple-touch-icon" href="https://nomowworriesco.com/wp-content/uploads/2023/09/Untitled-design-2024-02-27T142837.736.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -36,15 +39,62 @@
         }
         
         .container {
-            max-width: 900px;
+            max-width: 1100px;
             margin: 0 auto;
-            padding: 40px 24px 120px;
+            padding: 40px 32px 120px;
+        }
+        
+        /* Embed mode - adds max-height with scroll to prevent overflow into host page */
+        .embed-mode .container {
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+            padding-bottom: 80px;
+        }
+        
+        .embed-mode .form-content {
+            max-height: none;
+        }
+        
+        /* Remove any possible scrollbar issues */
+        html, body {
+            overflow-x: hidden;
+        }
+        
+        /* Mobile: ensure content flows naturally without nested scroll containers */
+        @media (max-width: 768px) {
+            html, body {
+                height: auto;
+                min-height: 100%;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .container {
+                height: auto;
+                min-height: auto;
+                overflow: visible;
+            }
         }
         
         /* Header */
         .header {
             text-align: center;
             margin-bottom: 24px;
+        }
+        
+        .brand-logo {
+            margin-bottom: 16px;
+        }
+        
+        .nmw-logo {
+            max-width: 200px;
+            height: auto;
+        }
+        
+        @media (max-width: 480px) {
+            .nmw-logo {
+                max-width: 160px;
+            }
         }
         
         .logo {
@@ -142,29 +192,32 @@
             background: var(--card-bg);
             border-radius: var(--radius);
             border: 1px solid var(--border);
-            padding: 32px;
-            margin-bottom: 24px;
+            padding: 24px 28px;
+            margin-bottom: 20px;
         }
         
         .card-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 4px;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 6px;
             color: var(--text);
+            text-align: center;
+            letter-spacing: -0.3px;
         }
         
         .card-desc {
             font-size: 14px;
             color: var(--text-muted);
             margin-bottom: 20px;
+            text-align: center;
         }
         
         /* Form Fields */
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
+            gap: 16px;
+            margin-bottom: 16px;
         }
         
         .form-row.single { grid-template-columns: 1fr; }
@@ -181,8 +234,8 @@
         .field select,
         .field textarea {
             width: 100%;
-            padding: 16px 18px;
-            font-size: 16px;
+            padding: 14px 16px;
+            font-size: 15px;
             font-family: inherit;
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
@@ -201,12 +254,240 @@
             box-shadow: 0 0 0 3px var(--green-light);
         }
         
-        /* Service Selection - Primary buttons */
+        /* Package Quick-Select */
+        .packages-wrap {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            align-items: stretch;
+        }
+        
+        .package-btn {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 22px 24px 24px;
+            width: 260px;
+            min-height: 320px;
+            flex-shrink: 0;
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+        
+        /* Hover only on devices that support true hover (desktop) */
+        @media (hover: hover) and (pointer: fine) {
+            .package-btn:hover {
+                border-color: var(--green);
+                background: linear-gradient(180deg, rgba(34, 197, 94, 0.04) 0%, transparent 100%);
+                transform: translateY(-2px);
+            }
+        }
+        
+        /* Active state for touch feedback on mobile */
+        .package-btn:active {
+            border-color: var(--green);
+            background: linear-gradient(180deg, rgba(34, 197, 94, 0.04) 0%, transparent 100%);
+        }
+        
+        .package-btn.selected {
+            border-color: var(--green);
+            background: linear-gradient(180deg, rgba(34, 197, 94, 0.08) 0%, rgba(34, 197, 94, 0.02) 100%);
+            box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1);
+        }
+        
+        /* Package name and tagline */
+        .package-name {
+            width: 100%;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+            letter-spacing: -0.3px;
+        }
+        
+        .package-tagline {
+            width: 100%;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: block;
+        }
+        
+        /* Package description bullet list - SERVICES */
+        .package-desc-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: left;
+            font-size: 12px;
+            color: var(--text);
+            line-height: 1.7;
+            width: 100%;
+        }
+        
+        .package-desc-list li {
+            position: relative;
+            padding-left: 18px;
+        }
+        
+        .package-desc-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--green);
+            font-weight: 600;
+        }
+        
+        /* Package perks section - differentiator from services */
+        .package-perks {
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--border);
+            width: 100%;
+        }
+        
+        .package-perks-label {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            display: block;
+        }
+        
+        .package-perks-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: left;
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+        
+        .package-perks-list li {
+            position: relative;
+            padding-left: 16px;
+        }
+        
+        .package-perks-list li::before {
+            content: "+";
+            position: absolute;
+            left: 0;
+            color: var(--green);
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        /* Service pill highlight when package is hovered */
+        .service-pill.package-highlight {
+            border-color: var(--green) !important;
+            background: linear-gradient(180deg, rgba(34, 197, 94, 0.08) 0%, rgba(34, 197, 94, 0.02) 100%) !important;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12) !important;
+        }
+        
+        /* Premium package customize hint animation */
+        @keyframes premiumHintPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.5); }
+            50% { box-shadow: 0 0 0 8px rgba(251, 191, 36, 0); }
+        }
+        
+        .service-pill.premium-customize-hint {
+            animation: premiumHintPulse 1s ease-in-out 3;
+            border-color: #fbbf24 !important;
+        }
+        
+        /* package-name and package-tagline styles moved to package section above */
+        
+        .package-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: center;
+            line-height: 1.5;
+            max-width: 200px;
+        }
+        
+        .package-badge {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+        
+        .package-badge.popular {
+            background: linear-gradient(135deg, var(--green) 0%, #16a34a 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.4);
+        }
+        
+        .package-badge.value {
+            background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(30, 58, 95, 0.4);
+        }
+        
+        .package-badge svg {
+            width: 12px;
+            height: 12px;
+        }
+        
+        .package-badge.value svg {
+            display: none;
+        }
+        
+        .services-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 24px 0 20px;
+            color: var(--green);
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .services-divider span {
+            /* Clean text - no oval/pill */
+        }
+        
+        .services-divider::before,
+        .services-divider::after {
+            content: '';
+            flex: 1;
+            max-width: 80px;
+            height: 1px;
+            background: var(--border);
+            margin: 0 16px;
+        }
+        
+        /* Service Selection - Primary buttons (smaller than package cards) */
         .services-wrap {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
             justify-content: center;
+            max-width: 700px;
+            margin: 0 auto;
         }
         
         /* Service with dropdown container */
@@ -221,13 +502,13 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 10px 18px;
-            min-height: 44px;
-            min-width: 150px;
+            padding: 8px 14px;
+            min-height: 38px;
+            min-width: 120px;
             background: var(--card-bg);
             border: 2px solid var(--border);
             border-radius: 50px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             font-family: inherit;
             color: var(--text);
@@ -237,7 +518,16 @@
             text-align: center;
         }
         
-        .service-pill:hover {
+        /* Hover only on devices that support true hover (desktop) */
+        @media (hover: hover) and (pointer: fine) {
+            .service-pill:hover {
+                background: var(--green-hover);
+                border-color: var(--green-hover);
+            }
+        }
+        
+        /* Active state for touch feedback */
+        .service-pill:active {
             background: var(--green-hover);
             border-color: var(--green-hover);
         }
@@ -246,6 +536,57 @@
             background: var(--green-light);
             border-color: var(--green);
             color: var(--green-dark);
+        }
+        
+        /* Mobile: prevent sticky hover states and ensure clean touch behavior */
+        @media (hover: none) and (pointer: coarse) {
+            .service-pill {
+                -webkit-tap-highlight-color: transparent;
+                touch-action: manipulation;
+            }
+            
+            /* Force immediate visual reset on deselect */
+            .service-pill:not(.selected):not(.package-highlight) {
+                background: var(--card-bg) !important;
+                border-color: var(--border) !important;
+                color: var(--text) !important;
+                box-shadow: none !important;
+            }
+            
+            /* Only apply light green when actually selected */
+            .service-pill.selected {
+                background: var(--green-light) !important;
+                border-color: var(--green) !important;
+                color: var(--green-dark) !important;
+            }
+            
+            /* Package buttons - prevent sticky hover */
+            .package-btn {
+                -webkit-tap-highlight-color: transparent;
+                touch-action: manipulation;
+            }
+            
+            /* Reset package buttons that aren't selected */
+            .package-btn:not(.selected) {
+                border-color: var(--border) !important;
+                background: var(--card-bg) !important;
+                transform: none !important;
+            }
+        }
+        
+        /* Always-visible description under pill */
+        .pill-desc {
+            display: block;
+            font-size: 11px;
+            font-weight: 400;
+            color: var(--text-muted);
+            margin-top: 2px;
+            text-align: center;
+        }
+        
+        .service-pill.selected .pill-desc {
+            color: var(--green-dark);
+            opacity: 0.8;
         }
         
         /* Sub-label inside pill (shows when selected) */
@@ -261,6 +602,16 @@
         
         .service-pill.selected .pill-sublabel.show {
             display: block;
+        }
+        
+        /* When fertilization is included via Weed Control + Fertilizer */
+        .service-pill.included-via-weedman {
+            opacity: 0.85;
+            pointer-events: none;
+        }
+        .service-pill.included-via-weedman .pill-sublabel {
+            color: #16a34a;
+            font-weight: 500;
         }
         
         /* Hover tooltip for service pills */
@@ -294,9 +645,12 @@
             border-right-color: #1f2937;
         }
         
-        .service-pill:hover .pill-tooltip {
-            opacity: 1;
-            visibility: visible;
+        /* Only show tooltip on true hover (desktop) */
+        @media (hover: hover) and (pointer: fine) {
+            .service-pill:hover .pill-tooltip {
+                opacity: 1;
+                visibility: visible;
+            }
         }
         
         /* Service dropdown (shared by mowing, fertilization, mulch, bush trimming) */
@@ -333,7 +687,15 @@
             color: var(--text);
         }
         
-        .dropdown-option:hover {
+        /* Hover only on devices that support true hover (desktop) */
+        @media (hover: hover) and (pointer: fine) {
+            .dropdown-option:hover {
+                background: var(--green-light);
+            }
+        }
+        
+        /* Active state for touch feedback */
+        .dropdown-option:active {
             background: var(--green-light);
         }
         
@@ -349,8 +711,24 @@
             color: var(--text-muted);
         }
         
-        .dropdown-option.disabled:hover {
-            background: white;
+        /* Only apply hover to disabled on desktop */
+        @media (hover: hover) and (pointer: fine) {
+            .dropdown-option.disabled:hover {
+                background: white;
+            }
+        }
+        
+        /* Mobile: prevent sticky hover states on dropdown options */
+        @media (hover: none) and (pointer: coarse) {
+            .dropdown-option {
+                -webkit-tap-highlight-color: transparent;
+                touch-action: manipulation;
+            }
+            
+            /* Reset non-selected options to white */
+            .dropdown-option:not(.selected):not(:active) {
+                background: white !important;
+            }
         }
         
         .dropdown-option-content {
@@ -381,6 +759,187 @@
         
         .dropdown-option.selected .dropdown-deselect {
             display: block;
+        }
+        
+        /* Info note inside dropdown */
+        .dropdown-info {
+            padding: 10px 14px;
+            font-size: 10px;
+            color: var(--text-muted);
+            background: #f9fafb;
+            border-top: 1px solid var(--border);
+            line-height: 1.4;
+        }
+        
+        /* Weed Man Partner Services Multi-Select Dropdown */
+        .weedman-dropdown {
+            min-width: 280px;
+            padding: 0;
+            border-radius: 12px;
+            overflow: visible;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+        }
+        
+        .weedman-header {
+            padding: 12px 14px;
+            background: linear-gradient(135deg, #f8faf8 0%, #f0f4f0 100%);
+            border-bottom: 1px solid #e8ece8;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            overflow: visible;
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* Fix tooltip clipping inside weedman dropdown */
+        .weedman-partner-badge {
+            overflow: visible;
+        }
+        
+        .weedman-header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .weedman-header-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .weedman-header-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .weedman-partner-badge {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+        
+        .weedman-partner-badge .partner-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #374151;
+            letter-spacing: 0;
+            line-height: 1.3;
+        }
+        
+        .weedman-partner-badge .partner-link {
+            font-size: 11px;
+            font-weight: 500;
+            color: #6b7280;
+            line-height: 1.3;
+        }
+        
+        .weedman-partner-badge .partner-link a {
+            color: #16a34a;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+            font-weight: 600;
+        }
+        
+        .weedman-partner-badge .partner-link a:hover {
+            color: #15803d;
+        }
+        
+        .weedman-options {
+            padding: 6px 0;
+            max-height: 320px;
+            overflow-y: auto;
+        }
+        
+        .weedman-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            margin: 0;
+            background: white;
+        }
+        
+        .weedman-option:last-of-type {
+            border-bottom: none;
+        }
+        
+        @media (hover: hover) and (pointer: fine) {
+            .weedman-option:hover {
+                background: #f8faf8;
+            }
+        }
+        
+        .weedman-option:active {
+            background: #f0f4f0;
+        }
+        
+        .weedman-option input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--green);
+            cursor: pointer;
+            flex-shrink: 0;
+            margin-top: 1px;
+            border-radius: 4px;
+        }
+        
+        .weedman-option-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        
+        .weedman-option-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1a1a1a;
+            line-height: 1.3;
+        }
+        
+        .weedman-option-note {
+            font-size: 12px;
+            color: #6b7280;
+            line-height: 1.3;
+        }
+        
+        .weedman-done-btn {
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: inherit;
+            background: var(--green);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        
+        .weedman-done-btn svg {
+            width: 12px;
+            height: 12px;
+            fill: white;
+        }
+        
+        .weedman-done-btn:hover {
+            background: var(--green-dark);
+        }
+        
+        .weedman-done-btn:active {
+            transform: scale(0.98);
         }
         
         /* Legacy support: mowing-dropdown class */
@@ -493,6 +1052,19 @@
         .toggle-with-tooltip:hover .toggle-tooltip {
             opacity: 1;
             visibility: visible;
+        }
+        
+        /* Conditional Sections - Property Details & Notes hidden until service selected */
+        .conditional-section {
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .conditional-section.visible {
+            display: block !important;
+            opacity: 1;
+            transform: translateY(0);
         }
         
         /* Conditional Fields - cleaned up, no green bar */
@@ -698,14 +1270,18 @@
         .photo-section.show { display: block; }
         
         .photo-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 16px;
+            position: relative;
+            margin-bottom: 6px;
         }
         
         .photo-header .card-title {
             margin-bottom: 0;
+        }
+        
+        .photo-header .photo-toggle {
+            position: absolute;
+            top: 0;
+            right: 0;
         }
         
         .photo-toggle {
@@ -780,7 +1356,7 @@
         .photo-modal {
             background: white;
             border-radius: var(--radius);
-            max-width: 900px;
+            max-width: 1000px;
             width: 100%;
             padding: 28px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.2);
@@ -857,7 +1433,7 @@
         .upload-area {
             border: 2px dashed var(--border);
             border-radius: var(--radius-sm);
-            padding: 36px 24px;
+            padding: 20px 16px;
             text-align: center;
             cursor: pointer;
             transition: all 0.15s;
@@ -874,19 +1450,19 @@
         }
         
         .upload-icon {
-            width: 52px;
-            height: 52px;
+            width: 40px;
+            height: 40px;
             background: var(--green-light);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 14px;
+            margin: 0 auto 10px;
         }
         
         .upload-icon svg {
-            width: 26px;
-            height: 26px;
+            width: 20px;
+            height: 20px;
             color: var(--green);
         }
         
@@ -1155,40 +1731,160 @@
             background: var(--green-dark);
         }
         
-        /* Mulch Indicator - Subtle inline hint */
-        .mulch-indicator {
-            padding: 8px 12px;
-            margin-top: 10px;
+        /* Measurement Importance Notice - Clean professional design */
+        .measurement-notice {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            margin-bottom: 20px;
+        }
+        
+        .measurement-notice-header {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: var(--text-muted);
-            background: #f9fafb;
-            border-radius: 6px;
-            border: 1px solid var(--border);
+            gap: 12px;
+            margin-bottom: 16px;
         }
-        .mulch-indicator-icon {
-            width: 18px;
-            height: 18px;
+        
+        .measurement-notice-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--green-light) 0%, #bbf7d0 100%);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--text-muted);
             flex-shrink: 0;
         }
-        .mulch-indicator-icon svg {
-            width: 14px;
-            height: 14px;
+        
+        .measurement-notice-icon svg {
+            width: 24px;
+            height: 24px;
+            color: var(--green);
         }
-        .mulch-indicator-text {
-            font-size: 12px;
+        
+        .measurement-notice-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.3px;
+        }
+        
+        .measurement-notice-subtitle {
+            font-size: 13px;
             color: var(--text-muted);
-            line-height: 1.3;
+            margin-top: 2px;
         }
-        .mulch-indicator-text strong {
+        
+        .measurement-notice-body {
+            font-size: 14px;
+            color: var(--text);
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+        
+        .measurement-services {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 16px 0;
+        }
+        
+        .measurement-service-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #f3f4f6;
+            border-radius: 20px;
+            font-size: 12px;
             font-weight: 500;
             color: var(--text);
+        }
+        
+        .measurement-service-tag svg {
+            width: 14px;
+            height: 14px;
+            color: var(--green);
+        }
+        
+        .measurement-notice-footer {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 14px 16px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border-left: 3px solid var(--green);
+        }
+        
+        .measurement-notice-footer-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            color: var(--green);
+        }
+        
+        .measurement-notice-footer-text {
+            font-size: 13px;
+            color: #475569;
+            line-height: 1.5;
+        }
+        
+        .measurement-notice-footer-text strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+        
+        /* Mulch Indicator - Clean notice (no animation) */
+        .mulch-indicator {
+            padding: 12px 16px;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: #92400e;
+            background: #fffbeb;
+            border-radius: 8px;
+            border: 1px solid #fcd34d;
+        }
+        
+        .mulch-indicator-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #d97706;
+            flex-shrink: 0;
+        }
+        
+        .mulch-indicator-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .mulch-indicator-text {
+            font-size: 13px;
+            color: #92400e;
+            line-height: 1.4;
+        }
+        
+        .mulch-indicator-text strong {
+            font-weight: 600;
+            color: #78350f;
+        }
+        
+        /* Mulch button highlight when mulch needs measuring - subtle, no animation */
+        .map-btn.mulch-needs-attention {
+            background: #fffbeb;
+            border-color: #fcd34d;
+            color: #92400e;
+        }
+        .map-btn.mulch-needs-attention svg circle {
+            fill: #d97706;
         }
         
         /* Mulch Calculator - Compact Design */
@@ -1299,7 +1995,7 @@
             font-size: 10px;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.5px;
         }
         
         /* Buttons */
@@ -1387,6 +2083,19 @@
             color: var(--text-muted);
             font-size: 15px;
             line-height: 1.6;
+        }
+        
+        .success-logo {
+            margin-bottom: 8px;
+        }
+        
+        /* Widget Footer */
+        .widget-footer {
+            text-align: center;
+            padding: 24px 16px;
+            margin-top: 32px;
+            font-size: 12px;
+            color: var(--text-light);
         }
         
         /* Summary */
@@ -1712,27 +2421,350 @@
             color: var(--text);
         }
         
+        /* Package Configuration Modal */
+        .package-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .package-modal-overlay.show {
+            display: flex;
+        }
+        
+        .package-modal {
+            background: white;
+            border-radius: var(--radius);
+            max-width: 480px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .package-modal-header {
+            background: white;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .package-modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 2px;
+        }
+        
+        .package-modal-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        
+        .package-modal-body {
+            padding: 24px;
+        }
+        
+        .package-section {
+            margin-bottom: 24px;
+        }
+        
+        .package-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .package-section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .package-section-icon {
+            width: 20px;
+            height: 20px;
+            background: var(--green-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+        }
+        
+        /* Accordion/Collapsible Section */
+        .package-accordion {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+        }
+        
+        .package-accordion-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            background: #f9fafb;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        
+        .package-accordion-header:hover {
+            background: #f3f4f6;
+        }
+        
+        .package-accordion-left {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        
+        .package-accordion-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        .package-accordion-partner {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        
+        .package-accordion-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .package-accordion-count {
+            font-size: 12px;
+            color: var(--text-muted);
+            background: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+        
+        .package-accordion-chevron {
+            width: 20px;
+            height: 20px;
+            color: var(--text-muted);
+            transition: transform 0.2s;
+        }
+        
+        .package-accordion.open .package-accordion-chevron {
+            transform: rotate(180deg);
+        }
+        
+        .package-accordion-body {
+            display: none;
+            border-top: 1px solid var(--border);
+        }
+        
+        .package-accordion.open .package-accordion-body {
+            display: block;
+        }
+        
+        .package-accordion-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-bottom: 1px solid #f3f4f6;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        
+        .package-accordion-item:last-child {
+            border-bottom: none;
+        }
+        
+        .package-accordion-item:hover {
+            background: #fafafa;
+        }
+        
+        .package-accordion-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--green);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        
+        .package-accordion-item-content {
+            flex: 1;
+        }
+        
+        .package-accordion-item-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+        }
+        
+        .package-accordion-item-note {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 1px;
+        }
+        
+        /* Package Select Dropdown */
+        .package-select {
+            width: 100%;
+            padding: 12px 14px;
+            font-size: 14px;
+            font-family: inherit;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: white;
+            color: var(--text);
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M2.5 4.5L6 8l3.5-3.5'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+        }
+        
+        .package-select:focus {
+            outline: none;
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+        }
+        
+        /* Package Checkbox List */
+        .package-checkbox-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .package-checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: #f9fafb;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        
+        .package-checkbox-item:hover {
+            background: var(--green-light);
+        }
+        
+        .package-checkbox-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--green);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        
+        .package-checkbox-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+        
+        .package-checkbox-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+        }
+        
+        .package-checkbox-note {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+        
+        .package-modal-footer {
+            padding: 16px 24px;
+            background: #f9fafb;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        
+        .package-modal-btn {
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        
+        .package-modal-btn.cancel {
+            background: white;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        
+        .package-modal-btn.cancel:hover {
+            background: #f3f4f6;
+        }
+        
+        .package-modal-btn.done {
+            background: var(--green);
+            color: white;
+            border: none;
+            flex: 1;
+        }
+        
+        .package-modal-btn.done:hover {
+            background: var(--green-dark);
+        }
+        
         /* Responsive */
         @media (max-width: 768px) {
             .container { max-width: 100%; padding: 32px 20px 100px; }
             .photo-modal { max-width: 95%; }
+            .package-modal { max-width: 95%; }
         }
         
         @media (max-width: 480px) {
             .form-row { grid-template-columns: 1fr; }
             .container { padding: 24px 16px 100px; }
             .step span { display: none; }
-            .service-pill { font-size: 13px; padding: 10px 14px; min-width: 130px; }
+            .service-pill { font-size: 12px; padding: 7px 12px; min-width: 100px; }
             .info-tooltip { width: 200px; }
+            .packages-wrap { flex-direction: column; align-items: center; gap: 12px; }
+            .package-btn { width: 100%; max-width: 320px; }
         }
     </style>
     <!-- html2canvas for map screenshots -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
+    <script>
+        // Auto-detect embed mode (in iframe or ?embed=true)
+        (function() {
+            const isInIframe = window.self !== window.top;
+            const urlParams = new URLSearchParams(window.location.search);
+            const embedParam = urlParams.get('embed');
+            
+            if (isInIframe || embedParam === 'true') {
+                document.body.classList.add('embed-mode');
+            }
+        })();
+    </script>
     <div class="container">
         <!-- Header -->
         <div class="header">
+            <div class="brand-logo">
+                <img src="https://nomowworriesco.com/wp-content/uploads/2023/09/BB788C6C-FC2A-4717-A09F-F81F647D4BA9-removebg-preview-e1707662407808.png" alt="No Mow Worries Lawn Care" class="nmw-logo">
+            </div>
             <h1>Get Your Free Quote</h1>
             <p>Takes about 2 minutes</p>
         </div>
@@ -1814,8 +2846,81 @@
             
             <!-- Services -->
             <div class="card">
-                <div class="card-title">What do you need?</div>
-                <div class="card-desc">Select all that apply</div>
+                <div class="card-title">Select Your Services</div>
+                <div class="card-desc">Choose a package or pick individual services</div>
+                
+                <!-- Package Quick-Select -->
+                <div class="packages-wrap">
+                    <button type="button" class="package-btn" data-package="essential" onclick="selectPackage('essential')" onmouseenter="highlightPackageServices('essential')" onmouseleave="unhighlightPackageServices()">
+                        <span class="package-name">Essentials</span>
+                        <span class="package-tagline">Just the basics, done right</span>
+                        <ul class="package-desc-list">
+                            <li>Weekly Mowing</li>
+                            <li>Lawn Aeration</li>
+                            <li>Overseeding</li>
+                            <li>Weed Control + Fertilizer</li>
+                        </ul>
+                        <div class="package-perks">
+                            <span class="package-perks-label">Included</span>
+                            <ul class="package-perks-list">
+                                <li>Reliable scheduling</li>
+                                <li>Cancel any time</li>
+                                <li>Card on file</li>
+                                <li>Customer portal access</li>
+                            </ul>
+                        </div>
+                    </button>
+                    <button type="button" class="package-btn" data-package="complete" onclick="selectPackage('complete')" onmouseenter="highlightPackageServices('complete')" onmouseleave="unhighlightPackageServices()">
+                        <span class="package-badge popular">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                            Most Popular
+                        </span>
+                        <span class="package-name">Complete</span>
+                        <span class="package-tagline">Full-service lawn care</span>
+                        <ul class="package-desc-list">
+                            <li>Everything in Essentials</li>
+                            <li>Bush Trimming</li>
+                            <li>Power Raking</li>
+                        </ul>
+                        <div class="package-perks">
+                            <span class="package-perks-label">Included</span>
+                            <ul class="package-perks-list">
+                                <li>Pre-scheduled services</li>
+                                <li>Price locked all year</li>
+                                <li>Cancel any time</li>
+                                <li>Card on file</li>
+                                <li>Customer portal access</li>
+                            </ul>
+                        </div>
+                    </button>
+                    <button type="button" class="package-btn" data-package="total" onclick="selectPackage('total')" onmouseenter="highlightPackageServices('total')" onmouseleave="unhighlightPackageServices()">
+                        <span class="package-badge value">
+                            VIP
+                        </span>
+                        <span class="package-name">Premium</span>
+                        <span class="package-tagline">White-glove lawn care</span>
+                        <ul class="package-desc-list">
+                            <li>All services included</li>
+                            <li>Bush Trimming</li>
+                            <li>Mulch refresh included</li>
+                        </ul>
+                        <div class="package-perks">
+                            <span class="package-perks-label">Included</span>
+                            <ul class="package-perks-list">
+                                <li>Priority scheduling</li>
+                                <li>Priority support</li>
+                                <li>Price locked all year</li>
+                                <li>Cancel any time</li>
+                                <li>Card on file</li>
+                                <li>Customer portal access</li>
+                            </ul>
+                        </div>
+                    </button>
+                </div>
+                
+                <div class="services-divider">
+                    <span>or select individual services</span>
+                </div>
                 
                 <div class="services-wrap">
                     <!-- Mowing Service with dropdown -->
@@ -1839,24 +2944,65 @@
                                 </span>
                                 <span class="dropdown-deselect">×</span>
                             </button>
-                            <button type="button" class="dropdown-option" data-value="onetime" onclick="selectServiceOption('mowing', 'onetime', 'One-Time Mow')">
+                            <button type="button" class="dropdown-option disabled" data-value="onetime" disabled>
                                 <span class="dropdown-option-content">
                                     One-Time Mow
-                                    <span class="dropdown-note">$115 minimum</span>
+                                    <span class="dropdown-note">We do not offer one-time mowing</span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Aeration with pass options -->
+                    <div class="service-with-dropdown">
+                        <button type="button" class="service-pill" id="pillAeration" onclick="toggleServiceDropdown('aeration')">
+                            <span class="pill-label">Lawn Aeration</span>
+                            <span class="pill-sublabel" id="aerationSublabel"></span>
+                        </button>
+                        <div class="service-dropdown" id="aerationDropdown">
+                            <button type="button" class="dropdown-option" data-value="single" onclick="selectServiceOption('aeration', 'single', 'Single Pass')">
+                                <span class="dropdown-option-content">
+                                    Single Pass
+                                    <span class="dropdown-note">Standard service</span>
+                                </span>
+                                <span class="dropdown-deselect">×</span>
+                            </button>
+                            <button type="button" class="dropdown-option" data-value="double" onclick="selectServiceOption('aeration', 'double', 'Double Pass')">
+                                <span class="dropdown-option-content">
+                                    Double Pass
+                                    <span class="dropdown-note">Maximum coverage</span>
                                 </span>
                                 <span class="dropdown-deselect">×</span>
                             </button>
                         </div>
                     </div>
                     
-                    <!-- Other services -->
-                    <button type="button" class="service-pill" data-service="aeration" onclick="toggleSimpleService(this)">
-                        <span class="pill-label">Lawn Aeration</span>
-                    </button>
-                    
-                    <button type="button" class="service-pill" data-service="overseeding" onclick="toggleSimpleService(this)">
-                        <span class="pill-label">Overseeding</span>
-                    </button>
+                    <!-- Overseeding with package options -->
+                    <div class="service-with-dropdown">
+                        <button type="button" class="service-pill" id="pillOverseeding" onclick="toggleServiceDropdown('overseeding')">
+                            <span class="pill-label">Overseeding</span>
+                            <span class="pill-sublabel" id="overseedingSublabel"></span>
+                        </button>
+                        <div class="service-dropdown" id="overseedingDropdown">
+                            <button type="button" class="dropdown-option" data-value="standard" onclick="selectServiceOption('overseeding', 'standard', 'Standard')">
+                                <span class="dropdown-option-content">
+                                    Standard Overseeding
+                                    <span class="dropdown-note">Best with existing thick lawn</span>
+                                </span>
+                                <span class="dropdown-deselect">×</span>
+                            </button>
+                            <button type="button" class="dropdown-option" data-value="complete" onclick="selectServiceOption('overseeding', 'complete', 'Complete Package')">
+                                <span class="dropdown-option-content">
+                                    Complete Package
+                                    <span class="dropdown-note">+ Peat Moss + Starter Fertilizer</span>
+                                </span>
+                                <span class="dropdown-deselect">×</span>
+                            </button>
+                            <div class="dropdown-info">
+                                Complete package recommended for bare spots or thin lawns
+                            </div>
+                        </div>
+                    </div>
                     
                     <!-- Fertilization with frequency dropdown -->
                     <div class="service-with-dropdown">
@@ -1881,13 +3027,76 @@
                         </div>
                     </div>
                     
-                    <!-- Weed Control with tooltip and sublabel -->
+                    <!-- Weed Man Partner Services (Multi-Select) -->
                     <div class="service-with-dropdown">
-                        <button type="button" class="service-pill" id="pillWeedControl" onclick="toggleWeedControl(this)">
-                            <span class="pill-tooltip">Partnered with Weed Man</span>
+                        <button type="button" class="service-pill" id="pillWeedControl" onclick="toggleWeedManDropdown()">
                             <span class="pill-label">Weed Control</span>
-                            <span class="pill-sublabel" id="weedControlSublabel">Partnered with Weed Man</span>
+                            <span class="pill-desc">+ Fertilizer</span>
+                            <span class="pill-sublabel" id="weedControlSublabel"></span>
                         </button>
+                        <div class="service-dropdown weedman-dropdown" id="weedControlDropdown">
+                            <div class="weedman-header">
+                                <div class="weedman-header-left">
+                                    <span class="weedman-partner-badge">
+                                        <span class="partner-title" style="display: flex; align-items: center; gap: 6px;">
+                                            Official Partner
+                                            <span class="info-icon">i
+                                                <span class="info-tooltip" style="width: 240px;">We partner with Weed Man to provide professional fertilization and weed control. We handle all communication, scheduling, and billing!</span>
+                                            </span>
+                                        </span>
+                                        <span class="partner-link">with <a href="https://weedman.com/en-us/denver" target="_blank" rel="noopener">Weed Man</a> ↗</span>
+                                    </span>
+                                </div>
+                                <button type="button" class="weedman-done-btn" onclick="closeWeedManDropdown()">
+                                    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                                    Done
+                                </button>
+                            </div>
+                            <div class="weedman-options">
+                                <label class="weedman-option" data-value="weed_control_fertilizer">
+                                    <input type="checkbox" onchange="updateWeedManSelection()">
+                                    <span class="weedman-option-content">
+                                        <span class="weedman-option-name">Weed Control and Fertilizer</span>
+                                        <span class="weedman-option-note">Every 4-6 weeks</span>
+                                    </span>
+                                </label>
+                                <label class="weedman-option" data-value="insect_control">
+                                    <input type="checkbox" onchange="updateWeedManSelection()">
+                                    <span class="weedman-option-content">
+                                        <span class="weedman-option-name">Insect Control</span>
+                                        <span class="weedman-option-note">Surface-feeding insects</span>
+                                    </span>
+                                </label>
+                                <label class="weedman-option" data-value="crabgrass_control">
+                                    <input type="checkbox" onchange="updateWeedManSelection()">
+                                    <span class="weedman-option-content">
+                                        <span class="weedman-option-name">Crabgrass Control</span>
+                                        <span class="weedman-option-note">Pre-emergent treatment</span>
+                                    </span>
+                                </label>
+                                <label class="weedman-option" data-value="mosquito_control">
+                                    <input type="checkbox" onchange="updateWeedManSelection()">
+                                    <span class="weedman-option-content">
+                                        <span class="weedman-option-name">Mosquito Control</span>
+                                        <span class="weedman-option-note">Yard perimeter treatment</span>
+                                    </span>
+                                </label>
+                                <label class="weedman-option" data-value="grub_control">
+                                    <input type="checkbox" onchange="updateWeedManSelection()">
+                                    <span class="weedman-option-content">
+                                        <span class="weedman-option-name">Grub Control</span>
+                                        <span class="weedman-option-note">Prevents lawn damage from grubs</span>
+                                    </span>
+                                </label>
+                                <label class="weedman-option" data-value="perimeter_pest">
+                                    <input type="checkbox" onchange="updateWeedManSelection()">
+                                    <span class="weedman-option-content">
+                                        <span class="weedman-option-name">Perimeter Pest Control</span>
+                                        <span class="weedman-option-note">Home foundation barrier</span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
                     </div>
                     
                     <!-- Mulch Install with color dropdown -->
@@ -1918,12 +3127,33 @@
                         </div>
                     </div>
                     
-                    <button type="button" class="service-pill" data-service="yard_cleanup" onclick="toggleSimpleService(this)">
-                        <span class="pill-label">Yard Cleanup</span>
-                    </button>
+                    <!-- Yard Cleanup with type dropdown -->
+                    <div class="service-with-dropdown">
+                        <button type="button" class="service-pill" id="pillYardCleanup" onclick="toggleServiceDropdown('yardCleanup')">
+                            <span class="pill-label">Yard Cleanup</span>
+                            <span class="pill-sublabel" id="yardCleanupSublabel"></span>
+                        </button>
+                        <div class="service-dropdown" id="yardCleanupDropdown">
+                            <button type="button" class="dropdown-option" data-value="leaf_cleanup" onclick="selectServiceOption('yardCleanup', 'leaf_cleanup', 'Leaf Cleanup')">
+                                <span class="dropdown-option-content">
+                                    Leaf Cleanup
+                                    <span class="dropdown-note">Leaves only</span>
+                                </span>
+                                <span class="dropdown-deselect">×</span>
+                            </button>
+                            <button type="button" class="dropdown-option" data-value="complete_cleanup" onclick="selectServiceOption('yardCleanup', 'complete_cleanup', 'Complete Yard Cleanup')">
+                                <span class="dropdown-option-content">
+                                    Complete Yard Cleanup
+                                    <span class="dropdown-note">All yard debris: leaves, pine needles, twigs, branches, etc.</span>
+                                </span>
+                                <span class="dropdown-deselect">×</span>
+                            </button>
+                        </div>
+                    </div>
                     
-                    <button type="button" class="service-pill" data-service="leaf_cleanup" onclick="toggleSimpleService(this)">
-                        <span class="pill-label">Leaf Cleanup</span>
+                    <!-- Power Raking -->
+                    <button type="button" class="service-pill" data-service="power_raking" onclick="toggleSimpleService(this)">
+                        <span class="pill-label">Power Raking</span>
                     </button>
                     
                     <!-- Bush Trimming with frequency dropdown -->
@@ -1967,8 +3197,8 @@
                 </div>
             </div>
             
-            <!-- Property Details -->
-            <div class="card">
+            <!-- Property Details (hidden until service selected) -->
+            <div class="card conditional-section" id="propertyDetailsCard" style="display: none;">
                 <div class="card-title">Property Details</div>
                 <div class="card-desc">Help us give you the most accurate quote</div>
                 
@@ -1999,7 +3229,7 @@
                         </div>
                         
                         <div class="inline-success" id="gateSuccess">
-                            ✅ You're good to go! Gate width is sufficient for all services.
+                            You're good to go! Gate width is sufficient for all services.
                         </div>
                         
                         <div class="gate-code-section" style="margin-top: 16px;">
@@ -2074,11 +3304,7 @@
                         <div class="photo-toggle-knob"></div>
                     </div>
                 </div>
-                
-                <!-- Photo Recommendation -->
-                <div class="info-note danger show" style="margin-bottom: 16px;">
-                    <strong>Recommendation:</strong> Submit photos for faster, more accurate quotes
-                </div>
+                <div class="card-desc">Submit photos for faster, more accurate quotes</div>
                 
                 <div class="photo-content" id="photoContent">
                     <div class="upload-area" id="uploadArea" onclick="document.getElementById('photoInput').click()">
@@ -2120,10 +3346,108 @@
                 </div>
             </div>
             
-            <!-- Notes -->
-            <div class="card notes-section">
-                <div class="card-title">Additional Notes <span style="font-weight:400;color:var(--text-muted)">(optional)</span></div>
-                <textarea id="notes" rows="3" placeholder="Any special requests, access instructions, or details we should know..."></textarea>
+            <!-- Package Configuration Modal (VIP) -->
+            <div class="package-modal-overlay" id="packageConfigModal">
+                <div class="package-modal">
+                    <div class="package-modal-header">
+                        <div class="package-modal-title">Customize Package</div>
+                        <div class="package-modal-subtitle">Select your preferences for VIP package</div>
+                    </div>
+                    <div class="package-modal-body">
+                        <!-- Mulch Color -->
+                        <div class="package-section">
+                            <div class="package-section-title">Mulch Color</div>
+                            <select class="package-select" id="packageMulchColor">
+                                <option value="">Select mulch color...</option>
+                                <option value="brown">Brown Mulch</option>
+                                <option value="black">Black Mulch</option>
+                                <option value="red">Red Mulch</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Weed Man Services (Accordion) -->
+                        <div class="package-section">
+                            <div class="package-accordion" id="weedServicesAccordion" onclick="toggleWeedAccordion(event)">
+                                <div class="package-accordion-header">
+                                    <div class="package-accordion-left">
+                                        <div class="package-accordion-title">Weed Control Services</div>
+                                        <div class="package-accordion-partner">Official Partner with Weed Man</div>
+                                    </div>
+                                    <div class="package-accordion-right">
+                                        <span class="package-accordion-count" id="weedServicesCount">1 selected</span>
+                                        <svg class="package-accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                                    </div>
+                                </div>
+                                <div class="package-accordion-body" id="packageWeedServices">
+                                    <label class="package-accordion-item" data-value="weed_control_fertilizer">
+                                        <input type="checkbox" checked onchange="updateWeedCount()">
+                                        <div class="package-accordion-item-content">
+                                            <div class="package-accordion-item-name">Weed Control & Fertilizer</div>
+                                            <div class="package-accordion-item-note">Base package • Every 4-6 weeks</div>
+                                        </div>
+                                    </label>
+                                    <label class="package-accordion-item" data-value="crabgrass_control">
+                                        <input type="checkbox" onchange="updateWeedCount()">
+                                        <div class="package-accordion-item-content">
+                                            <div class="package-accordion-item-name">Crabgrass Control</div>
+                                            <div class="package-accordion-item-note">Pre-emergent treatment</div>
+                                        </div>
+                                    </label>
+                                    <label class="package-accordion-item" data-value="insect_control">
+                                        <input type="checkbox" onchange="updateWeedCount()">
+                                        <div class="package-accordion-item-content">
+                                            <div class="package-accordion-item-name">Insect Control</div>
+                                            <div class="package-accordion-item-note">Surface-feeding insects</div>
+                                        </div>
+                                    </label>
+                                    <label class="package-accordion-item" data-value="grub_control">
+                                        <input type="checkbox" onchange="updateWeedCount()">
+                                        <div class="package-accordion-item-content">
+                                            <div class="package-accordion-item-name">Grub Control</div>
+                                            <div class="package-accordion-item-note">Prevents lawn damage from grubs</div>
+                                        </div>
+                                    </label>
+                                    <label class="package-accordion-item" data-value="mosquito_control">
+                                        <input type="checkbox" onchange="updateWeedCount()">
+                                        <div class="package-accordion-item-content">
+                                            <div class="package-accordion-item-name">Mosquito Control</div>
+                                            <div class="package-accordion-item-note">Yard perimeter treatment</div>
+                                        </div>
+                                    </label>
+                                    <label class="package-accordion-item" data-value="perimeter_pest">
+                                        <input type="checkbox" onchange="updateWeedCount()">
+                                        <div class="package-accordion-item-content">
+                                            <div class="package-accordion-item-name">Perimeter Pest Control</div>
+                                            <div class="package-accordion-item-note">Home foundation barrier</div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Bush Trimming Frequency -->
+                        <div class="package-section">
+                            <div class="package-section-title">Bush Trimming Frequency</div>
+                            <select class="package-select" id="packageBushFrequency">
+                                <option value="">Select frequency...</option>
+                                <option value="monthly">Once a Month</option>
+                                <option value="bimonthly" selected>Every 2 Months (Recommended)</option>
+                                <option value="quarterly">Every 3 Months</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="package-modal-footer">
+                        <button type="button" class="package-modal-btn cancel" onclick="cancelPackageConfig()">Cancel</button>
+                        <button type="button" class="package-modal-btn done" onclick="applyPackageConfig()">Apply Selections</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Notes (hidden until service selected) -->
+            <div class="card notes-section conditional-section" id="additionalNotesCard" style="display: none;">
+                <div class="card-title">Additional Notes</div>
+                <div class="card-desc">Any special requests, access instructions, or details we should know (optional)</div>
+                <textarea id="notes" rows="3" placeholder="E.g., gate code is 1234, please text before arriving..."></textarea>
             </div>
             
             <!-- SMS Consent (Required) -->
@@ -2144,6 +3468,41 @@
         
         <!-- Screen 2: Map -->
         <div class="screen" id="screen2">
+            <!-- Measurement Importance Notice -->
+            <div class="measurement-notice">
+                <div class="measurement-notice-header">
+                    <div class="measurement-notice-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="measurement-notice-title">One Quick Step</div>
+                        <div class="measurement-notice-subtitle">Draw your lawn to get accurate pricing</div>
+                    </div>
+                </div>
+                
+                <div class="measurement-notice-body" id="measurementNoticeBody">
+                    <!-- Populated dynamically based on selected services -->
+                </div>
+                
+                <div class="measurement-services" id="sqftServicesList">
+                    <!-- Populated dynamically based on selected services -->
+                </div>
+                
+                <div class="measurement-notice-footer">
+                    <svg class="measurement-notice-footer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="16" x2="12" y2="12"/>
+                        <line x1="12" y1="8" x2="12.01" y2="8"/>
+                    </svg>
+                    <div class="measurement-notice-footer-text">
+                        Your measurement is saved with your request. If your actual lawn size differs significantly, pricing may need adjustment. Take a moment to be as accurate as possible.
+                    </div>
+                </div>
+            </div>
+            
             <div class="map-container">
                 <div class="map-instructions">
                     <strong>Outline your lawn area</strong> — Tap corners to draw. <span class="mobile-hint">Hold to precisely place points above your finger.</span>
@@ -2216,10 +3575,14 @@
                 <!-- Mulch Measurement Indicator (shows when mulch is selected but not measured) -->
                 <div class="mulch-indicator" id="mulchIndicator" style="display: none;">
                     <div class="mulch-indicator-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="3" y1="9" x2="21" y2="9"/>
+                            <line x1="9" y1="21" x2="9" y2="9"/>
+                        </svg>
                     </div>
                     <div class="mulch-indicator-text">
-                        <strong>Mulch selected?</strong> Tap "Mulch" above to measure beds
+                        <strong>Mulch beds not measured yet.</strong> Tap "Mulch" above and outline your flower beds to include them in your quote.
                     </div>
                 </div>
                 
@@ -2271,8 +3634,8 @@
         <!-- Screen 3: Review & Submit -->
         <div class="screen" id="screen3">
             <div class="card">
-                <div class="card-title">Review Your Request</div>
-                <div class="card-desc">Make sure everything looks correct</div>
+                <div class="card-title" style="text-align: center;">Review Your Request</div>
+                <div class="card-desc" style="text-align: center;">Make sure everything looks correct</div>
                 
                 <div class="summary-item">
                     <span class="summary-label">Name</span>
@@ -2290,9 +3653,44 @@
                     <span class="summary-label">Address</span>
                     <span class="summary-value" id="summaryAddress">—</span>
                 </div>
-                <div class="summary-item">
+                <div class="summary-item" id="packageRow" style="display: none;">
+                    <span class="summary-label">Package</span>
+                    <span class="summary-value" id="summaryPackage" style="font-weight: 600; color: #059669;">—</span>
+                </div>
+                <div class="summary-item" style="flex-direction: column; align-items: flex-start; gap: 4px;">
                     <span class="summary-label">Services</span>
-                    <span class="summary-value" id="summaryServices">—</span>
+                    <div class="summary-value" id="summaryServices" style="width: 100%; text-align: left; line-height: 1.6;">—</div>
+                </div>
+                <!-- Weed Control Services (Official Partner branding) -->
+                <div id="weedManRow" class="summary-item" style="display: none; flex-direction: column; align-items: flex-start; gap: 8px; border-bottom: 1px solid #e5e7eb; padding: 12px 0; margin: 0;">
+                    <!-- Header row: Title + Partner badge inline -->
+                    <div style="display: flex; align-items: baseline; gap: 8px; width: 100%;">
+                        <span class="summary-label" style="font-weight: 600;">Weed Control Services</span>
+                        <span style="font-size: 11px; color: #9ca3af;">Official Partner with <a href="https://weedman.com/en-us/denver" target="_blank" rel="noopener" style="color: #16a34a; font-weight: 500; text-decoration: none;">Weed Man</a></span>
+                    </div>
+                    <!-- Selected services as bullet list -->
+                    <div class="summary-value" id="summaryWeedMan" style="width: 100%; text-align: left; line-height: 1.6;">—</div>
+                    <!-- Payment preference toggle -->
+                    <div id="weedManPrepayRow" style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                        <span style="font-size: 12px; color: #6b7280;">Payment preference:</span>
+                        <div style="display: flex; background: #f3f4f6; border-radius: 6px; padding: 2px; gap: 2px;">
+                            <label style="cursor: pointer;">
+                                <input type="radio" name="weedManPayment" value="prepay" style="display: none;" onchange="updateWeedManPayment()">
+                                <span class="payment-toggle-btn" style="display: flex; align-items: center; gap: 4px; padding: 5px 10px; border-radius: 5px; font-size: 12px; color: #6b7280; transition: all 0.15s;">
+                                    Pay in Full <span style="font-size: 10px; font-weight: 600; color: #16a34a;">5% off</span>
+                                </span>
+                            </label>
+                            <label style="cursor: pointer;">
+                                <input type="radio" name="weedManPayment" value="per_service" checked style="display: none;" onchange="updateWeedManPayment()">
+                                <span class="payment-toggle-btn payment-active" style="display: block; padding: 5px 10px; border-radius: 5px; font-size: 12px; background: white; color: #111827; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: all 0.15s;">
+                                    Per Service
+                                </span>
+                            </label>
+                        </div>
+                        <span class="info-icon" style="color: #9ca3af; border-color: #d1d5db; font-size: 10px; width: 14px; height: 14px; line-height: 14px;">i
+                            <span class="info-tooltip" style="width: 260px; font-size: 12px;">Prepay discount applies to <strong>Weed Control services only</strong>. Our services are billed per visit.</span>
+                        </span>
+                    </div>
                 </div>
                 <div class="summary-item">
                     <span class="summary-label">Lawn Size</span>
@@ -2362,6 +3760,9 @@
         <!-- Success Screen -->
         <div class="screen" id="screenSuccess">
             <div class="card success-card">
+                <div class="success-logo">
+                    <img src="https://nomowworriesco.com/wp-content/uploads/2023/09/BB788C6C-FC2A-4717-A09F-F81F647D4BA9-removebg-preview-e1707662407808.png" alt="No Mow Worries" style="max-width: 180px; margin-bottom: 16px;">
+                </div>
                 <div class="success-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                         <path d="M20 6L9 17l-5-5"/>
@@ -2369,7 +3770,20 @@
                 </div>
                 <h2>Request Submitted!</h2>
                 <p>We'll review your request and send a quote to your email within 24 hours. For most requests, you'll hear from us much sooner.</p>
+                <div class="success-footer">
+                    <p style="font-size: 13px; color: var(--text-muted); margin-top: 24px;">
+                        <strong>No Mow Worries Lawn Care</strong><br>
+                        Aurora, Colorado<br>
+                        <a href="tel:7204465303" style="color: var(--green); text-decoration: none;">(720) 446-5303</a> • 
+                        <a href="https://nomowworriesco.com" target="_blank" style="color: var(--green); text-decoration: none;">nomowworriesco.com</a>
+                    </p>
+                </div>
             </div>
+        </div>
+        
+        <!-- Professional Footer -->
+        <div class="widget-footer">
+            <span>© 2025 No Mow Worries Lawn Care LLC • Aurora, CO</span>
         </div>
     </div>
     
@@ -2381,6 +3795,8 @@
         let fertilizationType = null;
         let mulchColor = null;
         let bushTrimmingFrequency = null;
+        let aerationType = null;
+        let overseedingType = null;
         let hasGate = null;
         let gateWidth = null;
         let gateCode = null;
@@ -2401,13 +3817,17 @@
         let markers = [];
         let mulchThickness = 3; // Default 3 inches (recommended)
         let measurementSkipped = false; // Track if step 2 was skipped
+        let selectedPackage = null; // Track which package was selected: 'essential', 'complete', 'total', or null (custom)
         
         // Service state tracking
         let serviceSelections = {
             mowing: null,
             fertilization: null,
             mulch: null,
-            bushTrimming: null
+            bushTrimming: null,
+            aeration: null,
+            overseeding: null,
+            yardCleanup: null
         };
         
         // Check if biweekly should be enabled (after June 15)
@@ -2417,6 +3837,131 @@
             const day = now.getDate();
             // June = 5, so if month > 5 OR (month === 5 AND day >= 15)
             return month > 5 || (month === 5 && day >= 15);
+        }
+        
+        // Populate the sqft-based services list in the measurement notice
+        function populateSqftServicesList() {
+            const container = document.getElementById('sqftServicesList');
+            const bodyEl = document.getElementById('measurementNoticeBody');
+            if (!container) return;
+            
+            const services = [];
+            const serviceNames = [];
+            
+            // Check which sqft-dependent services are selected (lawn-based)
+            if (selectedServices.mowing) {
+                services.push({ name: 'Lawn Mowing', icon: 'grass' });
+                serviceNames.push('mowing');
+            }
+            if (selectedServices.aeration) {
+                services.push({ name: 'Core Aeration', icon: 'dots' });
+                serviceNames.push('aeration');
+            }
+            if (selectedServices.overseeding) {
+                services.push({ name: 'Overseeding', icon: 'seed' });
+                serviceNames.push('overseeding');
+            }
+            if (selectedServices.fertilization) {
+                services.push({ name: 'Fertilization', icon: 'leaf' });
+                serviceNames.push('fertilization');
+            }
+            if (selectedServices.power_raking) {
+                services.push({ name: 'Power Rake', icon: 'rake' });
+                serviceNames.push('power raking');
+            }
+            if (selectedServices.mulch) {
+                services.push({ name: 'Mulch Install', icon: 'mulch' });
+                serviceNames.push('mulch');
+            }
+            
+            // Build dynamic message based on selected services
+            if (bodyEl) {
+                let message = '';
+                const hasMulchOnly = serviceNames.length === 1 && serviceNames[0] === 'mulch';
+                const hasLawnServices = serviceNames.some(s => s !== 'mulch');
+                const hasMulch = serviceNames.includes('mulch');
+                
+                if (hasMulchOnly) {
+                    message = 'Your mulch pricing is based on the area of your beds. Outline each bed to get an accurate quote.';
+                } else if (hasLawnServices && hasMulch) {
+                    // Both lawn and mulch services
+                    const lawnNames = serviceNames.filter(s => s !== 'mulch');
+                    if (lawnNames.length === 1) {
+                        message = `Your ${lawnNames[0]} and mulch pricing are based on square footage. Outline your lawn area, then draw your mulch beds.`;
+                    } else {
+                        message = `Your ${lawnNames.slice(0, -1).join(', ')} and ${lawnNames[lawnNames.length - 1]} pricing are based on lawn size, and mulch is based on bed area. Draw both to get accurate quotes.`;
+                    }
+                } else if (hasLawnServices) {
+                    // Lawn services only
+                    if (serviceNames.length === 1) {
+                        message = `Your ${serviceNames[0]} pricing is based on lawn size. Outline your lawn area to get an accurate quote.`;
+                    } else if (serviceNames.length === 2) {
+                        message = `Your ${serviceNames[0]} and ${serviceNames[1]} pricing are based on lawn size. Outline your lawn to get accurate quotes.`;
+                    } else {
+                        message = `Your ${serviceNames.slice(0, -1).join(', ')}, and ${serviceNames[serviceNames.length - 1]} pricing are based on lawn size. Outline your lawn area below.`;
+                    }
+                }
+                bodyEl.textContent = message;
+            }
+            
+            // Icon SVGs
+            const icons = {
+                grass: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 10V3"/><path d="m4 14 .94-3.06a1 1 0 0 1 .92-.69h.28a1 1 0 0 1 .92.69L8 14"/><path d="M4 14h4"/><path d="m16 14 .94-3.06a1 1 0 0 1 .92-.69h.28a1 1 0 0 1 .92.69L20 14"/><path d="M16 14h4"/><path d="M12 10c-1.5 0-3 .5-3 2v9"/><path d="M12 10c1.5 0 3 .5 3 2v9"/></svg>',
+                dots: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>',
+                seed: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c4-4 8-8 8-12a8 8 0 1 0-16 0c0 4 4 8 8 12Z"/><path d="M12 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/></svg>',
+                leaf: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>',
+                rake: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v2a2 2 0 0 1-2 2h-2l-2 12H10L8 8H6a2 2 0 0 1-2-2V4z"/><line x1="6" y1="4" x2="6" y2="8"/><line x1="10" y1="4" x2="10" y2="8"/><line x1="14" y1="4" x2="14" y2="8"/><line x1="18" y1="4" x2="18" y2="8"/></svg>',
+                mulch: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>'
+            };
+            
+            // Build HTML for service tags
+            let html = '';
+            services.forEach(service => {
+                html += `
+                    <div class="measurement-service-tag">
+                        ${icons[service.icon] || ''}
+                        ${service.name}
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        // Check if any service is selected and show/hide conditional sections
+        function updateConditionalSections() {
+            const propertyCard = document.getElementById('propertyDetailsCard');
+            const notesCard = document.getElementById('additionalNotesCard');
+            
+            // Check if ANY service is selected
+            const hasDropdownService = Object.values(serviceSelections).some(v => v !== null);
+            const hasSimpleService = Object.keys(selectedServices).length > 0;
+            const hasWeedManService = typeof weedManServices !== 'undefined' && weedManServices.length > 0;
+            
+            const anyServiceSelected = hasDropdownService || hasSimpleService || hasWeedManService;
+            
+            if (anyServiceSelected) {
+                // Show sections with animation
+                propertyCard.style.display = 'block';
+                notesCard.style.display = 'block';
+                // Trigger reflow for animation
+                void propertyCard.offsetWidth;
+                propertyCard.classList.add('visible');
+                notesCard.classList.add('visible');
+            } else {
+                // Hide sections
+                propertyCard.classList.remove('visible');
+                notesCard.classList.remove('visible');
+                // Hide after animation
+                setTimeout(() => {
+                    if (!propertyCard.classList.contains('visible')) {
+                        propertyCard.style.display = 'none';
+                    }
+                    if (!notesCard.classList.contains('visible')) {
+                        notesCard.style.display = 'none';
+                    }
+                }, 300);
+            }
         }
         
         // Initialize on page load
@@ -2468,7 +4013,11 @@
                 mowing: 'pillMowing',
                 fertilization: 'pillFertilization',
                 mulch: 'pillMulch',
-                bushTrimming: 'pillBushTrimming'
+                bushTrimming: 'pillBushTrimming',
+                aeration: 'pillAeration',
+                overseeding: 'pillOverseeding',
+                weedControl: 'pillWeedControl',
+                yardCleanup: 'pillYardCleanup'
             }[serviceType];
             
             const dropdownId = serviceType + 'Dropdown';
@@ -2484,7 +4033,9 @@
             
             if (dropdown.classList.contains('show')) {
                 dropdown.classList.remove('show');
-                if (!serviceSelections[serviceType]) {
+                // For weedControl, check weedManServices instead of serviceSelections
+                const hasSelection = serviceType === 'weedControl' ? weedManServices.length > 0 : serviceSelections[serviceType];
+                if (!hasSelection) {
                     pill.classList.remove('selected');
                 }
             } else {
@@ -2495,7 +4046,7 @@
         
         // Close dropdown when clicking outside
         document.addEventListener('click', function(e) {
-            const dropdownTypes = ['mowing', 'fertilization', 'mulch', 'bushTrimming'];
+            const dropdownTypes = ['mowing', 'fertilization', 'mulch', 'bushTrimming', 'aeration', 'overseeding', 'weedControl', 'yardCleanup'];
             
             dropdownTypes.forEach(type => {
                 const dropdown = document.getElementById(type + 'Dropdown');
@@ -2503,7 +4054,11 @@
                     mowing: 'pillMowing',
                     fertilization: 'pillFertilization',
                     mulch: 'pillMulch',
-                    bushTrimming: 'pillBushTrimming'
+                    bushTrimming: 'pillBushTrimming',
+                    aeration: 'pillAeration',
+                    overseeding: 'pillOverseeding',
+                    weedControl: 'pillWeedControl',
+                    yardCleanup: 'pillYardCleanup'
                 }[type];
                 const pill = document.getElementById(pillId);
                 
@@ -2514,7 +4069,9 @@
                     
                     if (!clickedInDropdown && !clickedOnPill && dropdown.classList.contains('show')) {
                         dropdown.classList.remove('show');
-                        if (!serviceSelections[type]) {
+                        // For weedControl, check weedManServices instead of serviceSelections
+                        const hasSelection = type === 'weedControl' ? weedManServices.length > 0 : serviceSelections[type];
+                        if (!hasSelection) {
                             pill.classList.remove('selected');
                         }
                     }
@@ -2523,12 +4080,21 @@
         });
         
         // Select option from dropdown (handles both select and deselect)
-        function selectServiceOption(serviceType, value, displayLabel) {
+        // fromPackage: optional flag to indicate selection came from a package preset (don't clear selectedPackage)
+        function selectServiceOption(serviceType, value, displayLabel, fromPackage = false) {
+            // If manually selecting a service (not from package preset), clear the package tracking
+            if (!fromPackage && selectedPackage) {
+                selectedPackage = null;
+                document.querySelectorAll('.package-btn').forEach(btn => btn.classList.remove('selected'));
+            }
             const pillId = {
                 mowing: 'pillMowing',
                 fertilization: 'pillFertilization',
                 mulch: 'pillMulch',
-                bushTrimming: 'pillBushTrimming'
+                bushTrimming: 'pillBushTrimming',
+                aeration: 'pillAeration',
+                overseeding: 'pillOverseeding',
+                yardCleanup: 'pillYardCleanup'
             }[serviceType];
             
             const sublabelId = serviceType + 'Sublabel';
@@ -2547,7 +4113,9 @@
             if (serviceSelections[serviceType] === value) {
                 // Deselect
                 serviceSelections[serviceType] = null;
-                delete selectedServices[serviceType === 'bushTrimming' ? 'bush_trimming' : serviceType];
+                const serviceKey = serviceType === 'bushTrimming' ? 'bush_trimming' : 
+                                   serviceType === 'yardCleanup' ? 'yard_cleanup' : serviceType;
+                delete selectedServices[serviceKey];
                 
                 // Update UI
                 pill.classList.remove('selected');
@@ -2580,6 +4148,14 @@
                 } else if (serviceType === 'bushTrimming') {
                     bushTrimmingFrequency = value;
                     selectedServices.bush_trimming = value;
+                } else if (serviceType === 'aeration') {
+                    aerationType = value;
+                    selectedServices.aeration = value;
+                } else if (serviceType === 'overseeding') {
+                    overseedingType = value;
+                    selectedServices.overseeding = value;
+                } else if (serviceType === 'yardCleanup') {
+                    selectedServices.yard_cleanup = value;
                 }
                 
                 // Update dropdown styling
@@ -2596,18 +4172,35 @@
             // Close dropdown
             dropdown.classList.remove('show');
             
+            // Blur pill to clear focus/hover state on mobile
+            pill.blur();
+            
             updatePhotoVisibility();
             checkGateWidth(); // Re-check gate width when services change
             updateMulchIndicator(); // Update mulch indicator when services change
+            updateConditionalSections(); // Show/hide Property Details & Notes
         }
         
-        // Update mulch indicator visibility
+        // Update mulch indicator visibility and button highlight
         function updateMulchIndicator() {
             const mulchIndicator = document.getElementById('mulchIndicator');
+            const mulchBtn = document.getElementById('btnMulch');
+            
+            const mulchSelected = selectedServices.mulch;
+            const hasMulchAreas = totalMulchSqft > 0;
+            const needsMulchMeasurement = mulchSelected && !hasMulchAreas;
+            
             if (mulchIndicator) {
-                const mulchSelected = selectedServices.mulch;
-                const hasMulchAreas = totalMulchSqft > 0;
-                mulchIndicator.style.display = (mulchSelected && !hasMulchAreas) ? 'flex' : 'none';
+                mulchIndicator.style.display = needsMulchMeasurement ? 'flex' : 'none';
+            }
+            
+            // Highlight the Mulch button in toolbar when measurement is needed
+            if (mulchBtn) {
+                if (needsMulchMeasurement) {
+                    mulchBtn.classList.add('mulch-needs-attention');
+                } else {
+                    mulchBtn.classList.remove('mulch-needs-attention');
+                }
             }
         }
         
@@ -2628,6 +4221,12 @@
         
         // Simple toggle for services without sub-options
         function toggleSimpleService(btn) {
+            // If manually toggling a service, clear the package tracking
+            if (selectedPackage) {
+                selectedPackage = null;
+                document.querySelectorAll('.package-btn').forEach(b => b.classList.remove('selected'));
+            }
+            
             const service = btn.dataset.service;
             btn.classList.toggle('selected');
             
@@ -2637,23 +4236,435 @@
                 delete selectedServices[service];
             }
             
+            // Blur to clear focus/hover state on mobile
+            btn.blur();
+            
             updatePhotoVisibility();
             checkGateWidth(); // Re-check gate width when services change
             updateMulchIndicator(); // Update mulch indicator when services change
+            updateConditionalSections(); // Show/hide Property Details & Notes
         }
         
-        // Weed control with partner sublabel
-        function toggleWeedControl(btn) {
-            btn.classList.toggle('selected');
+        // Weed Man Partner Services Multi-Select
+        let weedManServices = [];
+        
+        function toggleWeedManDropdown() {
+            const dropdown = document.getElementById('weedControlDropdown');
+            const pill = document.getElementById('pillWeedControl');
+            
+            // Close other dropdowns first
+            document.querySelectorAll('.service-dropdown').forEach(d => {
+                if (d.id !== 'weedControlDropdown') d.classList.remove('show');
+            });
+            
+            dropdown.classList.toggle('show');
+        }
+        
+        function updateWeedManSelection(fromPackage = false) {
+            // If manually changing weed services (not from package preset), clear the package tracking
+            if (!fromPackage && selectedPackage) {
+                selectedPackage = null;
+                document.querySelectorAll('.package-btn').forEach(b => b.classList.remove('selected'));
+            }
+            
+            const dropdown = document.getElementById('weedControlDropdown');
+            const pill = document.getElementById('pillWeedControl');
             const sublabel = document.getElementById('weedControlSublabel');
             
-            if (btn.classList.contains('selected')) {
-                selectedServices.weed_control = true;
+            // Get all checked services
+            weedManServices = [];
+            dropdown.querySelectorAll('.weedman-option input[type="checkbox"]:checked').forEach(checkbox => {
+                weedManServices.push(checkbox.closest('.weedman-option').dataset.value);
+            });
+            
+            // Update pill styling and sublabel
+            if (weedManServices.length > 0) {
+                pill.classList.add('selected');
+                selectedServices.weed_control = weedManServices;
+                
+                // Show count or short name (avoid redundancy with pill-desc)
+                if (weedManServices.length === 1) {
+                    const names = {
+                        'weed_control_fertilizer': 'Every 4-6 Weeks',
+                        'insect_control': 'Insect Control',
+                        'crabgrass_control': 'Crabgrass',
+                        'mosquito_control': 'Mosquito',
+                        'grub_control': 'Grub Control',
+                        'perimeter_pest': 'Perimeter Pest'
+                    };
+                    sublabel.textContent = names[weedManServices[0]] || weedManServices[0];
+                } else {
+                    sublabel.textContent = `${weedManServices.length} services`;
+                }
                 sublabel.classList.add('show');
+                
+                // Note: We don't show Fertilization as "included" anymore - WC+Fert handles it
             } else {
+                pill.classList.remove('selected');
                 delete selectedServices.weed_control;
+                sublabel.textContent = '';
                 sublabel.classList.remove('show');
             }
+            
+            updatePhotoVisibility();
+            checkGateWidth();
+            updateMulchIndicator();
+            updateConditionalSections(); // Show/hide Property Details & Notes
+        }
+        
+        function closeWeedManDropdown() {
+            const dropdown = document.getElementById('weedControlDropdown');
+            const pill = document.getElementById('pillWeedControl');
+            dropdown.classList.remove('show');
+            pill.blur();
+        }
+        
+        // Weed Man payment preference (prepay vs per service)
+        function updateWeedManPayment() {
+            // Update toggle button styling
+            document.querySelectorAll('input[name="weedManPayment"]').forEach(radio => {
+                const toggleBtn = radio.nextElementSibling;
+                if (radio.checked) {
+                    toggleBtn.style.background = 'white';
+                    toggleBtn.style.color = '#111827';
+                    toggleBtn.style.boxShadow = '0 1px 2px rgba(0,0,0,0.05)';
+                } else {
+                    toggleBtn.style.background = 'transparent';
+                    toggleBtn.style.color = '#6b7280';
+                    toggleBtn.style.boxShadow = 'none';
+                }
+            });
+        }
+        
+        // Legacy wrapper for package presets
+        function selectWeedControlOption(value, label) {
+            const dropdown = document.getElementById('weedControlDropdown');
+            
+            // Map old values to new checkbox values
+            const valueMap = {
+                'combo': 'weed_control_fertilizer'
+            };
+            
+            const checkboxValue = valueMap[value] || value;
+            const checkbox = dropdown.querySelector(`.weedman-option[data-value="${checkboxValue}"] input[type="checkbox"]`);
+            
+            if (checkbox && !checkbox.checked) {
+                checkbox.checked = true;
+                updateWeedManSelection(true); // fromPackage=true since this is called by packages
+            }
+        }
+        
+        // Package hover highlight - shows which services are included
+        // Note: Fertilization is NOT included separately - it's part of Weed Control + Fertilizer combo
+        const packageServiceMap = {
+            essential: ['pillMowing', 'pillAeration', 'pillOverseeding', 'pillWeedControl'],
+            complete: ['pillMowing', 'pillAeration', 'pillOverseeding', 'pillWeedControl', 'pillBushTrimming', 'power_raking'],
+            total: ['pillMowing', 'pillAeration', 'pillOverseeding', 'pillWeedControl', 'pillMulch', 'pillBushTrimming', 'pillYardCleanup', 'power_raking']
+        };
+        
+        function highlightPackageServices(packageType) {
+            const services = packageServiceMap[packageType];
+            if (!services) return;
+            
+            services.forEach(id => {
+                // Try by ID first (dropdown services)
+                let pill = document.getElementById(id);
+                // If not found, try by data-service attribute (simple services)
+                if (!pill) {
+                    pill = document.querySelector(`[data-service="${id}"]`);
+                }
+                if (pill) {
+                    pill.classList.add('package-highlight');
+                }
+            });
+        }
+        
+        function unhighlightPackageServices() {
+            document.querySelectorAll('.service-pill.package-highlight').forEach(pill => {
+                pill.classList.remove('package-highlight');
+            });
+        }
+        
+        // Package quick-select (with toggle behavior)
+        function selectPackage(packageType) {
+            const clickedBtn = event.target.closest('.package-btn');
+            const wasSelected = clickedBtn.classList.contains('selected');
+            
+            // Clear all current selections first
+            clearAllServices();
+            
+            // Remove 'selected' from all package buttons
+            document.querySelectorAll('.package-btn').forEach(btn => btn.classList.remove('selected'));
+            
+            // If this package was already selected, just deselect (toggle off)
+            if (wasSelected) {
+                selectedPackage = null; // Clear package selection
+                // Clear any lingering package-highlight classes from services
+                unhighlightPackageServices();
+                updatePhotoVisibility();
+                checkGateWidth();
+                updateMulchIndicator();
+                updateConditionalSections();
+                return;
+            }
+            
+            // Otherwise, select this package
+            clickedBtn.classList.add('selected');
+            selectedPackage = packageType; // Track which package was selected
+            
+            // Select services based on package (pass fromPackage=true to preserve package tracking)
+            if (packageType === 'essential') {
+                // Essentials: Weekly mowing, aeration, overseeding, Weed Control + Fertilizer
+                selectServiceOption('mowing', 'weekly', 'Weekly Mowing', true);
+                selectServiceOption('aeration', 'single', 'Single Pass', true);
+                selectServiceOption('overseeding', 'standard', 'Standard', true);
+                selectWeedControlOption('combo', 'Weed Control + Fertilizer');
+            } else if (packageType === 'complete') {
+                // Complete: Weekly mowing, aeration, overseeding, Weed Control + Fertilizer, 
+                // Bush trimming (every 2 months), Power Raking
+                selectServiceOption('mowing', 'weekly', 'Weekly Mowing', true);
+                selectServiceOption('aeration', 'single', 'Single Pass', true);
+                selectServiceOption('overseeding', 'standard', 'Standard', true);
+                selectWeedControlOption('combo', 'Weed Control + Fertilizer');
+                selectServiceOption('bushTrimming', 'bimonthly', 'Every 2 Months', true);
+                // Select power raking
+                const powerRakingBtn = document.querySelector('[data-service="power_raking"]');
+                if (powerRakingBtn && !powerRakingBtn.classList.contains('selected')) {
+                    powerRakingBtn.classList.add('selected');
+                    selectedServices.power_raking = true;
+                }
+            } else if (packageType === 'total') {
+                // Premium: All services EXCEPT standalone Fertilizer (to avoid double with Weed Control + Fert)
+                // Users should customize: Mulch, Bush Trimming, Weed Control options
+                selectServiceOption('mowing', 'weekly', 'Weekly Mowing', true);
+                selectServiceOption('aeration', 'double', 'Double Pass', true);
+                selectServiceOption('overseeding', 'complete', 'Complete Package', true);
+                selectWeedControlOption('combo', 'Weed Control + Fertilizer');
+                // Note: DO NOT select standalone Fertilization (would duplicate Weed Control + Fertilizer)
+                selectServiceOption('mulch', 'brown', 'Brown', true); // Default to brown, user can change
+                selectServiceOption('bushTrimming', 'bimonthly', 'Every 2 Months', true);
+                selectServiceOption('yardCleanup', 'complete_cleanup', 'Complete Yard Cleanup', true);
+                // Select power raking
+                const powerRakingBtn = document.querySelector('[data-service="power_raking"]');
+                if (powerRakingBtn && !powerRakingBtn.classList.contains('selected')) {
+                    powerRakingBtn.classList.add('selected');
+                    selectedServices.power_raking = true;
+                }
+                // Show premium warning about customization
+                showPremiumCustomizeHint();
+            }
+            
+            updatePhotoVisibility();
+            checkGateWidth();
+            updateMulchIndicator();
+            updateConditionalSections(); // Show/hide Property Details & Notes
+        }
+        
+        // Show the package configuration modal for VIP package
+        function showPackageConfigModal() {
+            // Reset modal to defaults
+            document.getElementById('packageMulchColor').value = '';
+            document.getElementById('packageBushFrequency').value = 'bimonthly';
+            
+            // Reset weed service checkboxes - only weed_control_fertilizer checked by default
+            document.querySelectorAll('#packageWeedServices input[type="checkbox"]').forEach(cb => {
+                const value = cb.closest('.package-accordion-item').dataset.value;
+                cb.checked = (value === 'weed_control_fertilizer');
+            });
+            
+            // Update count and close accordion by default
+            updateWeedCount();
+            document.getElementById('weedServicesAccordion').classList.remove('open');
+            
+            // Show modal
+            document.getElementById('packageConfigModal').classList.add('show');
+        }
+        
+        // Toggle weed services accordion
+        function toggleWeedAccordion(event) {
+            // Don't toggle if clicking on a checkbox or label
+            if (event.target.type === 'checkbox' || event.target.closest('.package-accordion-item')) {
+                return;
+            }
+            document.getElementById('weedServicesAccordion').classList.toggle('open');
+        }
+        
+        // Update weed services count badge
+        function updateWeedCount() {
+            const count = document.querySelectorAll('#packageWeedServices input[type="checkbox"]:checked').length;
+            const countEl = document.getElementById('weedServicesCount');
+            countEl.textContent = count === 1 ? '1 selected' : `${count} selected`;
+        }
+        
+        // Cancel package config - deselect the package button
+        function cancelPackageConfig() {
+            document.getElementById('packageConfigModal').classList.remove('show');
+            // Remove 'selected' from Total Care button since they cancelled
+            document.querySelectorAll('.package-btn').forEach(btn => btn.classList.remove('selected'));
+        }
+        
+        // Apply the package configuration
+        function applyPackageConfig() {
+            // Get selected values
+            const mulchColor = document.getElementById('packageMulchColor').value;
+            const bushFrequency = document.getElementById('packageBushFrequency').value;
+            const selectedWeedServices = [];
+            
+            document.querySelectorAll('#packageWeedServices input[type="checkbox"]:checked').forEach(cb => {
+                selectedWeedServices.push(cb.closest('.package-accordion-item').dataset.value);
+            });
+            
+            // Close modal
+            document.getElementById('packageConfigModal').classList.remove('show');
+            
+            // Apply Total Care base services (fromPackage=true to preserve package tracking)
+            selectServiceOption('mowing', 'weekly', 'Weekly Mowing', true);
+            selectServiceOption('aeration', 'double', 'Double Pass', true);
+            selectServiceOption('overseeding', 'complete', 'Complete Package', true);
+            
+            // Apply mulch color if selected
+            if (mulchColor) {
+                const colorLabels = { brown: 'Brown', black: 'Black', red: 'Red' };
+                selectServiceOption('mulch', mulchColor, colorLabels[mulchColor], true);
+            }
+            
+            // Apply weed services via the Weed Man dropdown
+            if (selectedWeedServices.length > 0) {
+                // Clear existing Weed Man selections
+                const weedDropdown = document.getElementById('weedControlDropdown');
+                if (weedDropdown) {
+                    weedDropdown.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+                }
+                
+                // Check the selected services in the actual weed control dropdown
+                selectedWeedServices.forEach(service => {
+                    const checkbox = document.querySelector(`#weedControlDropdown .weedman-option[data-value="${service}"] input[type="checkbox"]`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
+                
+                // Update the weed man selection state
+                updateWeedManSelection(true); // fromPackage=true since this is in applyPackageConfig
+            }
+            
+            // Apply bush trimming frequency if selected (fromPackage=true)
+            if (bushFrequency) {
+                const freqLabels = { 
+                    monthly: 'Once a Month', 
+                    bimonthly: 'Every 2 Months', 
+                    quarterly: 'Every 3 Months' 
+                };
+                selectServiceOption('bushTrimming', bushFrequency, freqLabels[bushFrequency], true);
+            }
+            
+            // Select leaf cleanup
+            const leafBtn = document.querySelector('[data-service="leaf_cleanup"]');
+            if (leafBtn && !leafBtn.classList.contains('selected')) {
+                leafBtn.classList.add('selected');
+                selectedServices.leaf_cleanup = true;
+            }
+            
+            // Select yard cleanup
+            const yardBtn = document.querySelector('[data-service="yard_cleanup"]');
+            if (yardBtn && !yardBtn.classList.contains('selected')) {
+                yardBtn.classList.add('selected');
+                selectedServices.yard_cleanup = true;
+            }
+            
+            updatePhotoVisibility();
+            checkGateWidth();
+            updateMulchIndicator();
+            updateConditionalSections(); // Show/hide Property Details & Notes
+        }
+        
+        // Show hint for Premium package customization
+        function showPremiumCustomizeHint() {
+            // Flash the services that can be customized briefly
+            const customizableServices = ['pillMulch', 'pillBushTrimming', 'pillWeedControl'];
+            customizableServices.forEach(id => {
+                const pill = document.getElementById(id);
+                if (pill) {
+                    pill.classList.add('premium-customize-hint');
+                    setTimeout(() => {
+                        pill.classList.remove('premium-customize-hint');
+                    }, 3000);
+                }
+            });
+        }
+        
+        // Clear all selected services
+        function clearAllServices() {
+            // Clear dropdown services
+            ['mowing', 'fertilization', 'mulch', 'bushTrimming', 'aeration', 'overseeding', 'yardCleanup'].forEach(type => {
+                serviceSelections[type] = null;
+                const pillId = {
+                    mowing: 'pillMowing',
+                    fertilization: 'pillFertilization',
+                    mulch: 'pillMulch',
+                    bushTrimming: 'pillBushTrimming',
+                    aeration: 'pillAeration',
+                    overseeding: 'pillOverseeding',
+                    yardCleanup: 'pillYardCleanup'
+                }[type];
+                const pill = document.getElementById(pillId);
+                const sublabel = document.getElementById(type + 'Sublabel');
+                const dropdown = document.getElementById(type + 'Dropdown');
+                
+                if (pill) pill.classList.remove('selected');
+                if (sublabel) {
+                    sublabel.textContent = '';
+                    sublabel.classList.remove('show');
+                }
+                if (dropdown) {
+                    dropdown.querySelectorAll('.dropdown-option').forEach(o => o.classList.remove('selected'));
+                }
+            });
+            
+            // Clear simple toggle services
+            document.querySelectorAll('.service-pill[data-service]').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            // Clear weed control dropdown
+            const weedControlPill = document.getElementById('pillWeedControl');
+            if (weedControlPill) {
+                weedControlPill.classList.remove('selected');
+                const sublabel = document.getElementById('weedControlSublabel');
+                if (sublabel) {
+                    sublabel.textContent = '';
+                    sublabel.classList.remove('show');
+                }
+                const dropdown = document.getElementById('weedControlDropdown');
+                if (dropdown) {
+                    dropdown.querySelectorAll('.dropdown-option').forEach(o => o.classList.remove('selected'));
+                }
+            }
+            
+            // Reset state
+            selectedServices = {};
+            mowingType = null;
+            fertilizationType = null;
+            mulchColor = null;
+            bushTrimmingFrequency = null;
+            aerationType = null;
+            overseedingType = null;
+            weedManServices = [];
+            
+            // Clear Weed Man checkboxes
+            const weedDropdown = document.getElementById('weedControlDropdown');
+            if (weedDropdown) {
+                weedDropdown.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            }
+            
+            // Hide one-time note
+            document.getElementById('onetimeNote').classList.remove('show');
+            
+            // Clear any package highlight styling from service pills
+            unhighlightPackageServices();
+            
+            // Hide conditional sections
+            updateConditionalSections();
         }
         
         // Property question handlers
@@ -2762,16 +4773,16 @@
         let photoSkipConfirmed = false; // Has user confirmed skipping photos?
         
         // Update photo section visibility
-        // Show photos ONLY for: One-time mow, Mulch install, Yard cleanup, Leaf cleanup, Bush trimming
+        // Show photos ONLY for: One-time mow, Mulch install, Yard cleanup, Bush trimming, Power Raking
         // Also show if lawn is overgrown AND mowing is selected (any frequency)
         // NEVER show for: Weekly/bi-weekly mowing (unless overgrown), aeration, overseeding, fertilizer, weed control
         function updatePhotoVisibility() {
             const needsPhotos = 
                 mowingType === 'onetime' || 
-                selectedServices.yard_cleanup ||
-                selectedServices.leaf_cleanup ||
+                selectedServices.yard_cleanup || // Now a dropdown with leaf_cleanup or complete_cleanup
                 selectedServices.mulch ||
                 selectedServices.bush_trimming ||
+                selectedServices.power_raking ||
                 (isOvergrown && (mowingType === 'weekly' || mowingType === 'biweekly'));
             
             document.getElementById('photoSection').classList.toggle('show', needsPhotos);
@@ -2996,10 +5007,10 @@
             // Must match the logic in updatePhotoVisibility()
             const photoServicesSelected = 
                 mowingType === 'onetime' || 
-                selectedServices.yard_cleanup ||
-                selectedServices.leaf_cleanup ||
+                selectedServices.yard_cleanup || // Now a dropdown
                 selectedServices.mulch ||
                 selectedServices.bush_trimming ||
+                selectedServices.power_raking ||
                 (isOvergrown && (mowingType === 'weekly' || mowingType === 'biweekly'));
             
             if (photoServicesSelected && photoSectionEnabled && photos.length === 0) {
@@ -3028,6 +5039,13 @@
             
             showScreen('screen2');
             updateSteps(2);
+            
+            // Scroll to top of the page so customer sees the measurement notice first
+            window.scrollTo({ top: 0, behavior: 'instant' });
+            
+            // Populate the sqft-based services list
+            populateSqftServicesList();
+            
             initMap();
             
             // Mulch-only mode: only mulch selected, no lawn services
@@ -3142,6 +5160,21 @@
             document.getElementById('summaryPhone').textContent = document.getElementById('phone').value;
             document.getElementById('summaryAddress').textContent = document.getElementById('address').value;
             
+            // Package (show if a package was selected, hide if custom/individual services)
+            const packageRow = document.getElementById('packageRow');
+            const packageEl = document.getElementById('summaryPackage');
+            if (selectedPackage) {
+                const packageNames = {
+                    essential: 'Essentials',
+                    complete: 'Complete',
+                    total: 'Premium (VIP)'
+                };
+                packageRow.style.display = 'flex';
+                packageEl.textContent = packageNames[selectedPackage] || 'Custom';
+            } else {
+                packageRow.style.display = 'none';
+            }
+            
             // Services
             const serviceLabels = {
                 mowing: {
@@ -3149,20 +5182,32 @@
                     biweekly: 'Bi-Weekly Mowing',
                     onetime: 'One-Time Mow'
                 },
-                aeration: 'Lawn Aeration',
-                overseeding: 'Overseeding',
+                aeration: {
+                    single: 'Lawn Aeration (Single Pass)',
+                    double: 'Lawn Aeration (Double Pass)'
+                },
+                overseeding: {
+                    standard: 'Overseeding',
+                    complete: 'Overseeding + Peat Moss + Starter Fertilizer'
+                },
                 fertilization: {
                     onetime: 'Fertilization (One-Time)',
                     recurring: 'Fertilization (Every 4-6 Weeks)'
                 },
-                weed_control: 'Weed Control (via Weed Man)',
+                weed_control: {
+                    combo: 'Weed Control + Fertilizer (via Weed Man)',
+                    fertilizer_only: 'Fertilizer Only (via Weed Man)'
+                },
                 mulch: {
                     brown: 'Mulch Install (Brown)',
                     red: 'Mulch Install (Red)',
                     black: 'Mulch Install (Black)'
                 },
-                yard_cleanup: 'Yard Cleanup',
-                leaf_cleanup: 'Leaf Cleanup',
+                yard_cleanup: {
+                    leaf_cleanup: 'Leaf Cleanup',
+                    complete_cleanup: 'Complete Yard Cleanup'
+                },
+                power_raking: 'Power Raking',
                 bush_trimming: {
                     onetime: 'Bush Trimming (One-Time)',
                     weekly: 'Bush Trimming (Weekly)',
@@ -3172,21 +5217,55 @@
                 }
             };
             
+            // Build NMW services list (exclude weed_control - that's Weed Man)
             const services = [];
             for (const [key, value] of Object.entries(selectedServices)) {
+                // Skip weed_control - it goes in Weed Man section
+                if (key === 'weed_control') continue;
+                
                 if (key === 'mowing' && typeof serviceLabels.mowing === 'object') {
                     services.push(serviceLabels.mowing[value]);
+                } else if (key === 'aeration' && typeof serviceLabels.aeration === 'object') {
+                    services.push(serviceLabels.aeration[value]);
+                } else if (key === 'overseeding' && typeof serviceLabels.overseeding === 'object') {
+                    services.push(serviceLabels.overseeding[value]);
                 } else if (key === 'fertilization' && typeof serviceLabels.fertilization === 'object') {
                     services.push(serviceLabels.fertilization[value]);
                 } else if (key === 'mulch' && typeof serviceLabels.mulch === 'object') {
                     services.push(serviceLabels.mulch[value]);
                 } else if (key === 'bush_trimming' && typeof serviceLabels.bush_trimming === 'object') {
                     services.push(serviceLabels.bush_trimming[value]);
+                } else if (key === 'yard_cleanup' && typeof serviceLabels.yard_cleanup === 'object') {
+                    services.push(serviceLabels.yard_cleanup[value]);
                 } else if (typeof serviceLabels[key] === 'string') {
                     services.push(serviceLabels[key]);
                 }
             }
-            document.getElementById('summaryServices').textContent = services.join(', ') || '—';
+            // Display services as bullet list for cleaner reading
+            const servicesEl = document.getElementById('summaryServices');
+            if (services.length > 0) {
+                servicesEl.innerHTML = services.map(s => `<div style="display: flex; gap: 6px; align-items: flex-start;"><span style="color: #16a34a;">•</span> ${s}</div>`).join('');
+            } else {
+                servicesEl.textContent = '—';
+            }
+            
+            // Weed Man Services (separate section)
+            const weedManLabels = {
+                weed_control_fertilizer: 'Weed Control & Fertilizer',
+                crabgrass_control: 'Crabgrass Control',
+                insect_control: 'Insect Control',
+                grub_control: 'Grub Control',
+                mosquito_control: 'Mosquito Control',
+                perimeter_pest: 'Perimeter Pest Control'
+            };
+            if (weedManServices && weedManServices.length > 0) {
+                const weedLabels = weedManServices.map(s => weedManLabels[s] || s);
+                // Display as bullet list for consistency
+                document.getElementById('summaryWeedMan').innerHTML = weedLabels.map(s => `<div style="display: flex; gap: 6px; align-items: flex-start;"><span style="color: #16a34a;">•</span> ${s}</div>`).join('');
+                document.getElementById('weedManRow').style.display = 'block';
+            } else {
+                document.getElementById('weedManRow').style.display = 'none';
+            }
             
             // Sqft
             document.getElementById('summarySqft').textContent = totalLawnSqft > 0 ? `${totalLawnSqft.toLocaleString()} sq ft` : 'Not measured';
@@ -4361,9 +6440,12 @@
                     address: document.getElementById('address').value.trim(),
                     referralSource: document.getElementById('referralSource').value,
                     smsConsent: document.getElementById('smsConsent').checked,
+                    selectedPackage: selectedPackage, // 'essential', 'complete', 'total', or null (custom)
                     services: selectedServices,
                     mowingType: mowingType,
                     fertilizationType: fertilizationType,
+                    weedManServices: weedManServices,
+                    weedManPayment: weedManServices.length > 0 ? (document.querySelector('input[name="weedManPayment"]:checked')?.value || 'per_service') : null,
                     mulchColor: mulchColor,
                     bushTrimmingFrequency: bushTrimmingFrequency,
                     hasGate: hasGate,
@@ -4461,6 +6543,38 @@
                 submitBtn.textContent = 'Submit Quote Request';
             }
         }
+        
+        // ========================================
+        // IFRAME AUTO-HEIGHT (no double-scrolling)
+        // ========================================
+        (function() {
+            function sendHeight() {
+                const height = document.body.scrollHeight;
+                window.parent.postMessage({ type: 'nmw-widget-height', height: height }, '*');
+            }
+            
+            // Send on load
+            window.addEventListener('load', () => {
+                sendHeight();
+                // Send again after fonts load
+                setTimeout(sendHeight, 100);
+                setTimeout(sendHeight, 500);
+            });
+            
+            // Watch for content changes
+            const observer = new ResizeObserver(() => sendHeight());
+            observer.observe(document.body);
+            
+            // Also send on any screen change
+            const originalShowScreen = window.showScreen;
+            if (originalShowScreen) {
+                window.showScreen = function(id) {
+                    originalShowScreen(id);
+                    setTimeout(sendHeight, 50);
+                    setTimeout(sendHeight, 200);
+                };
+            }
+        })();
     </script>
 </body>
 </html>
