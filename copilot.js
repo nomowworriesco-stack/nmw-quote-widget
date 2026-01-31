@@ -349,17 +349,58 @@ const COPILOT_SOURCE_MAP = {
 
 /**
  * Build CUSTOMER notes (general info + customer's written notes)
- * IMPORTANT: Include services here so they're visible when opening a customer!
+ * IMPORTANT: Include ALL data from the quote widget here!
  */
 function buildCustomerNotes(quote) {
     const lines = [];
     
-    // Services requested - FIRST so Chris sees them immediately!
+    // Package selected (if any)
+    if (quote.selectedPackage) {
+        const packageNames = { 
+            'essential': 'Essentials Package', 
+            'complete': 'Complete Package', 
+            'premium': 'Premium Package' 
+        };
+        lines.push(`📦 Package: ${packageNames[quote.selectedPackage] || quote.selectedPackage}`);
+    }
+    
+    // How they found us
+    if (quote.referralSource) {
+        const sourceNames = {
+            'google': 'Google',
+            'nextdoor': 'Nextdoor',
+            'referral': 'Referral',
+            'facebook': 'Facebook',
+            'yard_sign': 'Yard Sign',
+            'flyer': 'Flyer/Door Hanger',
+            'other': 'Other'
+        };
+        lines.push(`📣 How found us: ${sourceNames[quote.referralSource] || quote.referralSource}`);
+    }
+    
+    lines.push('');
+    
+    // Services requested
     const servicesText = normalizeServices(quote.services).join(', ');
     if (servicesText) {
         lines.push(`🎯 Services Requested: ${servicesText}`);
-        lines.push('');
     }
+    
+    // Weed Man services (if any)
+    if (quote.weedManServices && quote.weedManServices.length > 0) {
+        const weedManLabels = {
+            'weed_control_fertilizer': 'Weed Control + Fertilizer',
+            'mosquito_control': 'Mosquito Control',
+            'grub_control': 'Grub Control'
+        };
+        const weedManText = quote.weedManServices.map(s => weedManLabels[s] || s).join(', ');
+        lines.push(`🌿 Weed Man Services: ${weedManText}`);
+        if (quote.weedManPayment) {
+            lines.push(`💳 Payment: ${quote.weedManPayment === 'prepay' ? 'Prepay' : 'Per Service'}`);
+        }
+    }
+    
+    lines.push('');
     
     // Measurements summary
     if (quote.lawnSqft || quote.turfSqft) {
@@ -370,12 +411,46 @@ function buildCustomerNotes(quote) {
         const colorInfo = quote.mulchColor ? ` (${quote.mulchColor})` : '';
         lines.push(`🌿 ${mulchInfo}${colorInfo}`);
     }
-    if (lines.length > 1) lines.push(''); // Add separator after measurements
+    
+    lines.push('');
+    
+    // Property details
+    lines.push('🏠 Property Details:');
+    if (quote.hasGate === true) {
+        let gateInfo = '• Gate: Yes';
+        if (quote.gateWidth) gateInfo += ` (${quote.gateWidth}" wide)`;
+        if (quote.gateCode) gateInfo += ` — Code: ${quote.gateCode}`;
+        lines.push(gateInfo);
+    } else if (quote.hasGate === false) {
+        lines.push('• Gate: No');
+    }
+    
+    if (quote.hasDog === true) {
+        lines.push('• Dogs: Yes ⚠️');
+    } else if (quote.hasDog === false) {
+        lines.push('• Dogs: No');
+    }
+    
+    if (quote.isOvergrown === true) {
+        let overgrownInfo = '• Lawn Overgrown: Yes ⚠️';
+        if (quote.grassHeight) overgrownInfo += ` (${quote.grassHeight})`;
+        lines.push(overgrownInfo);
+    } else if (quote.isOvergrown === false) {
+        lines.push('• Lawn Overgrown: No');
+    }
+    
+    if (quote.hasStairs === true) {
+        lines.push('• Stairs to Backyard: Yes');
+    } else if (quote.hasStairs === false) {
+        lines.push('• Stairs to Backyard: No');
+    }
+    
+    lines.push('');
     
     // Customer's additional notes - very visible!
     if (quote.notes && quote.notes.trim()) {
-        lines.push(`📝 Customer Notes: ${quote.notes.trim()}`);
-        lines.push('');  // Blank line separator
+        lines.push(`📝 Notes: ${quote.notes.trim()}`);
+        lines.push('');
     }
     
     // Consent
@@ -693,8 +768,25 @@ async function sendSms(customerId, message, config = null) {
  * @param {object} quote - Quote data
  * @param {object} config - Optional config
  */
-async function sendQuoteConfirmationEmail(customerId, quote, config = null) {
+async function sendQuoteConfirmationEmail(customerId, quote, config = null, snapshotPath = null) {
     const firstName = (quote.name || 'there').split(' ')[0];
+    const services = normalizeServices(quote.services);
+    const lawnSqft = quote.turfSqft || quote.lawnSqft;
+    
+    // Load map snapshot as base64 if available
+    let mapImageBase64 = null;
+    if (snapshotPath) {
+        try {
+            const fs = require('fs');
+            if (fs.existsSync(snapshotPath)) {
+                const imageBuffer = fs.readFileSync(snapshotPath);
+                mapImageBase64 = `data:image/png;base64,${imageBuffer.toString('base64')}`;
+                console.log(`   🗺️  Map snapshot loaded for email (${Math.round(imageBuffer.length / 1024)}KB)`);
+            }
+        } catch (e) {
+            console.log(`   ⚠️  Could not load map snapshot: ${e.message}`);
+        }
+    }
     
     const subject = 'Quote Request Received - No Mow Worries';
     const htmlContent = `
@@ -702,32 +794,98 @@ async function sendQuoteConfirmationEmail(customerId, quote, config = null) {
 <html>
 <head>
   <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-    .header { background: #2E7D32; color: white; padding: 20px; text-align: center; }
-    .content { padding: 20px; }
-    .footer { background: #f5f5f5; padding: 15px; text-align: center; font-size: 12px; color: #666; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #1a1a1a; margin: 0; padding: 0; background: #f5f5f5; }
+    .container { max-width: 560px; margin: 0 auto; background: white; }
+    .header { background: #2E7D32; color: white; padding: 32px 24px; text-align: center; }
+    .header h1 { margin: 0; font-size: 24px; font-weight: 600; }
+    .content { padding: 32px 24px; }
+    .greeting { font-size: 18px; margin-bottom: 16px; }
+    .message { color: #444; margin-bottom: 24px; }
+    
+    .receipt { background: #f8f9fa; border-radius: 8px; padding: 20px; margin: 24px 0; }
+    .receipt-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #666; margin-bottom: 16px; font-weight: 600; }
+    .receipt-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e0e0e0; font-size: 14px; }
+    .receipt-row:last-child { border-bottom: none; }
+    .receipt-label { color: #666; }
+    .receipt-value { font-weight: 500; color: #1a1a1a; }
+    .services-list { margin: 0; padding: 0; list-style: none; }
+    .services-list li { padding: 4px 0; font-size: 14px; color: #1a1a1a; }
+    
+    .next-steps { margin: 24px 0; }
+    .next-steps h3 { font-size: 14px; font-weight: 600; margin: 0 0 12px 0; color: #1a1a1a; }
+    .next-steps ul { margin: 0; padding-left: 20px; color: #444; }
+    .next-steps li { margin-bottom: 8px; font-size: 14px; }
+    
+    .contact-box { background: #e8f5e9; border-radius: 8px; padding: 16px 20px; margin: 24px 0; text-align: center; }
+    .contact-box p { margin: 0; font-size: 14px; color: #1a1a1a; }
+    .contact-box a { color: #2E7D32; font-weight: 600; text-decoration: none; }
+    
+    .signature { margin-top: 24px; color: #444; font-size: 14px; }
+    
+    .footer { background: #f8f9fa; padding: 20px 24px; text-align: center; }
+    .footer p { margin: 4px 0; font-size: 12px; color: #999; }
+    .footer a { color: #2E7D32; text-decoration: none; }
   </style>
 </head>
 <body>
-  <div class="header">
-    <h1>🌿 No Mow Worries</h1>
-  </div>
-  <div class="content">
-    <p>Hi ${firstName}!</p>
-    <p>Thanks for submitting a quote request! We've received your information and will get back to you shortly with a customized quote.</p>
-    <p><strong>What's next?</strong></p>
-    <ul>
-      <li>We'll review your property details and measurements</li>
-      <li>You'll receive a detailed quote within 1-2 business days</li>
-      <li>No obligation - just helpful information!</li>
-    </ul>
-    <p>Have questions? Just reply to this email or call us at <strong>(720) 503-8019</strong>.</p>
-    <p>We look forward to helping you with your lawn care needs!</p>
-    <p>Best,<br>The No Mow Worries Team</p>
-  </div>
-  <div class="footer">
-    <p>No Mow Worries Lawn Care | Aurora, CO | (720) 503-8019</p>
-    <p><a href="https://nomowworriesco.com">nomowworriesco.com</a></p>
+  <div class="container">
+    <div class="header">
+      <h1>No Mow Worries</h1>
+    </div>
+    <div class="content">
+      <p class="greeting">Hi ${firstName},</p>
+      <p class="message">Thanks for submitting a quote request! We've received your information and will get back to you shortly with a customized quote.</p>
+      
+      <div class="receipt">
+        <div class="receipt-title">What We Received</div>
+        <div class="receipt-row">
+          <span class="receipt-label">Address</span>
+          <span class="receipt-value">${quote.address || 'N/A'}</span>
+        </div>
+        ${lawnSqft ? `<div class="receipt-row">
+          <span class="receipt-label">Lawn Size</span>
+          <span class="receipt-value">${parseInt(lawnSqft).toLocaleString()} sq ft</span>
+        </div>` : ''}
+        <div class="receipt-row">
+          <span class="receipt-label">Services</span>
+          <span class="receipt-value">
+            <ul class="services-list">
+              ${services.map(s => `<li>${s}</li>`).join('')}
+            </ul>
+          </span>
+        </div>
+      </div>
+      
+      ${mapImageBase64 ? `
+      <div style="margin: 24px 0; text-align: center;">
+        <img src="${mapImageBase64}" alt="Your Property" style="max-width: 100%; border-radius: 8px; border: 1px solid #e0e0e0;" />
+        <p style="margin-top: 8px; font-size: 12px; color: #666;">Your property location</p>
+      </div>
+      ` : ''}
+      
+      <div class="next-steps">
+        <h3>What's Next</h3>
+        <ul>
+          <li>We'll review your property details and measurements</li>
+          <li>You'll receive a detailed quote within 1-2 business days</li>
+          <li>No obligation — just helpful information</li>
+        </ul>
+      </div>
+      
+      <div class="contact-box">
+        <p>Questions? Reply to this email or call <a href="tel:7205038019">(720) 503-8019</a></p>
+      </div>
+      
+      <div class="signature">
+        <p>We look forward to helping you!</p>
+        <p><strong>The No Mow Worries Team</strong></p>
+      </div>
+    </div>
+    <div class="footer">
+      <p>No Mow Worries Lawn Care</p>
+      <p>Aurora, CO | (720) 503-8019</p>
+      <p><a href="https://nomowworriesco.com">nomowworriesco.com</a></p>
+    </div>
   </div>
 </body>
 </html>`;

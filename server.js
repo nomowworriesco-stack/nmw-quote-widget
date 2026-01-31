@@ -386,8 +386,25 @@ function savePhotos(quote) {
         fs.mkdirSync(dateDir, { recursive: true });
     }
     
+    // Deduplicate photos by base64 content
+    const seenData = new Set();
+    const uniquePhotos = [];
+    for (const photo of quote.photos) {
+        const photoData = typeof photo === 'string' ? photo : photo.data;
+        if (!seenData.has(photoData)) {
+            seenData.add(photoData);
+            uniquePhotos.push(photo);
+        } else {
+            console.log(`   ⚠️ Skipping duplicate photo`);
+        }
+    }
+    
+    if (uniquePhotos.length !== quote.photos.length) {
+        console.log(`   📷 Deduplicated: ${quote.photos.length} → ${uniquePhotos.length} photos`);
+    }
+    
     const savedPaths = [];
-    quote.photos.forEach((photo, i) => {
+    uniquePhotos.forEach((photo, i) => {
         // Handle both formats: string (base64 data URI) or object with {type, data}
         const photoData = typeof photo === 'string' ? photo : photo.data;
         const photoType = typeof photo === 'string' 
@@ -456,16 +473,26 @@ async function sendDiscordNotification(quote, snapshotPath, photoPaths, copilotR
             services: quote.services,
             selectedPackage: quote.selectedPackage,
             packageWasEdited: quote.packageWasEdited,
+            mowingType: quote.mowingType,
             turfSqft: quote.turfSqft,
             lawnSqft: quote.lawnSqft,
             mulchSqft: quote.mulchSqft,
             mulchCuFt: quote.mulchCuFt,
+            mulchColor: quote.mulchColor,
             notes: quote.notes,
             propertyNotes: quote.propertyNotes,
             additionalNotes: quote.additionalNotes,
             referralSource: quote.referralSource,
             weedManServices: quote.weedManServices,
-            weedManPayment: quote.weedManPayment
+            weedManPayment: quote.weedManPayment,
+            // Property details
+            hasGate: quote.hasGate,
+            gateWidth: quote.gateWidth,
+            gateCode: quote.gateCode,
+            hasDog: quote.hasDog,
+            hasStairs: quote.hasStairs,
+            isOvergrown: quote.isOvergrown,
+            grassHeight: quote.grassHeight
         },
         snapshotPath,
         photoPaths,
@@ -748,7 +775,9 @@ async function saveQuote(quote) {
             console.log('   📧 Sending confirmation email to customer...');
             const emailResult = await sendQuoteConfirmationEmail(
                 copilotResult.customer.customerId,
-                quote
+                quote,
+                null,
+                snapshotPath  // Pass the map snapshot path
             );
             if (emailResult.success) {
                 console.log('   ✅ Confirmation email sent!');
@@ -825,6 +854,28 @@ const server = http.createServer((req, res) => {
     // Serve index-updated
     if (url === '/index-updated.html') {
         const content = fs.readFileSync(path.join(__dirname, 'index-updated.html'), 'utf8');
+        res.writeHead(200, { 
+            'Content-Type': 'text/html',
+            'Cache-Control': 'no-cache'
+        });
+        res.end(content);
+        return;
+    }
+    
+    // Serve contact page replica with widget
+    if (url === '/contact' || url === '/contact-replica.html') {
+        const content = fs.readFileSync(path.join(__dirname, 'public', 'contact-replica.html'), 'utf8');
+        res.writeHead(200, { 
+            'Content-Type': 'text/html',
+            'Cache-Control': 'no-cache'
+        });
+        res.end(content);
+        return;
+    }
+    
+    // Serve widget only (for iframe embedding)
+    if (url === '/widget') {
+        const content = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
         res.writeHead(200, { 
             'Content-Type': 'text/html',
             'Cache-Control': 'no-cache'

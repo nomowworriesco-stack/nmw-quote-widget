@@ -219,98 +219,142 @@ async function sendQuoteNotification(quote, snapshotPath, photoPaths = [], copil
     // Build email subject - "New Website Lead - Name"
     const subject = `New Website Lead - ${quote.name}`;
     
-    // Build HTML content - cleaner, more compact format
+    // Build HTML content - clean, professional design
     let html = `
 <!DOCTYPE html>
 <html>
 <head>
     <style>
-        body { font-family: Arial, sans-serif; line-height: 1.5; color: #333; max-width: 600px; margin: 0 auto; }
-        .header { background: #2E7D32; color: white; padding: 15px 20px; text-align: center; border-radius: 8px 8px 0 0; }
-        .header h1 { margin: 0 0 3px 0; font-size: 18px; font-weight: normal; }
-        .header .name { font-size: 22px; font-weight: bold; margin: 5px 0; }
-        .header .date { font-size: 12px; opacity: 0.9; }
-        .content { padding: 15px; background: #f9f9f9; }
-        .contact-info { background: white; padding: 12px; border-radius: 6px; margin-bottom: 12px; border-left: 4px solid #2E7D32; }
-        .contact-info p { margin: 5px 0; }
-        .contact-info .label { color: #666; font-size: 11px; text-transform: uppercase; }
-        .contact-info .value { font-size: 14px; color: #333; }
-        .contact-info a { color: #2E7D32; text-decoration: none; }
-        .section { background: white; padding: 12px; border-radius: 6px; margin: 10px 0; }
-        .section h3 { margin: 0 0 8px 0; font-size: 14px; color: #2E7D32; display: flex; align-items: center; gap: 6px; }
-        .section h3 svg { width: 16px; height: 16px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.5; color: #1a1a1a; max-width: 600px; margin: 0 auto; background: #f5f5f5; }
+        .container { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .header { background: #2E7D32; color: white; padding: 24px; }
+        .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+        .header h1 { margin: 0; font-size: 14px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.9; }
+        .header .date { font-size: 12px; opacity: 0.8; }
+        .header .name { font-size: 24px; font-weight: 600; margin: 0; }
+        .content { padding: 24px; }
+        
+        /* Contact Info */
+        .contact-block { margin-bottom: 24px; }
+        .contact-row { display: flex; margin-bottom: 12px; }
+        .contact-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #666; margin-bottom: 2px; }
+        .contact-value { font-size: 15px; color: #1a1a1a; }
+        .contact-value a { color: #2E7D32; text-decoration: none; }
+        
+        /* Meta Info */
+        .meta-block { display: flex; gap: 24px; padding: 16px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; margin-bottom: 24px; }
+        .meta-item { font-size: 13px; color: #666; }
+        .meta-item strong { color: #1a1a1a; }
+        
+        /* Section Headers */
+        .section { margin-bottom: 24px; }
+        .section-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #2E7D32; margin: 0 0 12px 0; padding-bottom: 8px; border-bottom: 2px solid #2E7D32; }
+        
+        /* Services List */
         .services-list { margin: 0; padding: 0; list-style: none; }
-        .services-list li { display: flex; align-items: center; padding: 4px 0; font-size: 13px; }
-        .service-dot { width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; flex-shrink: 0; }
-        .property-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 13px; }
-        .property-item { display: flex; }
-        .property-item strong { min-width: 100px; }
-        .measurements { display: flex; gap: 15px; margin-top: 10px; }
-        .measurement { background: #e8f5e9; padding: 8px 12px; border-radius: 6px; text-align: center; flex: 1; }
-        .measurement .number { font-size: 18px; font-weight: bold; color: #2E7D32; }
-        .measurement .unit { font-size: 11px; color: #666; }
-        .notes-section { background: #fff3e0; padding: 10px 12px; border-radius: 6px; margin: 10px 0; border-left: 4px solid #ff9800; }
-        .notes-section h4 { margin: 0 0 5px 0; color: #e65100; font-size: 12px; }
-        .notes-section p { margin: 0; font-size: 13px; }
-        .copilot { background: #e3f2fd; padding: 10px 12px; border-radius: 6px; margin: 10px 0; border-left: 4px solid #1976D2; font-size: 13px; }
-        .copilot a { color: #1976D2; font-weight: bold; }
-        .meta-row { display: flex; gap: 15px; font-size: 12px; color: #666; margin: 10px 0; }
-        .meta-item { display: flex; align-items: center; gap: 4px; }
-        .map-section { margin: 15px 0; text-align: center; }
-        .map-section h3 { color: #2E7D32; margin-bottom: 8px; font-size: 13px; }
-        .map-section img { max-width: 100%; max-height: 250px; border-radius: 6px; border: 1px solid #ddd; }
-        .weedman { background: #f3e5f5; padding: 10px 12px; border-radius: 6px; margin: 10px 0; border-left: 4px solid #7B1FA2; }
-        .weedman h4 { margin: 0 0 5px 0; color: #7B1FA2; font-size: 12px; }
-        .weedman .payment { font-size: 11px; color: #666; margin-top: 5px; }
-        .footer { background: #eee; padding: 10px; text-align: center; font-size: 11px; border-radius: 0 0 8px 8px; color: #666; }
+        .services-list li { padding: 8px 0; font-size: 14px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; }
+        .services-list li:last-child { border-bottom: none; }
+        .service-bullet { width: 6px; height: 6px; border-radius: 50%; background: #2E7D32; margin-right: 12px; flex-shrink: 0; }
+        
+        /* Property Grid */
+        .property-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .property-item { font-size: 14px; }
+        .property-item .label { color: #666; }
+        .property-item .value { font-weight: 500; }
+        
+        /* Measurements */
+        .measurements { display: flex; gap: 16px; margin-top: 16px; }
+        .measurement { background: #f8f9fa; padding: 16px; border-radius: 6px; text-align: center; flex: 1; }
+        .measurement .number { font-size: 28px; font-weight: 700; color: #2E7D32; line-height: 1; }
+        .measurement .unit { font-size: 12px; color: #666; margin-top: 4px; }
+        
+        /* Notes */
+        .notes-block { background: #f8f9fa; padding: 16px; border-radius: 6px; margin-bottom: 16px; }
+        .notes-block .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #666; margin-bottom: 6px; }
+        .notes-block .content { font-size: 14px; color: #1a1a1a; margin: 0; }
+        
+        /* Weed Man */
+        .partner-block { background: #f8f9fa; padding: 16px; border-radius: 6px; margin-bottom: 16px; border-left: 3px solid #7B1FA2; }
+        .partner-block .title { font-size: 12px; font-weight: 600; color: #7B1FA2; margin-bottom: 8px; }
+        .partner-block .payment { font-size: 12px; color: #666; margin-top: 8px; }
+        
+        /* Copilot Status */
+        .copilot-block { background: #e8f5e9; padding: 16px; border-radius: 6px; margin-bottom: 16px; }
+        .copilot-block .status { font-size: 13px; font-weight: 500; color: #2E7D32; }
+        .copilot-block a { color: #2E7D32; font-weight: 600; }
+        .copilot-block .ids { font-size: 12px; color: #666; margin-top: 4px; }
+        
+        /* Map */
+        .map-block { text-align: center; margin-bottom: 16px; }
+        .map-block img { max-width: 100%; border-radius: 6px; border: 1px solid #e0e0e0; }
+        
+        /* Photos */
+        .photos-block { background: #f8f9fa; padding: 12px 16px; border-radius: 6px; font-size: 13px; color: #666; }
+        
+        /* Footer */
+        .footer { background: #f8f9fa; padding: 16px; text-align: center; font-size: 11px; color: #999; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>New Website Lead</h1>
-        <div class="name">${quote.name || 'N/A'}</div>
-        <div class="date">${timestamp}</div>
-    </div>
-    <div class="content">
-        <div class="contact-info">
-            <p><span class="label">Email</span><br><span class="value"><a href="mailto:${quote.email}">${quote.email || 'N/A'}</a></span></p>
-            <p><span class="label">Phone</span><br><span class="value"><a href="tel:${quote.phone}">${quote.phone || 'N/A'}</a></span></p>
-            <p><span class="label">Address</span><br><span class="value">${quote.address || 'N/A'}</span></p>
+    <div class="container">
+        <div class="header">
+            <div class="header-top">
+                <h1>New Website Lead</h1>
+                <span class="date">${timestamp}</span>
+            </div>
+            <p class="name">${quote.name || 'N/A'}</p>
         </div>
-        
-        <div class="meta-row">
-            <div class="meta-item">📦 <strong>Package:</strong> ${packageName}</div>
-            <div class="meta-item">📣 <strong>Found us:</strong> ${quote.referralSource || 'Not specified'}</div>
-        </div>
-        
-        <div class="section">
-            <h3>📋 Services Requested</h3>
-            <ul class="services-list">
-                ${servicesWithColors.map(s => `<li><span class="service-dot" style="background: ${s.color};"></span>${s.name}</li>`).join('')}
-            </ul>
-        </div>`;
+        <div class="content">
+            <div class="contact-block">
+                <div class="contact-row">
+                    <div style="flex: 1;">
+                        <div class="contact-label">Email</div>
+                        <div class="contact-value"><a href="mailto:${quote.email}">${quote.email || 'N/A'}</a></div>
+                    </div>
+                    <div style="flex: 1;">
+                        <div class="contact-label">Phone</div>
+                        <div class="contact-value"><a href="tel:${quote.phone}">${quote.phone || 'N/A'}</a></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="contact-label">Address</div>
+                    <div class="contact-value">${quote.address || 'N/A'}</div>
+                </div>
+            </div>
+            
+            <div class="meta-block">
+                <div class="meta-item"><strong>Package:</strong> ${packageName}</div>
+                <div class="meta-item"><strong>Found us:</strong> ${quote.referralSource || 'Not specified'}</div>
+            </div>
+            
+            <div class="section">
+                <h3 class="section-title">Services Requested</h3>
+                <ul class="services-list">
+                    ${servicesWithColors.map(s => `<li><span class="service-bullet"></span>${s.name}</li>`).join('')}
+                </ul>
+            </div>`;
     
     // Add Weed Man section if applicable
     if (weedMan) {
         html += `
-        <div class="weedman">
-            <h4>🌿 Weed Man Services (Partner)</h4>
-            <ul class="services-list" style="margin: 5px 0;">
-                ${weedMan.services.map(s => `<li style="padding: 2px 0;">• ${s}</li>`).join('')}
-            </ul>
-            <div class="payment">💳 Preferred Payment: <strong>${weedMan.payment}</strong></div>
-        </div>`;
+            <div class="partner-block">
+                <div class="title">Weed Man Services (Partner)</div>
+                <ul class="services-list" style="margin: 0; padding: 0;">
+                    ${weedMan.services.map(s => `<li style="border: none; padding: 4px 0;"><span class="service-bullet" style="background: #7B1FA2;"></span>${s}</li>`).join('')}
+                </ul>
+                <div class="payment">Preferred Payment: <strong>${weedMan.payment}</strong></div>
+            </div>`;
     }
     
     html += `
-        <div class="section">
-            <h3>🏠 Property Details</h3>
-            <div class="property-grid">
-                <div class="property-item"><strong>Gate:</strong> ${quote.hasGate ? `Yes${quote.gateWidth ? ` (${quote.gateWidth}")` : ''}${quote.gateCode ? ` Code: ${quote.gateCode}` : ''}` : 'No'}</div>
-                <div class="property-item"><strong>Dogs:</strong> ${quote.hasDog ? 'Yes' : 'No'}</div>
-                <div class="property-item"><strong>Overgrown:</strong> ${quote.isOvergrown ? `Yes${quote.grassHeight ? ` (~${quote.grassHeight}")` : ''}` : 'No'}</div>
-                <div class="property-item"><strong>Stairs:</strong> ${quote.hasStairs ? 'Yes' : 'No'}</div>
-            </div>`;
+            <div class="section">
+                <h3 class="section-title">Property Details</h3>
+                <div class="property-grid">
+                    <div class="property-item"><span class="label">Gate:</span> <span class="value">${quote.hasGate ? `Yes${quote.gateWidth ? ` (${quote.gateWidth}")` : ''}${quote.gateCode ? ` Code: ${quote.gateCode}` : ''}` : 'No'}</span></div>
+                    <div class="property-item"><span class="label">Dogs:</span> <span class="value">${quote.hasDog ? 'Yes' : 'No'}</span></div>
+                    <div class="property-item"><span class="label">Overgrown:</span> <span class="value">${quote.isOvergrown ? `Yes${quote.grassHeight ? ` (~${quote.grassHeight}")` : ''}` : 'No'}</span></div>
+                    <div class="property-item"><span class="label">Stairs:</span> <span class="value">${quote.hasStairs ? 'Yes' : 'No'}</span></div>
+                </div>`;
     
     // Add measurements
     if (quote.turfSqft || quote.lawnSqft || quote.mulchSqft) {
@@ -319,47 +363,46 @@ async function sendQuoteNotification(quote, snapshotPath, photoPaths = [], copil
             const sqft = quote.turfSqft || quote.lawnSqft;
             const formatted = typeof sqft === 'number' ? sqft.toLocaleString() : parseInt(sqft).toLocaleString();
             html += `
-            <div class="measurement">
-                <div class="number">${formatted}</div>
-                <div class="unit">🌱 Lawn sq ft</div>
-            </div>`;
+                <div class="measurement">
+                    <div class="number">${formatted}</div>
+                    <div class="unit">Lawn sq ft</div>
+                </div>`;
         }
         if (quote.mulchSqft) {
             const mulchSqft = typeof quote.mulchSqft === 'number' ? quote.mulchSqft : parseInt(quote.mulchSqft);
             html += `
-            <div class="measurement">
-                <div class="number">${mulchSqft.toLocaleString()}</div>
-                <div class="unit">🪴 Mulch sq ft (${quote.mulchCuFt} cu ft)</div>
-            </div>`;
+                <div class="measurement">
+                    <div class="number">${mulchSqft.toLocaleString()}</div>
+                    <div class="unit">Mulch sq ft (${quote.mulchCuFt} cu ft)</div>
+                </div>`;
         }
         html += `</div>`;
     }
     
     html += `</div>`; // Close property section
     
-    // Add notes sections (separate page 1 and page 3)
+    // Add notes sections
     if (quote.propertyNotes || quote.additionalNotes) {
         if (quote.propertyNotes) {
             html += `
-            <div class="notes-section">
-                <h4>📝 Property Notes (Page 1)</h4>
-                <p>${quote.propertyNotes}</p>
+            <div class="notes-block">
+                <div class="label">Property Notes</div>
+                <p class="content">${quote.propertyNotes}</p>
             </div>`;
         }
         if (quote.additionalNotes) {
             html += `
-            <div class="notes-section" style="background: #e8f5e9; border-left-color: #4CAF50;">
-                <h4 style="color: #2E7D32;">💬 Additional Notes (Review Page)</h4>
-                <p>${quote.additionalNotes}</p>
+            <div class="notes-block">
+                <div class="label">Additional Notes</div>
+                <p class="content">${quote.additionalNotes}</p>
             </div>`;
         }
     } else if (quote.notes) {
-        // Fallback for old format
         html += `
-        <div class="notes-section">
-            <h4>📝 Customer Notes</h4>
-            <p>${quote.notes}</p>
-        </div>`;
+            <div class="notes-block">
+                <div class="label">Customer Notes</div>
+                <p class="content">${quote.notes}</p>
+            </div>`;
     }
     
     // Add Copilot info if customer was created
@@ -367,35 +410,33 @@ async function sendQuoteNotification(quote, snapshotPath, photoPaths = [], copil
         const customerId = copilotResult.customer.customerId;
         const propertyId = copilotResult.property?.propertyId;
         html += `
-        <div class="copilot">
-            ✅ <strong>Added to Copilot</strong> — 
-            Customer: <a href="https://secure.copilotcrm.com/customers/details/${customerId}">${customerId}</a>
-            ${propertyId ? ` | Property: ${propertyId}` : ''}
-        </div>`;
+            <div class="copilot-block">
+                <div class="status">Added to Copilot</div>
+                <div class="ids">Customer: <a href="https://secure.copilotcrm.com/customers/details/${customerId}">${customerId}</a>${propertyId ? ` | Property: ${propertyId}` : ''}</div>
+            </div>`;
     }
     
-    // Map section - compact inline if available
+    // Map section
     if (snapshotPath) {
         html += `
-        <div class="map-section">
-            <h3>📍 Property Map</h3>
-            <img src="cid:map_snapshot" alt="Property Map" />
-        </div>`;
+            <div class="map-block">
+                <img src="cid:map_snapshot" alt="Property Map" />
+            </div>`;
     }
     
     // Photos section note
     if (photoPaths && photoPaths.length > 0) {
         html += `
-        <div class="section" style="background: #fafafa;">
-            <h3>📷 Customer Photos (${photoPaths.length})</h3>
-            <p style="font-size: 12px; color: #666; margin: 0;"><em>See attached photos</em></p>
-        </div>`;
+            <div class="photos-block">
+                ${photoPaths.length} photo${photoPaths.length > 1 ? 's' : ''} attached
+            </div>`;
     }
     
     html += `
-    </div>
-    <div class="footer">
-        Quote Widget | No Mow Worries Lawn Care
+        </div>
+        <div class="footer">
+            No Mow Worries Lawn Care
+        </div>
     </div>
 </body>
 </html>`;

@@ -3815,6 +3815,7 @@
         let mulchThickness = 3; // Default 3 inches (recommended)
         let measurementSkipped = false; // Track if step 2 was skipped
         let selectedPackage = null; // Track which package was selected: 'essential', 'complete', 'total', or null (custom)
+        let packageWasEdited = false; // Track if user modified services after selecting a package
         
         // Service state tracking
         let serviceSelections = {
@@ -4094,9 +4095,9 @@
         // Select option from dropdown (handles both select and deselect)
         // fromPackage: optional flag to indicate selection came from a package preset (don't clear selectedPackage)
         function selectServiceOption(serviceType, value, displayLabel, fromPackage = false) {
-            // If manually selecting a service (not from package preset), clear the package tracking
+            // If manually selecting a service (not from package preset), mark package as edited
             if (!fromPackage && selectedPackage) {
-                selectedPackage = null;
+                packageWasEdited = true;
                 document.querySelectorAll('.package-btn').forEach(btn => btn.classList.remove('selected'));
             }
             const pillId = {
@@ -4233,9 +4234,9 @@
         
         // Simple toggle for services without sub-options
         function toggleSimpleService(btn) {
-            // If manually toggling a service, clear the package tracking
+            // If manually toggling a service, mark package as edited
             if (selectedPackage) {
-                selectedPackage = null;
+                packageWasEdited = true;
                 document.querySelectorAll('.package-btn').forEach(b => b.classList.remove('selected'));
             }
             
@@ -4281,9 +4282,9 @@
         }
         
         function updateWeedManSelection(fromPackage = false) {
-            // If manually changing weed services (not from package preset), clear the package tracking
+            // If manually changing weed services (not from package preset), mark package as edited
             if (!fromPackage && selectedPackage) {
-                selectedPackage = null;
+                packageWasEdited = true;
                 document.querySelectorAll('.package-btn').forEach(b => b.classList.remove('selected'));
             }
             
@@ -4421,6 +4422,7 @@
             // If this package was already selected, just deselect (toggle off)
             if (wasSelected) {
                 selectedPackage = null; // Clear package selection
+                packageWasEdited = false; // Reset edited flag
                 // Clear any lingering package-highlight classes from services
                 unhighlightPackageServices();
                 updatePhotoVisibility();
@@ -4433,6 +4435,7 @@
             // Otherwise, select this package
             clickedBtn.classList.add('selected');
             selectedPackage = packageType; // Track which package was selected
+            packageWasEdited = false; // Reset edited flag for fresh package selection
             
             // Select services based on package (pass fromPackage=true to preserve package tracking)
             if (packageType === 'essential') {
@@ -4868,31 +4871,66 @@
         
         // Photo handling - max 10 photos
         const MAX_PHOTOS = 10;
+        let photoProcessing = false; // Prevent double-processing
         
         function handlePhotos(files) {
+            // Prevent double-processing (e.g., drag+click race condition)
+            if (photoProcessing) {
+                console.log('Photo processing already in progress, skipping');
+                return;
+            }
+            
             const remaining = MAX_PHOTOS - photos.length;
             if (remaining <= 0) {
                 alert('Maximum 10 photos allowed. Please remove some photos before adding more.');
                 return;
             }
             
+            photoProcessing = true;
             let added = 0;
+            let processed = 0;
+            const totalToProcess = Math.min(Array.from(files).filter(f => f.type.startsWith('image/')).length, remaining);
+            
             for (const file of files) {
                 if (added >= remaining) {
                     alert(`Only ${remaining} more photo(s) can be added. Maximum is 10 photos.`);
                     break;
                 }
                 if (file.type.startsWith('image/')) {
+                    // Check if this file is already in the photos array (by name and size)
+                    const isDuplicate = photos.some(p => p.name === file.name && p.file?.size === file.size);
+                    if (isDuplicate) {
+                        console.log(`Skipping duplicate photo: ${file.name}`);
+                        processed++;
+                        if (processed >= totalToProcess) photoProcessing = false;
+                        continue;
+                    }
+                    
                     const reader = new FileReader();
                     reader.onload = (e) => {
-                        photos.push({ name: file.name, data: e.target.result, file });
-                        renderPhotos();
-                        updatePhotoCount();
+                        // Double-check for duplicates (by data) before adding
+                        const dataExists = photos.some(p => p.data === e.target.result);
+                        if (!dataExists) {
+                            photos.push({ name: file.name, data: e.target.result, file });
+                            renderPhotos();
+                            updatePhotoCount();
+                        } else {
+                            console.log(`Skipping duplicate photo (same data): ${file.name}`);
+                        }
+                        processed++;
+                        if (processed >= totalToProcess) photoProcessing = false;
+                    };
+                    reader.onerror = () => {
+                        processed++;
+                        if (processed >= totalToProcess) photoProcessing = false;
                     };
                     reader.readAsDataURL(file);
                     added++;
                 }
             }
+            
+            // Reset flag if no files to process
+            if (totalToProcess === 0) photoProcessing = false;
         }
         
         function renderPhotos() {
@@ -6480,6 +6518,7 @@
                     referralSource: document.getElementById('referralSource').value,
                     smsConsent: document.getElementById('smsConsent').checked,
                     selectedPackage: selectedPackage, // 'essential', 'complete', 'total', or null (custom)
+                    packageWasEdited: packageWasEdited, // true if user modified services after selecting a package
                     services: selectedServices,
                     mowingType: mowingType,
                     fertilizationType: fertilizationType,
@@ -6496,8 +6535,13 @@
                     overgrownAcknowledged: document.getElementById('overgrownDisclaimer').style.display !== 'none',
                     grassHeight: isOvergrown ? document.getElementById('grassHeight').value : null,
                     hasStairs: hasStairs,
-                    notes: [document.getElementById('notes').value.trim(), document.getElementById('customerNotes').value.trim()].filter(n => n).join(' | '),
+                    // Separate notes: propertyNotes from page 1, additionalNotes from review page
+                    propertyNotes: document.getElementById('notes').value.trim() || null,
+                    additionalNotes: document.getElementById('customerNotes').value.trim() || null,
+                    // Combined notes for backward compatibility
+                    notes: [document.getElementById('notes').value.trim(), document.getElementById('customerNotes').value.trim()].filter(n => n).join(' | ') || null,
                     lawnSqft: totalLawnSqft,
+                    turfSqft: totalLawnSqft, // Alias for lawnSqft (used by Discord notifications)
                     mulchSqft: totalMulchSqft,
                     mulchThickness: totalMulchSqft > 0 ? mulchThickness : null,
                     mulchCuFt: totalMulchSqft > 0 ? (totalMulchSqft * (mulchThickness / 12)).toFixed(1) : null,
