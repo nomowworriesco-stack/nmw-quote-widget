@@ -63,12 +63,75 @@ async function generateStaticMap(address, mapCenter = null, polygons = null) {
         const params = new URLSearchParams({
             size: '600x400',
             maptype: 'satellite',
-            zoom: '19',
             key: GOOGLE_MAPS_API_KEY
         });
         
-        // Use center coordinates if available, otherwise geocode address
-        if (mapCenter && mapCenter.lat && mapCenter.lng) {
+        // Calculate center and zoom from polygons if available
+        let centerLat = null;
+        let centerLng = null;
+        let zoomLevel = 19; // Default zoom
+        
+        console.log(`   🗺️  generateStaticMap called:`);
+        console.log(`      - address: ${address}`);
+        console.log(`      - mapCenter: ${mapCenter ? JSON.stringify(mapCenter) : 'null'}`);
+        console.log(`      - polygons: ${polygons ? polygons.length : 'null/undefined'}`);
+        
+        if (polygons && polygons.length > 0) {
+            // Calculate center of all polygon points
+            let allLats = [];
+            let allLngs = [];
+            for (const poly of polygons) {
+                console.log(`      - Polygon: type=${poly.type}, sqft=${poly.sqft}, coords=${poly.coords ? poly.coords.length : 0}`);
+                if (poly.coords && poly.coords.length >= 3) {
+                    for (const coord of poly.coords) {
+                        allLats.push(coord.lat);
+                        allLngs.push(coord.lng);
+                    }
+                }
+            }
+            console.log(`      - Total coord points collected: ${allLats.length}`);
+            if (allLats.length > 0) {
+                const minLat = Math.min(...allLats);
+                const maxLat = Math.max(...allLats);
+                const minLng = Math.min(...allLngs);
+                const maxLng = Math.max(...allLngs);
+                
+                // Calculate actual center of the polygon bounds
+                centerLat = (minLat + maxLat) / 2;
+                centerLng = (minLng + maxLng) / 2;
+                
+                // Calculate polygon span to determine zoom
+                const latSpan = maxLat - minLat;
+                const lngSpan = maxLng - minLng;
+                const maxSpan = Math.max(latSpan, lngSpan);
+                
+                // Adjust zoom based on polygon size:
+                // Very small (<0.0003 span) = zoom 20
+                // Small (0.0003-0.001) = zoom 19
+                // Medium (0.001-0.003) = zoom 18
+                // Large (>0.003) = zoom 17
+                if (maxSpan < 0.0003) {
+                    zoomLevel = 20;
+                } else if (maxSpan < 0.001) {
+                    zoomLevel = 19;
+                } else if (maxSpan < 0.003) {
+                    zoomLevel = 18;
+                } else {
+                    zoomLevel = 17;
+                }
+                
+                // Small offset south (1/4 of lat span) to show polygon slightly above center
+                // This keeps the polygon visible without pushing it to the edge
+                centerLat -= latSpan * 0.1;
+                
+                console.log(`   📍 Map center: ${centerLat.toFixed(6)}, ${centerLng.toFixed(6)} (zoom ${zoomLevel}, span: ${maxSpan.toFixed(6)})`);
+            }
+        }
+        
+        // Use calculated center, provided mapCenter, or address
+        if (centerLat && centerLng) {
+            params.set('center', `${centerLat},${centerLng}`);
+        } else if (mapCenter && mapCenter.lat && mapCenter.lng) {
             params.set('center', `${mapCenter.lat},${mapCenter.lng}`);
         } else if (address) {
             const encodedAddr = encodeURIComponent(address);
@@ -78,8 +141,12 @@ async function generateStaticMap(address, mapCenter = null, polygons = null) {
             return;
         }
         
+        // Use calculated zoom level
+        params.set('zoom', zoomLevel.toString());
+        
         // Build URL with polygon paths
         let url = `https://maps.googleapis.com/maps/api/staticmap?${params.toString()}`;
+        console.log(`   🔗 Static map base URL params: center=${params.get('center')}, zoom=${params.get('zoom')}`);
         
         // Add polygons if available
         if (polygons && polygons.length > 0) {
@@ -102,6 +169,8 @@ async function generateStaticMap(address, mapCenter = null, polygons = null) {
                 url += `&markers=color:green|${mapCenter.lat},${mapCenter.lng}`;
             }
         }
+        
+        console.log(`   🔗 Final URL length: ${url.length} chars`);
         
         https.get(url, (res) => {
             if (res.statusCode !== 200) {
@@ -143,6 +212,7 @@ const SERVICE_LABELS = {
     'complete': 'Overseeding + Peat Moss + Starter Fertilizer',
     
     'weed_control': 'Weed Control',
+    'power_raking': 'Power Raking',
     
     // Fertilization frequencies
     'fertilization': 'Fertilization',
@@ -384,12 +454,18 @@ async function sendDiscordNotification(quote, snapshotPath, photoPaths, copilotR
             phone: quote.phone,
             address: quote.address,
             services: quote.services,
+            selectedPackage: quote.selectedPackage,
+            packageWasEdited: quote.packageWasEdited,
             turfSqft: quote.turfSqft,
             lawnSqft: quote.lawnSqft,
             mulchSqft: quote.mulchSqft,
             mulchCuFt: quote.mulchCuFt,
             notes: quote.notes,
-            referralSource: quote.referralSource
+            propertyNotes: quote.propertyNotes,
+            additionalNotes: quote.additionalNotes,
+            referralSource: quote.referralSource,
+            weedManServices: quote.weedManServices,
+            weedManPayment: quote.weedManPayment
         },
         snapshotPath,
         photoPaths,
@@ -417,6 +493,20 @@ async function sendDiscordNotification(quote, snapshotPath, photoPaths, copilotR
             const services = normalizeServices(quote.services);
             const weedManOnly = isWeedManOnly(quote.services);
             
+            // Get package display name
+            const packageNames = { essential: 'Essentials', complete: 'Complete Care', total: 'Premium' };
+            let packageDisplay = 'Custom';
+            if (quote.selectedPackage) {
+                packageDisplay = packageNames[quote.selectedPackage] || quote.selectedPackage;
+                if (quote.packageWasEdited) packageDisplay += ' (Edited)';
+            }
+            
+            // Format square footage with commas
+            const formatSqft = (val) => {
+                const num = typeof val === 'number' ? val : parseInt(val);
+                return num.toLocaleString();
+            };
+            
             // Build the message content
             let content = weedManOnly 
                 ? `🌿 **Weed Man Request** *(awaiting Weed Man pricing)*\n\n`
@@ -425,14 +515,30 @@ async function sendDiscordNotification(quote, snapshotPath, photoPaths, copilotR
             content += `**Email:** ${quote.email || 'Not provided'}\n`;
             content += `**Phone:** ${quote.phone || 'Not provided'}\n`;
             content += `**Address:** ${quote.address || 'Not provided'}\n\n`;
+            
+            content += `📦 **Package:** ${packageDisplay}\n`;
+            content += `📣 **How found us:** ${quote.referralSource || 'Not specified'}\n\n`;
+            
             content += `**Services Requested:**\n`;
             services.forEach(s => content += `• ${s}\n`);
+            
+            // Add Weed Man services if present
+            if (quote.weedManServices && quote.weedManServices.length > 0) {
+                const weedManNames = { weed_control: 'Weed Control', fertilizer: 'Fertilization', combo: 'Weed Control + Fertilizer', insect: 'Insect Control', grub: 'Grub Control' };
+                content += `\n🌿 **Weed Man Services (Partner):**\n`;
+                quote.weedManServices.forEach(s => content += `• ${weedManNames[s] || s}\n`);
+                if (quote.weedManPayment) {
+                    const paymentDisplay = quote.weedManPayment === 'annual' ? 'Annual (Pre-Pay Discount)' : 'Per Service';
+                    content += `💳 Payment: ${paymentDisplay}\n`;
+                }
+            }
+            
             content += `\n`;
             if (quote.turfSqft || quote.lawnSqft) {
-                content += `**Lawn Sqft:** ${quote.turfSqft || quote.lawnSqft} sq ft\n`;
+                content += `**Lawn Sqft:** ${formatSqft(quote.turfSqft || quote.lawnSqft)} sq ft\n`;
             }
             if (quote.mulchSqft) {
-                content += `**Mulch:** ${quote.mulchSqft} sqft / ${quote.mulchCuFt || 'N/A'} cu ft\n`;
+                content += `**Mulch:** ${formatSqft(quote.mulchSqft)} sq ft / ${quote.mulchCuFt || 'N/A'} cu ft\n`;
             }
             content += `\n**Property Details:**\n`;
             // Gate - always show
@@ -456,9 +562,23 @@ async function sendDiscordNotification(quote, snapshotPath, photoPaths, copilotR
             }
             // Stairs - always show
             content += `• Stairs to Backyard: ${quote.hasStairs ? 'Yes' : 'No'}\n`;
+            
+            // Notes - separate page 1 and page 3 if available
             content += `\n`;
-            content += `**Notes:** ${quote.notes || 'None'}\n\n`;
-            content += `**How found us:** ${quote.referralSource || 'Not specified'}\n`;
+            if (quote.propertyNotes || quote.additionalNotes) {
+                if (quote.propertyNotes) {
+                    content += `**📝 Property Notes:** ${quote.propertyNotes}\n`;
+                }
+                if (quote.additionalNotes) {
+                    content += `**💬 Additional Notes:** ${quote.additionalNotes}\n`;
+                }
+            } else if (quote.notes) {
+                content += `**Notes:** ${quote.notes}\n`;
+            } else {
+                content += `**Notes:** None\n`;
+            }
+            
+            content += `\n`;
             if (copilotResult?.customer?.customerId) {
                 content += `**Copilot:** Customer ID ${copilotResult.customer.customerId}`;
                 if (copilotResult.property?.propertyId) {

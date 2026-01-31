@@ -5382,6 +5382,10 @@
         let lawnAreaCount = 0;
         let mulchAreaCount = 0;
         
+        // Store original map position (for snapshot reset)
+        let originalMapCenter = null;
+        const DEFAULT_ZOOM = 20;
+        
         const areaColors = {
             lawn: [
                 { fill: '#22c55e', stroke: '#16a34a', name: 'Section 1' },
@@ -5408,9 +5412,12 @@
         const smallXCursor = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cline x1='0' y1='0' x2='12' y2='12' stroke='white' stroke-width='1.5'/%3E%3Cline x1='12' y1='0' x2='0' y2='12' stroke='white' stroke-width='1.5'/%3E%3Cline x1='0' y1='0' x2='12' y2='12' stroke='%23333' stroke-width='0.5'/%3E%3Cline x1='12' y1='0' x2='0' y2='12' stroke='%23333' stroke-width='0.5'/%3E%3C/svg%3E";
         
         function createMap(center) {
+            // Store the original center for snapshot reset
+            originalMapCenter = center;
+            
             map = new google.maps.Map(document.getElementById('map'), {
                 center,
-                zoom: 20,
+                zoom: DEFAULT_ZOOM,
                 mapTypeId: 'satellite',
                 tilt: 0,
                 disableDefaultUI: true,
@@ -6503,12 +6510,15 @@
                 // Capture map screenshot if available
                 if (map && (totalLawnSqft > 0 || totalMulchSqft > 0)) {
                     try {
-                        // Store map center/zoom data
-                        data.mapCenter = {
+                        // Store map center/zoom data (original property center)
+                        data.mapCenter = originalMapCenter ? {
+                            lat: originalMapCenter.lat(),
+                            lng: originalMapCenter.lng()
+                        } : {
                             lat: map.getCenter().lat(),
                             lng: map.getCenter().lng()
                         };
-                        data.mapZoom = map.getZoom();
+                        data.mapZoom = DEFAULT_ZOOM;
                         
                         // Extract polygon coordinates for each area
                         data.polygons = areas.map(area => {
@@ -6530,14 +6540,63 @@
                             };
                         });
                         
-                        // Zoom out slightly to show full property with drawn areas
-                        const currentZoom = map.getZoom();
-                        if (currentZoom > 18) {
-                            map.setZoom(18);
+                        // === RESET MAP TO DEFAULT VIEW BEFORE SNAPSHOT ===
+                        // First, reset to the original property center at default zoom
+                        // This ensures the snapshot always shows the property clearly
+                        if (originalMapCenter) {
+                            map.setCenter(originalMapCenter);
+                            map.setZoom(DEFAULT_ZOOM);
                         }
                         
-                        // Wait for map to settle
-                        await new Promise(r => setTimeout(r, 500));
+                        // Wait for initial reset to render
+                        await new Promise(r => setTimeout(r, 300));
+                        
+                        // Now fit bounds to show all drawn polygons (if any)
+                        const bounds = new google.maps.LatLngBounds();
+                        let hasPolygons = false;
+                        
+                        areas.forEach(area => {
+                            if (area.polygon) {
+                                const path = area.polygon.getPath();
+                                for (let i = 0; i < path.getLength(); i++) {
+                                    bounds.extend(path.getAt(i));
+                                    hasPolygons = true;
+                                }
+                            } else if (area.holePath) {
+                                area.holePath.forEach(point => {
+                                    bounds.extend(point);
+                                    hasPolygons = true;
+                                });
+                            }
+                        });
+                        
+                        // If there are polygons, fit to them (but ensure house is still visible)
+                        if (hasPolygons) {
+                            // Also include the property center in bounds
+                            if (originalMapCenter) {
+                                bounds.extend(originalMapCenter);
+                            }
+                            map.fitBounds(bounds, { top: 50, right: 50, bottom: 50, left: 50 });
+                            
+                            // Wait for fitBounds to apply
+                            await new Promise(r => setTimeout(r, 200));
+                            
+                            const MIN_ZOOM = 19; // Minimum zoom to ensure property detail is visible
+                            const currentZoom = map.getZoom();
+                            
+                            // Enforce zoom range: not too zoomed out, not too zoomed in
+                            if (currentZoom < MIN_ZOOM) {
+                                // Customer was zoomed out too far - zoom in to show detail
+                                map.setZoom(MIN_ZOOM);
+                            } else if (currentZoom > DEFAULT_ZOOM) {
+                                // Tiny area - cap to prevent too much zoom
+                                map.setZoom(DEFAULT_ZOOM);
+                            }
+                        }
+                        // If no polygons, we already reset to default view above
+                        
+                        // Wait for map tiles to fully load
+                        await new Promise(r => setTimeout(r, 800));
                         
                         // Capture map container as image
                         const mapContainer = document.getElementById('map');
@@ -6548,11 +6607,10 @@
                                 backgroundColor: '#ffffff'
                             });
                             data.snapshot = canvas.toDataURL('image/png');
-                            console.log('Map snapshot captured');
+                            console.log('Map snapshot captured (reset to default view)');
                         }
                         
-                        // Restore zoom
-                        map.setZoom(currentZoom);
+                        // No need to restore view since we're submitting anyway
                     } catch (e) {
                         console.warn('Failed to capture map snapshot:', e);
                     }

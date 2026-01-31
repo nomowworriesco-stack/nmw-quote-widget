@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Get a Quote | No Mow Worries Lawn Care</title>
-    <link rel="icon" type="image/png" href="https://nomowworriesco.com/wp-content/uploads/2023/09/Untitled-design-2024-02-27T142837.736-150x150.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://nomowworriesco.com/wp-content/uploads/2023/09/Untitled-design-2024-02-27T142837.736.png" sizes="192x192">
-    <link rel="apple-touch-icon" href="https://nomowworriesco.com/wp-content/uploads/2023/09/Untitled-design-2024-02-27T142837.736.png">
+    <title>Get a Quote | No Mow Worries</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -51,20 +48,6 @@
             padding-bottom: 80px;
         }
         
-        /* Prevent container scrollbars when service dropdowns are open */
-        .embed-mode .container:has(.service-dropdown.show) {
-            overflow: visible;
-        }
-        
-        /* Class-based fallback for dropdown open state */
-        .embed-mode .container.dropdown-open {
-            overflow: visible;
-        }
-        
-        .container.dropdown-open {
-            overflow: visible !important;
-        }
-        
         .embed-mode .form-content {
             max-height: none;
         }
@@ -94,21 +77,6 @@
         .header {
             text-align: center;
             margin-bottom: 24px;
-        }
-        
-        .brand-logo {
-            margin-bottom: 16px;
-        }
-        
-        .nmw-logo {
-            max-width: 200px;
-            height: auto;
-        }
-        
-        @media (max-width: 480px) {
-            .nmw-logo {
-                max-width: 160px;
-            }
         }
         
         .logo {
@@ -295,19 +263,10 @@
             font-family: inherit;
         }
         
-        /* Hover only on devices that support true hover (desktop) */
-        @media (hover: hover) and (pointer: fine) {
-            .package-btn:hover {
-                border-color: var(--green);
-                background: linear-gradient(180deg, rgba(34, 197, 94, 0.04) 0%, transparent 100%);
-                transform: translateY(-2px);
-            }
-        }
-        
-        /* Active state for touch feedback on mobile */
-        .package-btn:active {
+        .package-btn:hover {
             border-color: var(--green);
             background: linear-gradient(180deg, rgba(34, 197, 94, 0.04) 0%, transparent 100%);
+            transform: translateY(-2px);
         }
         
         .package-btn.selected {
@@ -502,12 +461,6 @@
             justify-content: center;
             max-width: 700px;
             margin: 0 auto;
-            overflow: visible;
-        }
-        
-        /* Prevent scrollbars when dropdowns are open */
-        .services-wrap:has(.service-dropdown.show) {
-            overflow: visible;
         }
         
         /* Service with dropdown container */
@@ -566,11 +519,10 @@
             }
             
             /* Force immediate visual reset on deselect */
-            .service-pill:not(.selected):not(.package-highlight) {
+            .service-pill:not(.selected) {
                 background: var(--card-bg) !important;
                 border-color: var(--border) !important;
                 color: var(--text) !important;
-                box-shadow: none !important;
             }
             
             /* Only apply light green when actually selected */
@@ -578,19 +530,6 @@
                 background: var(--green-light) !important;
                 border-color: var(--green) !important;
                 color: var(--green-dark) !important;
-            }
-            
-            /* Package buttons - prevent sticky hover */
-            .package-btn {
-                -webkit-tap-highlight-color: transparent;
-                touch-action: manipulation;
-            }
-            
-            /* Reset package buttons that aren't selected */
-            .package-btn:not(.selected) {
-                border-color: var(--border) !important;
-                background: var(--card-bg) !important;
-                transform: none !important;
             }
         }
         
@@ -1336,11 +1275,6 @@
         
         .photo-content {
             display: block;
-            border: 2px dashed var(--border);
-            border-radius: var(--radius-sm);
-            padding: 20px 16px;
-            max-height: none;
-            overflow: visible;
         }
         
         .photo-content.hidden {
@@ -1359,42 +1293,64 @@
             font-weight: 500;
         }
         
-        /* Photo Skip Modal - Inline version */
+        /* Photo Skip Modal */
         .photo-modal-overlay {
             display: none;
-            margin-top: 16px;
-            animation: slideDown 0.2s ease-out;
-        }
-        
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .photo-modal-overlay.show {
-            display: block;
-        }
-        
-        .photo-modal {
-            background: #fffbeb;
-            border: 1px solid #f59e0b;
-            border-radius: var(--radius);
-            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
             padding: 20px;
         }
         
+        .photo-modal-overlay.show {
+            display: flex;
+        }
+        
+        .photo-modal {
+            background: white;
+            border-radius: var(--radius);
+            max-width: 1000px;
+            width: 100%;
+            padding: 28px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
         .photo-modal-title {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 600;
-            margin-bottom: 8px;
-            color: #92400e;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+        
+        .photo-modal-body {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .photo-modal-body ul {
+            margin: 12px 0;
+            padding-left: 20px;
+        }
+        
+        .photo-modal-body li {
+            margin-bottom: 6px;
         }
         
         .photo-modal-warning {
-            font-size: 14px;
-            color: #78350f;
-            line-height: 1.5;
-            margin-bottom: 16px;
+            padding: 12px 16px;
+            background: #fee2e2;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            color: #991b1b;
+            margin-bottom: 20px;
         }
         
         .photo-modal-buttons {
@@ -1434,19 +1390,21 @@
         }
         
         .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-sm);
+            padding: 20px 16px;
             text-align: center;
             cursor: pointer;
             transition: all 0.15s;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 16px;
         }
         
         .upload-area:hover {
+            border-color: var(--green);
             background: var(--green-light);
         }
         
         .upload-area.dragover {
+            border-color: var(--green);
             background: var(--green-light);
         }
         
@@ -1482,8 +1440,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             gap: 12px;
-            max-height: none;
-            overflow: visible;
+            margin-top: 16px;
         }
         
         .photo-preview:empty { display: none; }
@@ -1545,13 +1502,6 @@
             width: 100%;
             height: 400px;
             background: #e5e7eb;
-        }
-        
-        /* Taller map on desktop */
-        @media (min-width: 768px) {
-            #map {
-                height: 550px;
-            }
         }
         
         .point-badge {
@@ -2092,19 +2042,6 @@
             color: var(--text-muted);
             font-size: 15px;
             line-height: 1.6;
-        }
-        
-        .success-logo {
-            margin-bottom: 8px;
-        }
-        
-        /* Widget Footer */
-        .widget-footer {
-            text-align: center;
-            padding: 24px 16px;
-            margin-top: 32px;
-            font-size: 12px;
-            color: var(--text-light);
         }
         
         /* Summary */
@@ -2771,7 +2708,6 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <!-- Logo removed -->
             <h1>Get Your Free Quote</h1>
             <p>Takes about 2 minutes</p>
         </div>
@@ -3329,22 +3265,26 @@
                     <div class="photo-preview" id="photoPreview"></div>
                     <div class="photo-count" id="photoCount"></div>
                 </div>
-                
-                <!-- Photo Skip Confirmation - Inline -->
-                <div class="photo-modal-overlay" id="photoSkipModal">
-                    <div class="photo-modal">
-                        <div class="photo-modal-title">Skip photos?</div>
-                        <div class="photo-modal-warning">
-                            <strong>Without photos</strong>, we'll need to schedule an in-person estimate before we can quote.
-                        </div>
-                        <div class="photo-modal-buttons">
-                            <button type="button" class="photo-modal-btn primary" onclick="cancelPhotoSkip()">
-                                Add Photos
-                            </button>
-                            <button type="button" class="photo-modal-btn secondary" onclick="confirmPhotoSkip()">
-                                Continue Without Photos
-                            </button>
-                        </div>
+            </div>
+            
+            <!-- Photo Skip Confirmation Modal -->
+            <div class="photo-modal-overlay" id="photoSkipModal">
+                <div class="photo-modal">
+                    <div class="photo-modal-title">Are you sure you don't want to add photos?</div>
+                    <div class="photo-modal-body">
+                        <p>Submitting photos helps us get your estimate sent out within 24 hours — no waiting for in-person visits.</p>
+                        <p>It also gives you a more accurate quote because we can see exactly what you need.</p>
+                    </div>
+                    <div class="photo-modal-warning">
+                        <strong>Without photos</strong>, we will need to schedule an in-person estimate. You will receive an email with your scheduled date once we review your request.
+                    </div>
+                    <div class="photo-modal-buttons">
+                        <button type="button" class="photo-modal-btn primary" onclick="cancelPhotoSkip()">
+                            Add Photos
+                        </button>
+                        <button type="button" class="photo-modal-btn secondary" onclick="confirmPhotoSkip()">
+                            Continue Without Photos
+                        </button>
                     </div>
                 </div>
             </div>
@@ -3476,18 +3416,21 @@
                 <div class="measurement-notice-header">
                     <div class="measurement-notice-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                            <circle cx="12" cy="10" r="3"/>
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                            <polyline points="10 9 9 9 8 9"/>
                         </svg>
                     </div>
                     <div>
-                        <div class="measurement-notice-title">One Quick Step</div>
-                        <div class="measurement-notice-subtitle">Draw your lawn to get accurate pricing</div>
+                        <div class="measurement-notice-title">Your Estimate Depends on This</div>
+                        <div class="measurement-notice-subtitle">Accurate measurements = accurate pricing</div>
                     </div>
                 </div>
                 
-                <div class="measurement-notice-body" id="measurementNoticeBody">
-                    <!-- Populated dynamically based on selected services -->
+                <div class="measurement-notice-body">
+                    The following services are priced based on your lawn's square footage. Please measure as accurately as possible to receive the most precise quote:
                 </div>
                 
                 <div class="measurement-services" id="sqftServicesList">
@@ -3501,7 +3444,7 @@
                         <line x1="12" y1="8" x2="12.01" y2="8"/>
                     </svg>
                     <div class="measurement-notice-footer-text">
-                        Your measurement is saved with your request. If your actual lawn size differs significantly, pricing may need adjustment. Take a moment to be as accurate as possible.
+                        <strong>Why this matters:</strong> Your measurement is saved with your request. If your lawn size differs significantly from what's drawn here, pricing may need to be adjusted upon arrival. Take your time — a few extra seconds now saves confusion later.
                     </div>
                 </div>
             </div>
@@ -3763,7 +3706,6 @@
         <!-- Success Screen -->
         <div class="screen" id="screenSuccess">
             <div class="card success-card">
-                <!-- Logo removed -->
                 <div class="success-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                         <path d="M20 6L9 17l-5-5"/>
@@ -3771,20 +3713,7 @@
                 </div>
                 <h2>Request Submitted!</h2>
                 <p>We'll review your request and send a quote to your email within 24 hours. For most requests, you'll hear from us much sooner.</p>
-                <div class="success-footer">
-                    <p style="font-size: 13px; color: var(--text-muted); margin-top: 24px;">
-                        <strong>No Mow Worries Lawn Care</strong><br>
-                        Aurora, Colorado<br>
-                        <a href="tel:7204465303" style="color: var(--green); text-decoration: none;">(720) 446-5303</a> • 
-                        <a href="https://nomowworriesco.com" target="_blank" style="color: var(--green); text-decoration: none;">nomowworriesco.com</a>
-                    </p>
-                </div>
             </div>
-        </div>
-        
-        <!-- Professional Footer -->
-        <div class="widget-footer">
-            <span>© 2025 No Mow Worries Lawn Care LLC • Aurora, CO</span>
         </div>
     </div>
     
@@ -3819,7 +3748,6 @@
         let mulchThickness = 3; // Default 3 inches (recommended)
         let measurementSkipped = false; // Track if step 2 was skipped
         let selectedPackage = null; // Track which package was selected: 'essential', 'complete', 'total', or null (custom)
-        let packageWasEdited = false; // Track if user modified services after selecting a package
         
         // Service state tracking
         let serviceSelections = {
@@ -3844,66 +3772,28 @@
         // Populate the sqft-based services list in the measurement notice
         function populateSqftServicesList() {
             const container = document.getElementById('sqftServicesList');
-            const bodyEl = document.getElementById('measurementNoticeBody');
             if (!container) return;
             
             const services = [];
-            const serviceNames = [];
             
-            // Check which sqft-dependent services are selected (lawn-based)
+            // Check which sqft-dependent services are selected
             if (selectedServices.mowing) {
                 services.push({ name: 'Lawn Mowing', icon: 'grass' });
-                serviceNames.push('mowing');
             }
             if (selectedServices.aeration) {
                 services.push({ name: 'Core Aeration', icon: 'dots' });
-                serviceNames.push('aeration');
             }
             if (selectedServices.overseeding) {
                 services.push({ name: 'Overseeding', icon: 'seed' });
-                serviceNames.push('overseeding');
             }
             if (selectedServices.fertilization) {
                 services.push({ name: 'Fertilization', icon: 'leaf' });
-                serviceNames.push('fertilization');
             }
             if (selectedServices.power_raking) {
                 services.push({ name: 'Power Rake', icon: 'rake' });
-                serviceNames.push('power raking');
             }
             if (selectedServices.mulch) {
                 services.push({ name: 'Mulch Install', icon: 'mulch' });
-                serviceNames.push('mulch');
-            }
-            
-            // Build dynamic message based on selected services
-            if (bodyEl) {
-                let message = '';
-                const hasMulchOnly = serviceNames.length === 1 && serviceNames[0] === 'mulch';
-                const hasLawnServices = serviceNames.some(s => s !== 'mulch');
-                const hasMulch = serviceNames.includes('mulch');
-                
-                if (hasMulchOnly) {
-                    message = 'Your mulch pricing is based on the area of your beds. Outline each bed to get an accurate quote.';
-                } else if (hasLawnServices && hasMulch) {
-                    // Both lawn and mulch services
-                    const lawnNames = serviceNames.filter(s => s !== 'mulch');
-                    if (lawnNames.length === 1) {
-                        message = `Your ${lawnNames[0]} and mulch pricing are based on square footage. Outline your lawn area, then draw your mulch beds.`;
-                    } else {
-                        message = `Your ${lawnNames.slice(0, -1).join(', ')} and ${lawnNames[lawnNames.length - 1]} pricing are based on lawn size, and mulch is based on bed area. Draw both to get accurate quotes.`;
-                    }
-                } else if (hasLawnServices) {
-                    // Lawn services only
-                    if (serviceNames.length === 1) {
-                        message = `Your ${serviceNames[0]} pricing is based on lawn size. Outline your lawn area to get an accurate quote.`;
-                    } else if (serviceNames.length === 2) {
-                        message = `Your ${serviceNames[0]} and ${serviceNames[1]} pricing are based on lawn size. Outline your lawn to get accurate quotes.`;
-                    } else {
-                        message = `Your ${serviceNames.slice(0, -1).join(', ')}, and ${serviceNames[serviceNames.length - 1]} pricing are based on lawn size. Outline your lawn area below.`;
-                    }
-                }
-                bodyEl.textContent = message;
             }
             
             // Icon SVGs
@@ -3916,7 +3806,7 @@
                 mulch: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>'
             };
             
-            // Build HTML for service tags
+            // Build HTML
             let html = '';
             services.forEach(service => {
                 html += `
@@ -4025,7 +3915,6 @@
             const dropdownId = serviceType + 'Dropdown';
             const pill = document.getElementById(pillId);
             const dropdown = document.getElementById(dropdownId);
-            const container = document.querySelector('.container');
             
             // Close all other dropdowns first
             document.querySelectorAll('.service-dropdown.show').forEach(d => {
@@ -4036,7 +3925,6 @@
             
             if (dropdown.classList.contains('show')) {
                 dropdown.classList.remove('show');
-                container.classList.remove('dropdown-open');
                 // For weedControl, check weedManServices instead of serviceSelections
                 const hasSelection = serviceType === 'weedControl' ? weedManServices.length > 0 : serviceSelections[serviceType];
                 if (!hasSelection) {
@@ -4044,7 +3932,6 @@
                 }
             } else {
                 dropdown.classList.add('show');
-                container.classList.add('dropdown-open');
                 pill.classList.add('selected');
             }
         }
@@ -4052,8 +3939,6 @@
         // Close dropdown when clicking outside
         document.addEventListener('click', function(e) {
             const dropdownTypes = ['mowing', 'fertilization', 'mulch', 'bushTrimming', 'aeration', 'overseeding', 'weedControl', 'yardCleanup'];
-            const container = document.querySelector('.container');
-            let anyDropdownOpen = false;
             
             dropdownTypes.forEach(type => {
                 const dropdown = document.getElementById(type + 'Dropdown');
@@ -4082,26 +3967,17 @@
                             pill.classList.remove('selected');
                         }
                     }
-                    
-                    // Track if any dropdown is still open
-                    if (dropdown.classList.contains('show')) {
-                        anyDropdownOpen = true;
-                    }
                 }
             });
-            
-            // Remove dropdown-open class if no dropdowns are open
-            if (!anyDropdownOpen) {
-                container.classList.remove('dropdown-open');
-            }
         });
         
         // Select option from dropdown (handles both select and deselect)
         // fromPackage: optional flag to indicate selection came from a package preset (don't clear selectedPackage)
         function selectServiceOption(serviceType, value, displayLabel, fromPackage = false) {
-            // If manually selecting a service (not from package preset), mark package as edited
+            // If manually selecting a service (not from package preset), clear the package tracking
             if (!fromPackage && selectedPackage) {
-                packageWasEdited = true;
+                selectedPackage = null;
+                document.querySelectorAll('.package-btn').forEach(btn => btn.classList.remove('selected'));
             }
             const pillId = {
                 mowing: 'pillMowing',
@@ -4237,9 +4113,10 @@
         
         // Simple toggle for services without sub-options
         function toggleSimpleService(btn) {
-            // If manually toggling a service, mark package as edited
+            // If manually toggling a service, clear the package tracking
             if (selectedPackage) {
-                packageWasEdited = true;
+                selectedPackage = null;
+                document.querySelectorAll('.package-btn').forEach(b => b.classList.remove('selected'));
             }
             
             const service = btn.dataset.service;
@@ -4266,7 +4143,6 @@
         function toggleWeedManDropdown() {
             const dropdown = document.getElementById('weedControlDropdown');
             const pill = document.getElementById('pillWeedControl');
-            const container = document.querySelector('.container');
             
             // Close other dropdowns first
             document.querySelectorAll('.service-dropdown').forEach(d => {
@@ -4274,19 +4150,13 @@
             });
             
             dropdown.classList.toggle('show');
-            
-            // Toggle container class to prevent scrollbars
-            if (dropdown.classList.contains('show')) {
-                container.classList.add('dropdown-open');
-            } else {
-                container.classList.remove('dropdown-open');
-            }
         }
         
         function updateWeedManSelection(fromPackage = false) {
-            // If manually changing weed services (not from package preset), mark package as edited
+            // If manually changing weed services (not from package preset), clear the package tracking
             if (!fromPackage && selectedPackage) {
-                packageWasEdited = true;
+                selectedPackage = null;
+                document.querySelectorAll('.package-btn').forEach(b => b.classList.remove('selected'));
             }
             
             const dropdown = document.getElementById('weedControlDropdown');
@@ -4337,9 +4207,7 @@
         function closeWeedManDropdown() {
             const dropdown = document.getElementById('weedControlDropdown');
             const pill = document.getElementById('pillWeedControl');
-            const container = document.querySelector('.container');
             dropdown.classList.remove('show');
-            container.classList.remove('dropdown-open');
             pill.blur();
         }
         
@@ -4423,8 +4291,6 @@
             // If this package was already selected, just deselect (toggle off)
             if (wasSelected) {
                 selectedPackage = null; // Clear package selection
-                // Clear any lingering package-highlight classes from services
-                unhighlightPackageServices();
                 updatePhotoVisibility();
                 checkGateWidth();
                 updateMulchIndicator();
@@ -4435,7 +4301,6 @@
             // Otherwise, select this package
             clickedBtn.classList.add('selected');
             selectedPackage = packageType; // Track which package was selected
-            packageWasEdited = false; // Reset edited flag when selecting a new package
             
             // Select services based on package (pass fromPackage=true to preserve package tracking)
             if (packageType === 'essential') {
@@ -4684,9 +4549,6 @@
             
             // Hide one-time note
             document.getElementById('onetimeNote').classList.remove('show');
-            
-            // Clear any package highlight styling from service pills
-            unhighlightPackageServices();
             
             // Hide conditional sections
             updateConditionalSections();
@@ -4965,9 +4827,6 @@
         function goToStep1() {
             showScreen('screen1');
             updateSteps(1);
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'instant' });
-            document.getElementById('screen1').scrollIntoView({ behavior: 'instant', block: 'start' });
         }
         
         function goToStep2() {
@@ -5068,12 +4927,6 @@
             showScreen('screen2');
             updateSteps(2);
             
-            // Scroll to top of the page so customer sees the measurement notice first
-            window.scrollTo({ top: 0, behavior: 'instant' });
-            // Also scroll widget container and screen into view
-            document.getElementById('screen2').scrollIntoView({ behavior: 'instant', block: 'start' });
-            document.querySelector('.widget-container')?.scrollTo({ top: 0, behavior: 'instant' });
-            
             // Populate the sqft-based services list
             populateSqftServicesList();
             
@@ -5151,10 +5004,6 @@
             showScreen('screen3');
             updateSteps(3);
             updateSummary();
-            
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'instant' });
-            document.getElementById('screen3').scrollIntoView({ behavior: 'instant', block: 'start' });
             
             // Submit button is always enabled on step 3 (validations passed to get here)
             document.getElementById('submitBtn').disabled = false;
@@ -5407,16 +5256,10 @@
         
         let subtractAreaCount = 0;
         
-        // Store original map center for snapshot reset
-        let originalMapCenter = null;
-        
         // Small precision X cursor (12x12)
         const smallXCursor = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cline x1='0' y1='0' x2='12' y2='12' stroke='white' stroke-width='1.5'/%3E%3Cline x1='12' y1='0' x2='0' y2='12' stroke='white' stroke-width='1.5'/%3E%3Cline x1='0' y1='0' x2='12' y2='12' stroke='%23333' stroke-width='0.5'/%3E%3Cline x1='12' y1='0' x2='0' y2='12' stroke='%23333' stroke-width='0.5'/%3E%3C/svg%3E";
         
         function createMap(center) {
-            // Store original center for snapshot reset
-            originalMapCenter = center;
-            
             map = new google.maps.Map(document.getElementById('map'), {
                 center,
                 zoom: 20,
@@ -6482,7 +6325,6 @@
                     referralSource: document.getElementById('referralSource').value,
                     smsConsent: document.getElementById('smsConsent').checked,
                     selectedPackage: selectedPackage, // 'essential', 'complete', 'total', or null (custom)
-                    packageWasEdited: selectedPackage ? packageWasEdited : false, // True if user modified services after selecting a package
                     services: selectedServices,
                     mowingType: mowingType,
                     fertilizationType: fertilizationType,
@@ -6500,8 +6342,6 @@
                     grassHeight: isOvergrown ? document.getElementById('grassHeight').value : null,
                     hasStairs: hasStairs,
                     notes: [document.getElementById('notes').value.trim(), document.getElementById('customerNotes').value.trim()].filter(n => n).join(' | '),
-                    propertyNotes: document.getElementById('notes').value.trim() || null, // Page 1 notes
-                    additionalNotes: document.getElementById('customerNotes').value.trim() || null, // Page 3 notes
                     lawnSqft: totalLawnSqft,
                     mulchSqft: totalMulchSqft,
                     mulchThickness: totalMulchSqft > 0 ? mulchThickness : null,
@@ -6542,16 +6382,14 @@
                             };
                         });
                         
-                        // Reset map to default view (original center + good zoom) for clean snapshot
-                        // This ensures snapshot always shows the property nicely centered,
-                        // regardless of how much the customer panned/zoomed during measurement
-                        if (originalMapCenter) {
-                            map.setCenter(originalMapCenter);
+                        // Zoom out slightly to show full property with drawn areas
+                        const currentZoom = map.getZoom();
+                        if (currentZoom > 18) {
+                            map.setZoom(18);
                         }
-                        map.setZoom(19); // Good zoom level to show property + drawn areas
                         
-                        // Wait for map tiles to load after resetting view
-                        await new Promise(r => setTimeout(r, 800));
+                        // Wait for map to settle
+                        await new Promise(r => setTimeout(r, 500));
                         
                         // Capture map container as image
                         const mapContainer = document.getElementById('map');
@@ -6562,8 +6400,11 @@
                                 backgroundColor: '#ffffff'
                             });
                             data.snapshot = canvas.toDataURL('image/png');
-                            console.log('Map snapshot captured at default view');
+                            console.log('Map snapshot captured');
                         }
+                        
+                        // Restore zoom
+                        map.setZoom(currentZoom);
                     } catch (e) {
                         console.warn('Failed to capture map snapshot:', e);
                     }
